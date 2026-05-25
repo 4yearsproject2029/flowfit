@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'data/local/local_database.dart';
 import 'features/home/screens/home_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalDatabase.init();
+
   runApp(const FlowFitApp());
 }
 
