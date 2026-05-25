@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 28),
               Text(
-                'Workout',
+                'Workouts for ${_dateKey(selectedDate)}',
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -63,9 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'No workouts yet. Your workout list will appear here.',
-                    ),
+                    const Text('No workouts added yet.'),
                   ],
                 ),
               ),
@@ -74,6 +72,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  String _dateKey(DateTime date) {
+    final year = date.year.toString().padLeft(4, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+
+    return '$year-$month-$day';
   }
 
   String _selectedDateLabel(DateTime date) {

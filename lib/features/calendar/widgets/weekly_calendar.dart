@@ -19,6 +19,7 @@ class WeeklyCalendar extends StatelessWidget {
       children: weekDates.map((date) {
         final isToday = _isSameDay(date, today);
         final isSelected = _isSameDay(date, selectedDate);
+        final colors = Theme.of(context).colorScheme;
 
         return Expanded(
           child: Padding(
@@ -29,15 +30,11 @@ class WeeklyCalendar extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.transparent,
+                  color: isSelected ? colors.primary : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isToday
-                        ? Theme.of(context).colorScheme.primary
-                        : Colors.grey.shade300,
-                    width: isToday ? 2 : 1,
+                    color: isToday ? colors.secondary : Colors.grey.shade300,
+                    width: isToday || isSelected ? 2 : 1,
                   ),
                 ),
                 child: Column(

@@ -8,10 +8,7 @@ void main() {
 
     expect(find.text('FlowFit'), findsOneWidget);
     expect(find.text('This Week'), findsOneWidget);
-    expect(find.text('Workout'), findsOneWidget);
-    expect(
-      find.text('No workouts yet. Your workout list will appear here.'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('Workouts for '), findsOneWidget);
+    expect(find.text('No workouts added yet.'), findsOneWidget);
   });
 }
