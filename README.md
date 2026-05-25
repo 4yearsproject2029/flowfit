@@ -2,16 +2,16 @@
 
 Personal workout routine & tracking app built with Flutter.
 
-## Features
-- Weekly workout calendar
+## MVP Features
+- Weekly calendar UI
 - Workout tracking
 - Exercise checklist
 - Rest timer
 
+## Goal
+Build a usable workout tracking MVP in 7 days.
+
 ## Tech Stack
 - Flutter
 - Riverpod
-- Hive/SQLite
-
-## Project Goal
-Build a usable workout tracking MVP in 7 days.
+- Hive / SQLite
