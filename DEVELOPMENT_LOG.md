@@ -187,3 +187,91 @@
 - Add preset timer buttons
 - Add timer start, stop, and reset behavior
 - Continue MVP polish
+
+---
+
+# Day 6
+
+## Completed
+- Created RestTimer widget
+- Added preset timer buttons
+- Added 30s, 60s, 90s, 120s, 3m, and 5m presets
+- Added MM:SS timer display
+- Added Start button
+- Added Stop button
+- Added Reset button
+- Added countdown behavior
+- Added timer cleanup in dispose
+- Placed RestTimer on HomeScreen
+- Added optional workout weight input
+- Saved weight to WorkoutLog
+- Displayed workout weight in WorkoutItem
+- Verified flutter analyze and flutter test
+
+## Learned
+- How to use Timer.periodic in Flutter
+- Why timers must be cancelled in dispose
+- How to keep temporary UI state local to a widget
+- How to extend an existing form without changing Hive model adapters
+
+## Challenges
+- Keeping the timer useful without adding unnecessary architecture
+- Avoiding timer lifecycle issues
+- Keeping the HomeScreen usable after adding more UI
+
+## Current App State
+- Weekly calendar UI works
+- Date selection works
+- Workout logs can be added for the selected date
+- Optional weight can be added to workout logs
+- Workout logs persist locally with Hive
+- Completion checkbox and delete actions work
+- Rest timer supports quick preset durations
+- Rest timer can start, stop, and reset
+
+## Next Steps
+- Improve HomeScreen scrolling
+- Make RestTimer more compact
+- Keep RestTimer visible while scrolling
+- Continue MVP polish
+
+---
+
+# Day 6.5
+
+## Completed
+- Refactored HomeScreen to use CustomScrollView
+- Changed HomeScreen to full-page scrolling
+- Removed independent workout list scrolling
+- Changed WorkoutList to render as normal page content
+- Made RestTimer more compact
+- Reduced RestTimer padding and spacing
+- Used compact preset chips
+- Used compact timer control buttons
+- Added pinned RestTimer behavior with SliverPersistentHeader
+- Kept workout list scrolling naturally under the timer
+- Verified flutter analyze and flutter test
+
+## Learned
+- How CustomScrollView supports full-page scroll layouts
+- How SliverPersistentHeader can pin important UI
+- Why nested scroll areas can make workout screens feel cramped
+- How to make a widget more compact without changing its behavior
+
+## Challenges
+- Balancing sticky timer visibility with workout list space
+- Avoiding nested scroll issues
+- Keeping the implementation beginner-friendly
+
+## Current App State
+- HomeScreen scrolls as one natural page
+- RestTimer stays pinned near the top while scrolling
+- RestTimer takes less vertical space
+- Workout list has more visible room
+- Add workout, completion, delete, and timer behavior still work
+
+## Next Steps
+- QA manual workout flow
+- Polish small UI spacing issues
+- Update README with MVP status
+- Prepare Day 7 QA and bug fixes

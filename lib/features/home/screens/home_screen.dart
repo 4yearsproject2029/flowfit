@@ -5,6 +5,7 @@ import '../../../data/models/workout_category.dart';
 import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
 import '../../calendar/widgets/weekly_calendar.dart';
+import '../../timer/widgets/rest_timer.dart';
 import '../../workout/widgets/add_workout_button.dart';
 import '../../workout/widgets/workout_list.dart';
 
@@ -25,65 +26,83 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('FlowFit'), centerTitle: false),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'This Week',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              WeeklyCalendar(
-                selectedDate: selectedDate,
-                onDateSelected: (date) {
-                  setState(() {
-                    selectedDate = date;
-                  });
-                },
-              ),
-              const SizedBox(height: 28),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Workouts for ${_dateKey(selectedDate)}',
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'This Week',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  AddWorkoutButton(onPressed: _showAddWorkoutSheet),
-                ],
+                    const SizedBox(height: 12),
+                    WeeklyCalendar(
+                      selectedDate: selectedDate,
+                      onDateSelected: (date) {
+                        setState(() {
+                          selectedDate = date;
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: ValueListenableBuilder<Box<WorkoutLog>>(
-                  valueListenable: storageService.workoutLogsListenable,
-                  builder: (context, box, child) {
-                    final workoutLogs = storageService.getWorkoutLogsByDate(
-                      _dateKey(selectedDate),
-                    );
+            ),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _RestTimerHeaderDelegate(),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+              sliver: SliverToBoxAdapter(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Workouts for ${_dateKey(selectedDate)}',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    AddWorkoutButton(onPressed: _showAddWorkoutSheet),
+                  ],
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              sliver: ValueListenableBuilder<Box<WorkoutLog>>(
+                valueListenable: storageService.workoutLogsListenable,
+                builder: (context, box, child) {
+                  final workoutLogs = storageService.getWorkoutLogsByDate(
+                    _dateKey(selectedDate),
+                  );
 
-                    if (workoutLogs.isEmpty) {
-                      return _EmptyWorkoutSection(
+                  if (workoutLogs.isEmpty) {
+                    return SliverToBoxAdapter(
+                      child: _EmptyWorkoutSection(
                         selectedDateLabel: _selectedDateLabel(selectedDate),
-                      );
-                    }
+                      ),
+                    );
+                  }
 
-                    return WorkoutList(
+                  return SliverToBoxAdapter(
+                    child: WorkoutList(
                       workoutLogs: workoutLogs,
                       onToggle: storageService.toggleWorkoutCompletion,
                       onDelete: storageService.deleteWorkoutLog,
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -128,6 +147,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final month = monthLabels[date.month - 1];
     return '$month ${date.day}, ${date.year}';
+  }
+}
+
+class _RestTimerHeaderDelegate extends SliverPersistentHeaderDelegate {
+  @override
+  double get minExtent => 164;
+
+  @override
+  double get maxExtent => 164;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: const RestTimer(),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _RestTimerHeaderDelegate oldDelegate) {
+    return false;
   }
 }
 

@@ -23,8 +23,21 @@ void main() {
 
     expect(find.text('FlowFit'), findsOneWidget);
     expect(find.text('This Week'), findsOneWidget);
+    expect(find.text('Rest Timer'), findsOneWidget);
+    expect(find.text('01:00'), findsOneWidget);
     expect(find.textContaining('Workouts for '), findsOneWidget);
     expect(find.text('No workouts added yet.'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('selects a rest timer preset', (WidgetTester tester) async {
+    await tester.pumpWidget(const FlowFitApp());
+
+    await tester.tap(find.text('3m'));
+    await tester.pump();
+
+    expect(find.text('03:00'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox());
   });

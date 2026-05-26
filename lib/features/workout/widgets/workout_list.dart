@@ -27,24 +27,21 @@ class WorkoutList extends StatelessWidget {
       return first.isCompleted ? 1 : -1;
     });
 
-    return ListView.separated(
-      itemCount: sortedWorkoutLogs.length,
-      separatorBuilder: (context, index) {
-        return const SizedBox(height: 8);
-      },
-      itemBuilder: (context, index) {
-        final workoutLog = sortedWorkoutLogs[index];
-
-        return WorkoutItem(
-          workoutLog: workoutLog,
-          onToggle: () {
-            onToggle(workoutLog.id);
-          },
-          onDelete: () {
-            onDelete(workoutLog.id);
-          },
+    return Column(
+      children: sortedWorkoutLogs.map((workoutLog) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: WorkoutItem(
+            workoutLog: workoutLog,
+            onToggle: () {
+              onToggle(workoutLog.id);
+            },
+            onDelete: () {
+              onDelete(workoutLog.id);
+            },
+          ),
         );
-      },
+      }).toList(),
     );
   }
 }
