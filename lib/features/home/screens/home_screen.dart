@@ -6,6 +6,7 @@ import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
 import '../../calendar/widgets/weekly_calendar.dart';
 import '../../workout/widgets/add_workout_button.dart';
+import '../../workout/widgets/workout_list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -73,26 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }
 
-                    return ListView.separated(
-                      itemCount: workoutLogs.length,
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(height: 8);
-                      },
-                      itemBuilder: (context, index) {
-                        final workoutLog = workoutLogs[index];
-
-                        return _WorkoutLogTile(
-                          workoutLog: workoutLog,
-                          onToggle: () {
-                            storageService.toggleWorkoutCompletion(
-                              workoutLog.id,
-                            );
-                          },
-                          onDelete: () {
-                            storageService.deleteWorkoutLog(workoutLog.id);
-                          },
-                        );
-                      },
+                    return WorkoutList(
+                      workoutLogs: workoutLogs,
+                      onToggle: storageService.toggleWorkoutCompletion,
+                      onDelete: storageService.deleteWorkoutLog,
                     );
                   },
                 ),
@@ -334,60 +319,5 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
     if (mounted) {
       Navigator.pop(context);
     }
-  }
-}
-
-class _WorkoutLogTile extends StatelessWidget {
-  const _WorkoutLogTile({
-    required this.workoutLog,
-    required this.onToggle,
-    required this.onDelete,
-  });
-
-  final WorkoutLog workoutLog;
-  final VoidCallback onToggle;
-  final VoidCallback onDelete;
-
-  @override
-  Widget build(BuildContext context) {
-    final details = <String>[
-      if (workoutLog.sets != null) '${workoutLog.sets} sets',
-      if (workoutLog.reps != null) '${workoutLog.reps} reps',
-      if (workoutLog.weight != null) '${workoutLog.weight} kg',
-    ].join(' · ');
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: ListTile(
-        leading: Checkbox(
-          value: workoutLog.isCompleted,
-          onChanged: (value) {
-            onToggle();
-          },
-        ),
-        title: Text(
-          workoutLog.workoutName,
-          style: TextStyle(
-            decoration: workoutLog.isCompleted
-                ? TextDecoration.lineThrough
-                : TextDecoration.none,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: Text(
-          details.isEmpty
-              ? workoutLog.category
-              : '${workoutLog.category} · $details',
-        ),
-        trailing: IconButton(
-          onPressed: onDelete,
-          icon: const Icon(Icons.delete_outline),
-        ),
-      ),
-    );
   }
 }
