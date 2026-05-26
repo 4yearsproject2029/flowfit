@@ -275,3 +275,57 @@
 - Polish small UI spacing issues
 - Update README with MVP status
 - Prepare Day 7 QA and bug fixes
+
+---
+
+# Day 7
+
+## Completed
+- Completed manual MVP testing
+- Verified date selection flow
+- Verified Add Workout bottom sheet opens correctly
+- Verified workout category selection
+- Verified workout creation flow
+- Verified workout list updates after saving
+- Verified completion checkbox behavior
+- Verified delete workout behavior
+- Verified rest timer behavior
+- Updated README for MVP status
+- Confirmed flutter analyze passes
+- Confirmed flutter test passes
+
+## Learned
+- Manual QA can reveal environment warnings that automated tests do not show
+- MVP polish should focus on stability and clarity before adding features
+- Documentation should match the actual implemented tech stack
+
+## Challenges
+- Evaluating a Flutter HardwareKeyboard warning during text input
+- Confirming whether the warning came from app code or the dev environment
+- Keeping Day 7 focused on QA and documentation instead of adding new scope
+
+## Known Issues
+- Flutter printed a HardwareKeyboard KeyDownEvent warning while typing in the Add Workout bottom sheet
+- The warning said a KeyDownEvent was dispatched while the physical key was already marked as pressed
+- No custom FocusNode, RawKeyboard, HardwareKeyboard, or manual keyboard handling is used in the app
+- TextEditingController instances are owned by the bottom sheet state and disposed correctly
+- Current conclusion: this appears to be a Flutter Web/dev environment warning, not an app logic issue
+- The warning is non-blocking as long as typing continues to work normally
+
+## Current App State
+- FlowFit MVP is ready for demo
+- Weekly calendar works
+- Date-based workout logs work
+- Add workout flow works
+- Categories, sets, reps, and weight work
+- Completion tracking works
+- Delete workout works
+- Hive persistence is connected
+- Rest timer works
+- HomeScreen uses full-page scrolling with a pinned compact timer
+
+## Next Steps
+- Prepare MVP demo
+- Record short walkthrough
+- Commit final MVP changes
+- Plan post-MVP improvements
