@@ -1,17 +1,42 @@
 # FlowFit
 
-Personal workout routine & tracking app built with Flutter.
+FlowFit is a Flutter workout tracker MVP built to make workout logging fast, simple, and usable during exercise.
 
-## MVP Features
-- Weekly calendar UI
-- Workout tracking
-- Exercise checklist
+## Implemented Features
+
+- Weekly calendar
+- Date-based workout logs
+- Add workout bottom sheet
+- Workout categories
+- Sets, reps, and weight inputs
+- Completion checkbox
+- Delete workout
+- Hive local persistence
 - Rest timer
 
-## Goal
-Build a usable workout tracking MVP in 7 days.
-
 ## Tech Stack
+
 - Flutter
+- Dart
+- Hive
+- Material 3
+
+## Planned / Not Currently Used
+
 - Riverpod
-- Hive / SQLite
+
+## How to Run
+
+```bash
+flutter pub get
+flutter run
+flutter test
+```
+
+## Known Limitations
+
+- No authentication
+- No cloud sync
+- No analytics or charts
+- No notifications
+- No workout templates yet
