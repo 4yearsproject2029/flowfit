@@ -22,6 +22,7 @@ class WorkoutItem extends StatelessWidget {
       workoutLog.category,
       if (workoutLog.sets != null) '${workoutLog.sets} sets',
       if (workoutLog.reps != null) '${workoutLog.reps} reps',
+      if (workoutLog.weight != null) '${workoutLog.weight} kg',
     ].join(' · ');
 
     return Container(

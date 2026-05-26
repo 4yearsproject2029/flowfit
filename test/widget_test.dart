@@ -38,10 +38,15 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextFormField).first, 'Bench Press');
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Weight'),
+      '80.5',
+    );
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
 
     expect(find.widgetWithText(ListTile, 'Bench Press'), findsOneWidget);
+    expect(find.textContaining('80.5 kg'), findsOneWidget);
     expect(find.text('No workouts added yet.'), findsNothing);
 
     await tester.pumpWidget(const SizedBox());

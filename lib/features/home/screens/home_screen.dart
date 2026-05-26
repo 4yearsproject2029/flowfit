@@ -182,6 +182,7 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
   final nameController = TextEditingController();
   final setsController = TextEditingController();
   final repsController = TextEditingController();
+  final weightController = TextEditingController();
 
   String selectedCategory = workoutCategories.first;
 
@@ -190,6 +191,7 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
     nameController.dispose();
     setsController.dispose();
     repsController.dispose();
+    weightController.dispose();
     super.dispose();
   }
 
@@ -280,6 +282,17 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
                   ),
                 ],
               ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: weightController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Weight',
+                ),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+              ),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
@@ -311,6 +324,7 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
       isCompleted: false,
       sets: int.tryParse(setsController.text.trim()),
       reps: int.tryParse(repsController.text.trim()),
+      weight: double.tryParse(weightController.text.trim()),
       createdAt: now,
     );
 
