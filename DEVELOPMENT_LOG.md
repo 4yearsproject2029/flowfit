@@ -142,3 +142,48 @@
 - Add completed workout styling
 - Improve add workout validation
 - Prepare reusable workout widgets
+
+---
+
+# Day 5
+
+## Completed
+- Created reusable WorkoutItem widget
+- Created reusable WorkoutList widget
+- Moved workout list UI out of HomeScreen
+- Removed inline workout tile code from HomeScreen
+- Improved completed workout styling
+- Added line-through text for completed workouts
+- Added softer text color for completed workouts
+- Added lighter background for completed workouts
+- Sorted incomplete workouts before completed workouts
+- Kept checkbox toggle logic working
+- Kept workout delete logic working
+- Verified flutter analyze and flutter test
+
+## Learned
+- How to refactor UI into reusable widgets
+- How to keep HomeScreen focused on screen-level state
+- How to make completion status clearer with simple visual feedback
+- How to sort UI data without changing stored Hive data
+
+## Challenges
+- Keeping the refactor simple and beginner-friendly
+- Avoiding nested scroll issues with workout lists
+- Preserving existing add, toggle, delete, and empty state behavior
+
+## Current App State
+- Weekly calendar UI works
+- Date selection works
+- Workout logs can be added for the selected date
+- Workout logs display in a reusable WorkoutList
+- Each workout displays through a reusable WorkoutItem
+- Incomplete workouts appear before completed workouts
+- Completed workouts are visually easier to recognize
+- Workout completion and delete actions still work
+
+## Next Steps
+- Add rest timer feature
+- Add preset timer buttons
+- Add timer start, stop, and reset behavior
+- Continue MVP polish
