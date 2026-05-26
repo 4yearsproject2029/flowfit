@@ -5,15 +5,17 @@ class Workout {
     required this.id,
     required this.name,
     required this.category,
-    required this.isCompleted,
-    required this.date,
+    this.description,
+    this.defaultSets,
+    this.defaultReps,
   });
 
   final String id;
   final String name;
   final String category;
-  final bool isCompleted;
-  final DateTime date;
+  final String? description;
+  final int? defaultSets;
+  final int? defaultReps;
 }
 
 class WorkoutAdapter extends TypeAdapter<Workout> {
@@ -26,8 +28,9 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
       id: reader.readString(),
       name: reader.readString(),
       category: reader.readString(),
-      isCompleted: reader.readBool(),
-      date: DateTime.fromMillisecondsSinceEpoch(reader.readInt()),
+      description: reader.read() as String?,
+      defaultSets: reader.read() as int?,
+      defaultReps: reader.read() as int?,
     );
   }
 
@@ -36,7 +39,8 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
     writer.writeString(obj.id);
     writer.writeString(obj.name);
     writer.writeString(obj.category);
-    writer.writeBool(obj.isCompleted);
-    writer.writeInt(obj.date.millisecondsSinceEpoch);
+    writer.write(obj.description);
+    writer.write(obj.defaultSets);
+    writer.write(obj.defaultReps);
   }
 }
