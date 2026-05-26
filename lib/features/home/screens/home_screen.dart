@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
+import '../../../data/models/workout_category.dart';
 import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
 import '../../calendar/widgets/weekly_calendar.dart';
+import '../../workout/widgets/add_workout_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,11 +45,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               const SizedBox(height: 28),
-              Text(
-                'Workouts for ${_dateKey(selectedDate)}',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Workouts for ${_dateKey(selectedDate)}',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  AddWorkoutButton(onPressed: _showAddWorkoutSheet),
+                ],
               ),
               const SizedBox(height: 12),
               Expanded(
@@ -92,6 +101,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showAddWorkoutSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return _AddWorkoutSheet(
+          selectedDateKey: _dateKey(selectedDate),
+          storageService: storageService,
+        );
+      },
     );
   }
 
@@ -154,6 +176,164 @@ class _EmptyWorkoutSection extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _AddWorkoutSheet extends StatefulWidget {
+  const _AddWorkoutSheet({
+    required this.selectedDateKey,
+    required this.storageService,
+  });
+
+  final String selectedDateKey;
+  final StorageService storageService;
+
+  @override
+  State<_AddWorkoutSheet> createState() => _AddWorkoutSheetState();
+}
+
+class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
+  final formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final setsController = TextEditingController();
+  final repsController = TextEditingController();
+
+  String selectedCategory = workoutCategories.first;
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    setsController.dispose();
+    repsController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(
+          left: 16,
+          top: 16,
+          right: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        ),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Add Workout',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Workout name',
+                ),
+                textInputAction: TextInputAction.next,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Enter a workout name';
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                initialValue: selectedCategory,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Category',
+                ),
+                items: workoutCategories.map((category) {
+                  return DropdownMenuItem(
+                    value: category,
+                    child: Text(category),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value == null) {
+                    return;
+                  }
+
+                  setState(() {
+                    selectedCategory = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: setsController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Sets',
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: repsController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Reps',
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: _saveWorkout,
+                  child: const Text('Save'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _saveWorkout() async {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+
+    final now = DateTime.now();
+    final id = now.millisecondsSinceEpoch.toString();
+    final workoutLog = WorkoutLog(
+      id: id,
+      date: widget.selectedDateKey,
+      workoutId: id,
+      workoutName: nameController.text.trim(),
+      category: selectedCategory,
+      isCompleted: false,
+      sets: int.tryParse(setsController.text.trim()),
+      reps: int.tryParse(repsController.text.trim()),
+      createdAt: now,
+    );
+
+    await widget.storageService.addWorkoutLog(workoutLog);
+
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 }
 

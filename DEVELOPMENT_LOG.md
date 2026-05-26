@@ -94,3 +94,51 @@
 - Add category selection
 - Connect workout creation to selected date
 - Enable real workout tracking workflow
+
+---
+
+# Day 4
+
+## Completed
+- Created reusable Add Workout button
+- Added workout creation bottom sheet
+- Added workout name input
+- Added workout category dropdown
+- Added optional sets and reps inputs
+- Connected workout creation to selected date
+- Saved new WorkoutLog records with Hive
+- Confirmed workout list refreshes after saving
+- Kept checkbox completion logic working
+- Kept workout delete logic working
+- Fixed bottom sheet controller lifecycle issue
+- Fixed bottom sheet keyboard overflow issue
+- Verified flutter analyze and flutter test
+
+## Learned
+- How to use showModalBottomSheet for quick input flows
+- How TextEditingController lifecycle works
+- Why form state should live inside the widget that owns the form
+- How Hive listenables update the UI after saving data
+
+## Challenges
+- Avoiding TextEditingController disposal errors
+- Preventing bottom sheet overflow when the keyboard is open
+- Keeping the add workout flow simple and beginner-friendly
+
+## Current App State
+- Weekly calendar UI works
+- Date selection works
+- Add Workout button opens a bottom sheet
+- Workout logs can be created for the selected date
+- Workout logs persist locally with Hive
+- Added workouts appear immediately in the selected date list
+- Empty state disappears after adding a workout
+- Completion checkbox and delete button are available for workout logs
+- Users can now create workout logs through the actual app UI
+
+## Next Steps
+- Improve workout list UI
+- Polish workout completion UX
+- Add completed workout styling
+- Improve add workout validation
+- Prepare reusable workout widgets

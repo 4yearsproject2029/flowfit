@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flowfit/data/local/local_database.dart';
@@ -15,7 +15,6 @@ void main() {
   });
 
   tearDownAll(() async {
-    await Hive.close();
     await testHiveDirectory.delete(recursive: true);
   });
 
@@ -26,5 +25,25 @@ void main() {
     expect(find.text('This Week'), findsOneWidget);
     expect(find.textContaining('Workouts for '), findsOneWidget);
     expect(find.text('No workouts added yet.'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('adds a workout log from the bottom sheet', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const FlowFitApp());
+
+    await tester.tap(find.text('+ Add Workout'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextFormField).first, 'Bench Press');
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(ListTile, 'Bench Press'), findsOneWidget);
+    expect(find.text('No workouts added yet.'), findsNothing);
+
+    await tester.pumpWidget(const SizedBox());
   });
 }
