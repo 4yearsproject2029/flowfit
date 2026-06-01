@@ -152,10 +152,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class _RestTimerHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
-  double get minExtent => 164;
+  double get minExtent => 148;
 
   @override
-  double get maxExtent => 164;
+  double get maxExtent => 148;
 
   @override
   Widget build(

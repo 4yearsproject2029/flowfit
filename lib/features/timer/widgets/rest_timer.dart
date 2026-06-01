@@ -29,7 +29,7 @@ class _RestTimerState extends State<RestTimer> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(10),
@@ -57,26 +57,30 @@ class _RestTimerState extends State<RestTimer> {
               ),
             ],
           ),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 6,
-            runSpacing: 4,
-            children: presetDurations.map((seconds) {
-              final isSelected = seconds == selectedDuration;
+          const SizedBox(height: 4),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: presetDurations.map((seconds) {
+                final isSelected = seconds == selectedDuration;
 
-              return ChoiceChip(
-                label: Text(_presetLabel(seconds)),
-                selected: isSelected,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                visualDensity: VisualDensity.compact,
-                labelPadding: const EdgeInsets.symmetric(horizontal: 6),
-                onSelected: (selected) {
-                  _selectDuration(seconds);
-                },
-              );
-            }).toList(),
+                return Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: ChoiceChip(
+                    label: Text(_presetLabel(seconds)),
+                    selected: isSelected,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 6),
+                    onSelected: (selected) {
+                      _selectDuration(seconds);
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Row(
             children: [
               FilledButton(

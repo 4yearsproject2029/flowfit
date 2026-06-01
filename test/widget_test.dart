@@ -31,6 +31,24 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
+  testWidgets('fits on a small iPhone-sized screen', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    await tester.pumpWidget(const FlowFitApp());
+
+    expect(find.text('Rest Timer'), findsOneWidget);
+    expect(find.textContaining('Workouts for '), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets('selects a rest timer preset', (WidgetTester tester) async {
     await tester.pumpWidget(const FlowFitApp());
 
