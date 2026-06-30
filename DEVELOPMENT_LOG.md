@@ -774,3 +774,87 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0006
+
+---
+
+## 2026-06-30
+
+### RL-0006
+
+Epic:
+
+EP-05 Gamification - XP
+
+Status:
+
+Done
+
+Summary:
+
+- Completed RL-0006 MVP XP release.
+- Added 10 XP award when a workout moves from incomplete to complete.
+- Added duplicate XP prevention using a selected-date workout identity based on date, normalized workout name, and category.
+- Added local Hive persistence for XP total, XP award ledger, and latest XP explanation.
+- Added home-screen XP summary and explanation copy.
+- Verified toggling, deleting, and recreating the same workout identity does not duplicate XP.
+- Did not add levels, XP progress bars, weekly goal progress, badges, streaks, share cards, backend, login, sync, analytics, social graph, or public ranking.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `user_stories/RL-0006/RL-0006_SPRINT_PLAN.md`
+- `user_stories/RL-0006/RL-0006_UX_SPEC.md`
+- `user_stories/RL-0006/RL-0006_INTERPRETATION.md`
+- `user_stories/RL-0006/RL-0006_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0006/RL-0006_CODE_REVIEW.md`
+- `user_stories/RL-0006/RL-0006_QA_REPORT.md`
+- `user_stories/RL-0006/RL-0006_RELEASE_NOTE.md`
+
+Files Modified:
+
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `DEVELOPMENT_LOG.md`
+- `lib/data/local/local_database.dart`
+- `lib/data/services/storage_service.dart`
+- `lib/features/home/screens/home_screen.dart`
+- `test/storage_service_test.dart`
+- `test/widget_test.dart`
+- `user_stories/RL-0006/RL-0006_TASKS.md`
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- None
+
+Commit References:
+
+- None
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Not Required
+
+Known Limitations:
+
+- Existing callback-write widget tests remain skipped for the documented widget-test infrastructure reason.
+- Levels, XP progress bars, weekly progress, and share cards remain future-story scope.
+
+Lessons Learned:
+
+- XP duplicate prevention needs a stable MVP award identity rather than only a row ID.
+- Primitive Hive boxes were enough for RL-0006, so no adapter migration was needed.
+
+Next Recommended Story:
+
+RL-0007

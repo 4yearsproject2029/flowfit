@@ -8,6 +8,9 @@ class LocalDatabase {
   static const String workoutLogBoxName = 'workoutLogBox';
   static const String weeklyGoalBoxName = 'weeklyGoalBox';
   static const String appSettingsBoxName = 'appSettingsBox';
+  static const String xpTotalBoxName = 'xpTotalBox';
+  static const String xpAwardBoxName = 'xpAwardBox';
+  static const String xpMessageBoxName = 'xpMessageBox';
 
   static Future<void> init({String? testPath}) async {
     if (testPath == null) {
@@ -28,5 +31,8 @@ class LocalDatabase {
     await Hive.openBox<WorkoutLog>(workoutLogBoxName);
     await Hive.openBox<int>(weeklyGoalBoxName);
     await Hive.openBox<bool>(appSettingsBoxName);
+    await Hive.openBox<int>(xpTotalBoxName);
+    await Hive.openBox<bool>(xpAwardBoxName);
+    await Hive.openBox<String>(xpMessageBoxName);
   }
 }

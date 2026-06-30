@@ -65,6 +65,20 @@ class _HomeScreenState extends State<HomeScreen> {
               delegate: _RestTimerHeaderDelegate(),
             ),
             SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              sliver: SliverToBoxAdapter(
+                child: ValueListenableBuilder<Box<int>>(
+                  valueListenable: storageService.xpTotalListenable,
+                  builder: (context, box, child) {
+                    return _XpSummarySection(
+                      xpTotal: storageService.getXpTotal(),
+                      explanation: storageService.getXpExplanation(),
+                    );
+                  },
+                ),
+              ),
+            ),
+            SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
               sliver: SliverToBoxAdapter(
                 child: Row(
@@ -154,6 +168,48 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final month = monthLabels[date.month - 1];
     return '$month ${date.day}, ${date.year}';
+  }
+}
+
+class _XpSummarySection extends StatelessWidget {
+  const _XpSummarySection({required this.xpTotal, required this.explanation});
+
+  final int xpTotal;
+  final String explanation;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.24)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '$xpTotal XP',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: colorScheme.onPrimaryContainer,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            explanation,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onPrimaryContainer,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

@@ -29,6 +29,9 @@ void main() {
       await Hive.box<WorkoutLog>(LocalDatabase.workoutLogBoxName).clear();
       await Hive.box<int>(LocalDatabase.weeklyGoalBoxName).clear();
       await Hive.box<bool>(LocalDatabase.appSettingsBoxName).clear();
+      await Hive.box<int>(LocalDatabase.xpTotalBoxName).clear();
+      await Hive.box<bool>(LocalDatabase.xpAwardBoxName).clear();
+      await Hive.box<String>(LocalDatabase.xpMessageBoxName).clear();
     });
   }
 
@@ -81,6 +84,11 @@ void main() {
 
     expect(find.text('RepLog'), findsOneWidget);
     expect(find.text('This Week'), findsOneWidget);
+    expect(find.text('0 XP'), findsOneWidget);
+    expect(
+      find.textContaining('Complete a workout to earn 10 XP'),
+      findsOneWidget,
+    );
     expect(find.textContaining('Uninstalling RepLog'), findsOneWidget);
     expect(find.text('Set your weekly goal'), findsNothing);
   });

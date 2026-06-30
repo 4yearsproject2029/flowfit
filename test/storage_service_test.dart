@@ -82,4 +82,59 @@ void main() {
     expect(storageService.getWeeklyGoal(), 4);
     expect(storageService.hasCompletedOnboarding(), isTrue);
   });
+
+  test('awards completion XP once and persists the total', () async {
+    final workoutLog = WorkoutLog(
+      id: 'log-1',
+      date: '2026-06-30',
+      workoutId: 'workout-1',
+      workoutName: 'Squat',
+      category: 'Strength',
+      isCompleted: false,
+      createdAt: DateTime(2026, 6, 30, 9),
+    );
+
+    await storageService.addWorkoutLog(workoutLog);
+
+    expect(storageService.getXpTotal(), 0);
+
+    await storageService.toggleWorkoutCompletion('log-1');
+
+    expect(storageService.getXpTotal(), 10);
+    expect(
+      storageService.getXpExplanation(),
+      'Earned +10 XP for completing Squat.',
+    );
+
+    await storageService.toggleWorkoutCompletion('log-1');
+    await storageService.toggleWorkoutCompletion('log-1');
+
+    expect(storageService.getXpTotal(), 10);
+
+    await storageService.deleteWorkoutLog('log-1');
+    await storageService.addWorkoutLog(
+      WorkoutLog(
+        id: 'log-2',
+        date: '2026-06-30',
+        workoutId: 'workout-2',
+        workoutName: 'Squat',
+        category: 'Strength',
+        isCompleted: false,
+        createdAt: DateTime(2026, 6, 30, 10),
+      ),
+    );
+    await storageService.toggleWorkoutCompletion('log-2');
+
+    expect(storageService.getXpTotal(), 10);
+
+    await Hive.close();
+    await LocalDatabase.init(testPath: testHiveDirectory.path);
+    storageService = StorageService();
+
+    expect(storageService.getXpTotal(), 10);
+    expect(
+      storageService.getXpExplanation(),
+      'Earned +10 XP for completing Squat.',
+    );
+  });
 }
