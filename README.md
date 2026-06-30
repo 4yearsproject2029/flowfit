@@ -1,6 +1,6 @@
-# FlowFit
+# RepLog
 
-FlowFit is a Flutter workout tracker MVP built to make workout logging fast, simple, and usable during exercise.
+RepLog is a Flutter workout tracker MVP built to make workout logging fast, simple, and usable during exercise while preparing the app for consistency-focused habit features.
 
 This project was developed as a personal MVP experiment using an AI-assisted development workflow with ChatGPT and Codex.
 
@@ -62,7 +62,7 @@ Key project documents:
 
 ## AI-Assisted Development
 
-FlowFit was developed using a collaboration workflow:
+RepLog was developed using a collaboration workflow:
 
 ### ChatGPT
 
@@ -122,6 +122,6 @@ flutter test
 
 ## Project Status
 
-MVP Complete ✅
+MVP foundation complete.
 
-Built as a personal workout tracker and MVP development experiment.
+Built as a personal workout tracker foundation for the RepLog MVP direction.

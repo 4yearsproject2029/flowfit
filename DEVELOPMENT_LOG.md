@@ -362,3 +362,82 @@ Notes:
 - No unresolved blockers remain.
 - Existing FlowFit naming is intentionally deferred to RL-0001.
 - Next recommended story: RL-0001.
+
+---
+
+## 2026-06-30
+
+### RL-0001
+
+Epic:
+
+EP-01 Brand Readiness
+
+Status:
+
+Done
+
+Summary:
+
+- Closed RL-0001 after Release Manager validation.
+- Updated visible product identity from FlowFit to RepLog for app title, primary home label, README current-product copy, and iOS display metadata.
+- Preserved excluded technical identifiers such as Dart package name, bundle identifiers, Android namespace, generated project names, and existing app architecture.
+- Confirmed existing workout logging behavior still works.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `user_stories/RL-0001/RL-0001_RELEASE_NOTE.md`
+- `user_stories/RL-0001/RL-0001_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0001/RL-0001_CODE_REVIEW.md`
+- `user_stories/RL-0001/RL-0001_QA_REPORT.md`
+
+Files Modified:
+
+- `README.md`
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `user_stories/RL-0001/RL-0001_TASKS.md`
+- `user_stories/RL-0001/RL-0001_SPRINT_PLAN.md`
+- `DEVELOPMENT_LOG.md`
+- `ios/Runner/Info.plist`
+- `lib/main.dart`
+- `lib/features/home/screens/home_screen.dart`
+- `test/widget_test.dart`
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- None
+
+Commit References:
+
+- None
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Not Required
+
+Known Limitations:
+
+- Technical `flowfit` identifiers remain unchanged by explicit RL-0001 scope.
+- iOS display metadata was verified by file inspection, not by simulator launch.
+
+Lessons Learned:
+
+- Visible brand migration should stay separate from package and platform identifier renames.
+- Flutter validation may require approved SDK cache access when sandbox restrictions block `engine.stamp`.
+
+Next Recommended Story:
+
+RL-0002

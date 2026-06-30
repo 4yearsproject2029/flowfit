@@ -18,10 +18,10 @@ void main() {
     await testHiveDirectory.delete(recursive: true);
   });
 
-  testWidgets('shows FlowFit home screen', (WidgetTester tester) async {
+  testWidgets('shows RepLog home screen', (WidgetTester tester) async {
     await tester.pumpWidget(const FlowFitApp());
 
-    expect(find.text('FlowFit'), findsOneWidget);
+    expect(find.text('RepLog'), findsOneWidget);
     expect(find.text('This Week'), findsOneWidget);
     expect(find.text('Rest Timer'), findsOneWidget);
     expect(find.text('01:00'), findsOneWidget);

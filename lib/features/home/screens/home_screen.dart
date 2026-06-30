@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('FlowFit'), centerTitle: false),
+      appBar: AppBar(title: const Text('RepLog'), centerTitle: false),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
