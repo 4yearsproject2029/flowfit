@@ -165,7 +165,7 @@ Prioritization order:
 | EP-01 | Brand Readiness | Present the app consistently as RepLog before introducing new habit-building features. | P0 | Done |
 | EP-02 | Onboarding | Let users choose a realistic weekly workout goal before entering the main experience. | P0 | Done |
 | EP-03 | Workout Logging | Preserve and improve fast workout logging and completion recognition. | P0 | Done |
-| EP-04 | Offline Experience | Ensure core RepLog data persists locally and requires no network or account. | P0 | Not Started |
+| EP-04 | Offline Experience | Ensure core RepLog data persists locally and requires no network or account. | P0 | Done |
 | EP-05 | Gamification | Reward showing up through XP and visible level progress. | P0 | Not Started |
 | EP-06 | Weekly Goals | Track weekly consistency and encourage recovery without harsh punishment. | P0 | Not Started |
 | EP-07 | Share Cards | Let users optionally celebrate progress with privacy-conscious share cards. | P1 | Not Started |
@@ -218,7 +218,7 @@ RL-0013
 | Done | RL-0002 | EP-02 | Onboarding | Must Have | P0 | M | RL-0001 | Yes | No | As a beginner fitness user, I want to choose my weekly workout goal on first launch, so that RepLog can track consistency against a realistic target. | - First-time users choose a weekly goal before reaching the main experience.<br>- Goal options include at least 1-5 workouts per week.<br>- The selected goal is saved locally.<br>- Returning users skip onboarding.<br>- The goal persists after app restart. |
 | Done | RL-0003 | EP-03 | Workout Logging | Must Have | P0 | M | RL-0001 | Yes | No | As a beginner fitness user, I want to log a workout quickly, so that recording exercise does not feel like extra work. | - Users can create a workout log for the selected date.<br>- Workout name and category are required.<br>- Sets, reps, weight, and memo are optional.<br>- A valid workout can be saved in three taps or fewer after opening the add flow.<br>- New workouts appear immediately in the selected date's list. |
 | Done | RL-0005 | EP-03 | Workout Completion | Must Have | P0 | S | RL-0003 | No | No | As a user, I want to mark a workout as complete, so that RepLog can recognize that I showed up. | - Workouts can be marked complete from the list.<br>- Completed workouts are visually distinguishable.<br>- Completion can be toggled without deleting the workout.<br>- Completion updates immediately.<br>- Completion state persists after app restart. |
-| Not Started | RL-0004 | EP-04 | Offline Experience | Must Have | P0 | S | RL-0002, RL-0005 | No | No | As a user, I want my workouts and goals to persist offline, so that I can use RepLog without an internet connection. | - Workout logs persist after app restart.<br>- Completion state persists after restart.<br>- Weekly goals and onboarding state persist after restart.<br>- No login or network connection is required.<br>- Users are informed that uninstalling the app or changing devices may result in data loss. |
+| Done | RL-0004 | EP-04 | Offline Experience | Must Have | P0 | S | RL-0002, RL-0005 | No | No | As a user, I want my workouts and goals to persist offline, so that I can use RepLog without an internet connection. | - Workout logs persist after app restart.<br>- Completion state persists after restart.<br>- Weekly goals and onboarding state persist after restart.<br>- No login or network connection is required.<br>- Users are informed that uninstalling the app or changing devices may result in data loss. |
 | Not Started | RL-0006 | EP-05 | Gamification - XP | Must Have | P0 | L | RL-0005 | No | No | As a user, I want to earn XP when I complete a workout, so that I feel motivated to stay consistent. | - Completing a workout grants XP once.<br>- XP updates immediately.<br>- XP persists after app restart.<br>- Toggling, editing, deleting, or recreating workouts does not duplicate XP.<br>- Users can see why XP was awarded. |
 | Not Started | RL-0007 | EP-05 | Gamification - Levels | Must Have | P0 | M | RL-0006 | Yes | No | As a user, I want to see my level and progress toward the next level, so that my consistency feels visible. | - The home screen displays current level.<br>- The app displays XP progress toward the next level.<br>- Progress updates immediately after XP changes.<br>- Levels never decrease.<br>- Level progress persists after app restart. |
 | Not Started | RL-0008 | EP-06 | Weekly Goals | Must Have | P0 | M | RL-0002, RL-0005 | Yes | No | As a user, I want to see progress toward my weekly workout goal, so that I know whether I am staying consistent. | - The app displays the selected weekly goal.<br>- The app displays completed workouts for the current week.<br>- Progress updates immediately.<br>- Goal completion is recognized when the target is reached.<br>- Goal progress persists after app restart. |
@@ -316,6 +316,8 @@ Dependency validation:
 | 2026-06-30 | RL-0003 | In Progress | Done | Release Manager | Workout logging refinement, QA, and release closeout completed. |
 | 2026-06-30 | RL-0005 | Not Started | In Progress | Coordinator | Next eligible P0 workout completion story selected after RL-0003 completion. |
 | 2026-06-30 | RL-0005 | In Progress | Done | Release Manager | Workout completion behavior, persistence coverage, QA, and release closeout completed. |
+| 2026-06-30 | RL-0004 | Not Started | In Progress | Coordinator | Next eligible P0 offline experience story selected after RL-0005 completion. |
+| 2026-06-30 | RL-0004 | In Progress | Done | Release Manager | Offline persistence baseline, local data-loss messaging, QA, and release closeout completed. |
 
 ---
 
@@ -324,23 +326,23 @@ Dependency validation:
 | Metric | Value |
 | ------ | ----- |
 | Total Stories | 14 |
-| Not Started | 9 |
+| Not Started | 8 |
 | In Progress | 0 |
 | Blocked | 0 |
 | On Hold | 0 |
-| Done | 4 |
+| Done | 5 |
 | Canceled | 0 |
 
 Completion Rate:
 
 ```text
-4 / (14 - 0) = 28.6%
+5 / (14 - 0) = 35.7%
 ```
 
 MVP Completion Rate:
 
 ```text
-4 / (14 - 0) = 28.6%
+5 / (14 - 0) = 35.7%
 ```
 
 ---
@@ -360,6 +362,7 @@ Stories updated:
 * `RL-0001`: Acceptance criteria clarified to preserve existing workout behavior and exclude package rename, bundle identifier changes, generated project renames, backend, login, sync, analytics SDK, XP, badges, goals, share cards, social graph, and public ranking.
 * `RL-0002`: Status updated to Done after onboarding implementation, Code Review approval, QA pass, user manual testing confirmation, and release closeout.
 * `RL-0005`: Status updated to Done after workout completion behavior verification, persistence regression coverage, Code Review approval, QA pass, and release closeout.
+* `RL-0004`: Status updated to Done after offline persistence verification, local data-loss messaging, Code Review approval, QA pass, and release closeout.
 * `RL-0004`: Dependency updated from `RL-0005` to `RL-0002, RL-0005` because offline persistence acceptance criteria include onboarding and weekly goal state.
 * `RL-0013`: Dependency updated to include `RL-0007`, and acceptance criteria now explicitly include levels in MVP manual QA.
 
@@ -395,6 +398,7 @@ Reasoning:
 | v1.2 | 2026-06-30 | Release Manager Agent | Closed RL-0002 as Done after onboarding release validation and final widget-test cleanup with 4 passing tests and 2 skipped callback-write tests. |
 | v1.3 | 2026-06-30 | Release Manager Agent | Closed RL-0003 as Done after workout logging refinement, QA pass, and release closeout. |
 | v1.4 | 2026-06-30 | Release Manager Agent | Closed RL-0005 as Done after workout completion verification, persistence test coverage, QA pass, and release closeout. |
+| v1.5 | 2026-06-30 | Release Manager Agent | Closed RL-0004 as Done after offline persistence verification, local data-loss messaging, QA pass, and release closeout. |
 
 ---
 
@@ -410,7 +414,7 @@ Completed Output:
 
 ```text
 docs/EPIC_USER_STORY_TASKS.md
-user_stories/RL-0005/RL-0005_RELEASE_NOTE.md
+user_stories/RL-0004/RL-0004_RELEASE_NOTE.md
 ```
 
 Next Agent:
@@ -432,7 +436,7 @@ Required Input Files:
 * `docs/PROJECT_CONTEXT.md`
 * `docs/ARCHITECTURE.md`
 * `docs/EPIC_USER_STORY_TASKS.md`
-* `user_stories/RL-0005/RL-0005_RELEASE_NOTE.md`
+* `user_stories/RL-0004/RL-0004_RELEASE_NOTE.md`
 
 Optional Input Files:
 
@@ -450,8 +454,8 @@ Blocking Conditions:
 
 Instructions:
 
-* RL-0005 is complete and must remain Done.
+* RL-0004 is complete and must remain Done.
 * Select exactly one story when Coordinator stage begins.
 * Preserve Story IDs and completed story state.
-* Recommended next story is `RL-0004` because `RL-0002` and `RL-0005` are Done and `RL-0004` is the next eligible P0 story.
+* Recommended next story is `RL-0006` because `RL-0005` is Done and `RL-0006` is the next eligible P0 story.
 * Do not implement code from this backlog stage.

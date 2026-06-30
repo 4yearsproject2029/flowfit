@@ -68,4 +68,18 @@ void main() {
     await storageService.deleteWorkoutLog('log-1');
     expect(storageService.getWorkoutLogsByDate('2026-06-30'), isEmpty);
   });
+
+  test('persists weekly goal and onboarding state after restart', () async {
+    await storageService.saveWeeklyGoal(4);
+
+    expect(storageService.getWeeklyGoal(), 4);
+    expect(storageService.hasCompletedOnboarding(), isTrue);
+
+    await Hive.close();
+    await LocalDatabase.init(testPath: testHiveDirectory.path);
+    storageService = StorageService();
+
+    expect(storageService.getWeeklyGoal(), 4);
+    expect(storageService.hasCompletedOnboarding(), isTrue);
+  });
 }

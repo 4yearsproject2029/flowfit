@@ -49,6 +49,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         });
                       },
                     ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Saved only on this device. Uninstalling RepLog or switching devices may result in data loss.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ),
               ),

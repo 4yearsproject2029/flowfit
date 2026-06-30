@@ -690,3 +690,87 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0004
+
+---
+
+## 2026-06-30
+
+### RL-0004
+
+Epic:
+
+EP-04 Offline Experience
+
+Status:
+
+Done
+
+Summary:
+
+- Completed RL-0004 offline experience release.
+- Confirmed existing Hive persistence covers workout logs, completion state, weekly goal, and onboarding state.
+- Added local data-loss messaging to onboarding.
+- Added local data-loss messaging to the home screen for returning users.
+- Added restart persistence coverage for weekly goal and onboarding state.
+- Added widget-test assertions that the data-loss notice appears on first launch and returning home.
+- Verified no runtime login, network, or backend dependency was introduced.
+- Did not change Hive adapter IDs, Hive read/write order, or storage architecture.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `user_stories/RL-0004/RL-0004_SPRINT_PLAN.md`
+- `user_stories/RL-0004/RL-0004_UX_SPEC.md`
+- `user_stories/RL-0004/RL-0004_INTERPRETATION.md`
+- `user_stories/RL-0004/RL-0004_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0004/RL-0004_CODE_REVIEW.md`
+- `user_stories/RL-0004/RL-0004_QA_REPORT.md`
+- `user_stories/RL-0004/RL-0004_RELEASE_NOTE.md`
+
+Files Modified:
+
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `DEVELOPMENT_LOG.md`
+- `lib/features/home/screens/home_screen.dart`
+- `lib/features/onboarding/screens/onboarding_screen.dart`
+- `test/storage_service_test.dart`
+- `test/widget_test.dart`
+- `user_stories/RL-0004/RL-0004_TASKS.md`
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- None
+
+Commit References:
+
+- None
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Not Required
+
+Known Limitations:
+
+- Existing callback-write widget tests remain skipped for the documented widget-test infrastructure reason.
+- Data export, backup, and cloud sync remain out of scope.
+
+Lessons Learned:
+
+- RL-0004 could be completed without redesigning storage because the prior Hive foundation already covered the required MVP data.
+- The user-facing offline limitation belongs in visible product surfaces, not hidden architecture notes.
+
+Next Recommended Story:
+
+RL-0006

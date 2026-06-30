@@ -60,6 +60,7 @@ void main() {
     expect(find.text('Workouts per week'), findsOneWidget);
     expect(find.text('1 workout per week'), findsOneWidget);
     expect(find.text('5 workouts per week'), findsOneWidget);
+    expect(find.textContaining('Uninstalling RepLog'), findsOneWidget);
     expect(find.text('This Week'), findsNothing);
   });
 
@@ -80,6 +81,7 @@ void main() {
 
     expect(find.text('RepLog'), findsOneWidget);
     expect(find.text('This Week'), findsOneWidget);
+    expect(find.textContaining('Uninstalling RepLog'), findsOneWidget);
     expect(find.text('Set your weekly goal'), findsNothing);
   });
 

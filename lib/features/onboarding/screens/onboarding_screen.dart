@@ -46,6 +46,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   'Choose a realistic target. RepLog is here to help you show up consistently, not chase perfection.',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
+                const SizedBox(height: 12),
+                Text(
+                  'Saved only on this device. No account or network connection required. Uninstalling RepLog or switching devices may result in data loss.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
                 const SizedBox(height: 24),
                 Text(
                   'Workouts per week',
@@ -86,11 +91,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onPressed: isSaving ? null : _saveGoal,
                     child: Text(isSaving ? 'Saving...' : 'Continue'),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Saved on this device. No account or network connection required.',
-                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
             ),
