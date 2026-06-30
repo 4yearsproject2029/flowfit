@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../local/local_database.dart';
 import '../models/workout.dart';
 import '../models/workout_log.dart';
+import 'consistency_recovery_service.dart';
 
 class StorageService {
   static const int workoutCompletionXp = 10;
@@ -11,6 +12,8 @@ class StorageService {
   static const String _onboardingCompletedKey = 'onboardingCompleted';
   static const String _currentXpTotalKey = 'currentXpTotal';
   static const String _lastXpMessageKey = 'lastXpMessage';
+  static const String _lastMissedWeekStartKey = 'lastMissedWeekStart';
+  static const String _lastReturnWeekStartKey = 'lastReturnWeekStart';
 
   Box<Workout> get _workoutBox {
     return Hive.box<Workout>(LocalDatabase.workoutBoxName);
@@ -40,12 +43,24 @@ class StorageService {
     return Hive.box<String>(LocalDatabase.xpMessageBoxName);
   }
 
+  Box<bool> get _plannedRestBox {
+    return Hive.box<bool>(LocalDatabase.plannedRestBoxName);
+  }
+
+  Box<String> get _recoveryMetricBox {
+    return Hive.box<String>(LocalDatabase.recoveryMetricBoxName);
+  }
+
   ValueListenable<Box<WorkoutLog>> get workoutLogsListenable {
     return _workoutLogBox.listenable();
   }
 
   ValueListenable<Box<int>> get xpTotalListenable {
     return _xpTotalBox.listenable(keys: [_currentXpTotalKey]);
+  }
+
+  ValueListenable<Box<bool>> get plannedRestListenable {
+    return _plannedRestBox.listenable();
   }
 
   Future<void> addWorkout(Workout workout) async {
@@ -92,6 +107,7 @@ class StorageService {
 
     if (shouldAwardXp) {
       await _awardWorkoutCompletionXp(workoutLog);
+      await refreshConsistencyRecoveryMetrics();
     }
   }
 
@@ -132,6 +148,72 @@ class StorageService {
         'Complete a workout to earn $workoutCompletionXp XP. XP is awarded once per workout.';
   }
 
+  bool isPlannedRestDate(String date) {
+    return _plannedRestBox.get(date) ?? false;
+  }
+
+  List<String> getPlannedRestDates() {
+    return _plannedRestBox.keys
+        .whereType<String>()
+        .where((date) => _plannedRestBox.get(date) ?? false)
+        .toList();
+  }
+
+  Future<void> markPlannedRest(String date) async {
+    await _plannedRestBox.put(date, true);
+    await refreshConsistencyRecoveryMetrics();
+  }
+
+  ConsistencyRecoveryStatus getConsistencyRecoveryStatus({
+    required DateTime today,
+  }) {
+    final weeklyGoal = getWeeklyGoal();
+    if (weeklyGoal == null) {
+      return const ConsistencyRecoveryStatus(hasReturnedAfterMissedWeek: false);
+    }
+
+    return ConsistencyRecoveryService().calculateStatus(
+      weeklyGoal: weeklyGoal,
+      workoutLogs: getWorkoutLogs(),
+      today: today,
+      plannedRestDates: getPlannedRestDates(),
+    );
+  }
+
+  String? getLastDetectedMissedWeekStartDate() {
+    return _recoveryMetricBox.get(_lastMissedWeekStartKey);
+  }
+
+  String? getLastReturnWeekStartDate() {
+    return _recoveryMetricBox.get(_lastReturnWeekStartKey);
+  }
+
+  Future<void> refreshConsistencyRecoveryMetrics({DateTime? today}) async {
+    final status = getConsistencyRecoveryStatus(today: today ?? DateTime.now());
+
+    if (!status.hasReturnedAfterMissedWeek) {
+      await _recoveryMetricBox.delete(_lastMissedWeekStartKey);
+      await _recoveryMetricBox.delete(_lastReturnWeekStartKey);
+      return;
+    }
+
+    final missedWeekStartDate = status.missedWeekStartDate;
+    final returnWeekStartDate = status.returnWeekStartDate;
+
+    if (missedWeekStartDate == null || returnWeekStartDate == null) {
+      return;
+    }
+
+    await _recoveryMetricBox.put(
+      _lastMissedWeekStartKey,
+      _dateKey(missedWeekStartDate),
+    );
+    await _recoveryMetricBox.put(
+      _lastReturnWeekStartKey,
+      _dateKey(returnWeekStartDate),
+    );
+  }
+
   Future<void> saveWeeklyGoal(int workoutsPerWeek) async {
     if (workoutsPerWeek < 1 || workoutsPerWeek > 5) {
       throw ArgumentError.value(
@@ -167,5 +249,13 @@ class StorageService {
     final category = workoutLog.category.trim().toLowerCase();
 
     return '${workoutLog.date}|$workoutName|$category';
+  }
+
+  String _dateKey(DateTime date) {
+    final year = date.year.toString().padLeft(4, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+
+    return '$year-$month-$day';
   }
 }

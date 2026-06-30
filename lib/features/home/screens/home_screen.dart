@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 
 import '../../../data/models/workout_category.dart';
 import '../../../data/models/workout_log.dart';
+import '../../../data/services/consistency_recovery_service.dart';
 import '../../../data/services/level_service.dart';
 import '../../../data/services/storage_service.dart';
 import '../../../data/services/weekly_goal_service.dart';
@@ -103,6 +104,31 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              sliver: SliverToBoxAdapter(
+                child: ValueListenableBuilder<Box<WorkoutLog>>(
+                  valueListenable: storageService.workoutLogsListenable,
+                  builder: (context, _, child) {
+                    return ValueListenableBuilder<Box<bool>>(
+                      valueListenable: storageService.plannedRestListenable,
+                      builder: (context, _, child) {
+                        final status = storageService
+                            .getConsistencyRecoveryStatus(
+                              today: DateTime.now(),
+                            );
+
+                        if (!status.hasReturnedAfterMissedWeek) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return _ConsistencyRecoverySection(status: status);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+            SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
               sliver: SliverToBoxAdapter(
                 child: Row(
@@ -117,6 +143,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     AddWorkoutButton(onPressed: _showAddWorkoutSheet),
                   ],
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              sliver: SliverToBoxAdapter(
+                child: ValueListenableBuilder<Box<bool>>(
+                  valueListenable: storageService.plannedRestListenable,
+                  builder: (context, _, child) {
+                    final selectedDateKey = _dateKey(selectedDate);
+                    final isPlannedRest = storageService.isPlannedRestDate(
+                      selectedDateKey,
+                    );
+
+                    return _PlannedRestSection(
+                      isPlannedRest: isPlannedRest,
+                      onMarkPlannedRest: () {
+                        _markSelectedDateAsPlannedRest(selectedDateKey);
+                      },
+                    );
+                  },
                 ),
               ),
             ),
@@ -151,6 +198,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _markSelectedDateAsPlannedRest(String selectedDateKey) async {
+    await storageService.markPlannedRest(selectedDateKey);
   }
 
   void _showAddWorkoutSheet() {
@@ -192,6 +243,112 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final month = monthLabels[date.month - 1];
     return '$month ${date.day}, ${date.year}';
+  }
+}
+
+class _ConsistencyRecoverySection extends StatelessWidget {
+  const _ConsistencyRecoverySection({required this.status});
+
+  final ConsistencyRecoveryStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: colorScheme.secondary.withValues(alpha: 0.24),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            status.title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: colorScheme.onSecondaryContainer,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            status.message,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSecondaryContainer,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            status.reassurance,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSecondaryContainer,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlannedRestSection extends StatelessWidget {
+  const _PlannedRestSection({
+    required this.isPlannedRest,
+    required this.onMarkPlannedRest,
+  });
+
+  final bool isPlannedRest;
+  final VoidCallback onMarkPlannedRest;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    if (isPlannedRest) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: colorScheme.outlineVariant),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Planned rest day',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Rest counts as part of staying consistent.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: OutlinedButton(
+        onPressed: onMarkPlannedRest,
+        child: const Text('Mark planned rest'),
+      ),
+    );
   }
 }
 

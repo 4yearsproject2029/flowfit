@@ -11,6 +11,8 @@ class LocalDatabase {
   static const String xpTotalBoxName = 'xpTotalBox';
   static const String xpAwardBoxName = 'xpAwardBox';
   static const String xpMessageBoxName = 'xpMessageBox';
+  static const String plannedRestBoxName = 'plannedRestBox';
+  static const String recoveryMetricBoxName = 'recoveryMetricBox';
 
   static Future<void> init({String? testPath}) async {
     if (testPath == null) {
@@ -34,5 +36,7 @@ class LocalDatabase {
     await Hive.openBox<int>(xpTotalBoxName);
     await Hive.openBox<bool>(xpAwardBoxName);
     await Hive.openBox<String>(xpMessageBoxName);
+    await Hive.openBox<bool>(plannedRestBoxName);
+    await Hive.openBox<String>(recoveryMetricBoxName);
   }
 }

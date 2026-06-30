@@ -8,6 +8,7 @@ import 'package:flowfit/data/local/local_database.dart';
 import 'package:flowfit/data/models/workout.dart';
 import 'package:flowfit/data/models/workout_log.dart';
 import 'package:flowfit/data/services/storage_service.dart';
+import 'package:flowfit/data/services/weekly_goal_service.dart';
 import 'package:flowfit/main.dart';
 
 void main() {
@@ -32,6 +33,8 @@ void main() {
       await Hive.box<int>(LocalDatabase.xpTotalBoxName).clear();
       await Hive.box<bool>(LocalDatabase.xpAwardBoxName).clear();
       await Hive.box<String>(LocalDatabase.xpMessageBoxName).clear();
+      await Hive.box<bool>(LocalDatabase.plannedRestBoxName).clear();
+      await Hive.box<String>(LocalDatabase.recoveryMetricBoxName).clear();
     });
   }
 
@@ -98,6 +101,73 @@ void main() {
     expect(find.text('Set your weekly goal'), findsNothing);
   });
 
+  testWidgets(
+    'shows recovery encouragement after returning from a missed week',
+    (WidgetTester tester) async {
+      await resetHiveBoxesForTest(tester);
+      await completeOnboardingForTest(tester);
+      await tester.runAsync(() async {
+        final today = DateTime.now();
+        final previousWeekStart = WeeklyGoalService()
+            .startOfWeek(today)
+            .subtract(const Duration(days: 7));
+        await StorageService().addWorkoutLog(
+          WorkoutLog(
+            id: 'previous-log',
+            date: _dateKey(previousWeekStart),
+            workoutId: 'previous-workout',
+            workoutName: 'Walk',
+            category: 'Cardio',
+            isCompleted: true,
+            createdAt: previousWeekStart,
+          ),
+        );
+        await StorageService().addWorkoutLog(
+          WorkoutLog(
+            id: 'return-log',
+            date: _dateKey(today),
+            workoutId: 'return-workout',
+            workoutName: 'Squat',
+            category: 'Strength',
+            isCompleted: true,
+            createdAt: today,
+          ),
+        );
+      });
+      await pumpFlowFitApp(tester);
+
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
+      await tester.pump();
+
+      expect(find.text('Welcome back'), findsWidgets);
+      expect(
+        find.textContaining('Your XP and level are still here'),
+        findsOneWidget,
+      );
+      expect(find.text('No XP lost. No level lost.'), findsOneWidget);
+    },
+  );
+
+  testWidgets('shows planned rest state for the selected date', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      await StorageService().markPlannedRest(_dateKey(DateTime.now()));
+    });
+    await pumpFlowFitApp(tester);
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
+    await tester.pump();
+
+    expect(find.text('Planned rest day'), findsWidgets);
+    expect(
+      find.text('Rest counts as part of staying consistent.'),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('fits on a small iPhone-sized screen', (
     WidgetTester tester,
   ) async {
@@ -133,4 +203,12 @@ void main() {
     // button callback. Keep this covered manually until Hive-backed widget
     // callback tests are stable.
   }, skip: true);
+}
+
+String _dateKey(DateTime date) {
+  final year = date.year.toString().padLeft(4, '0');
+  final month = date.month.toString().padLeft(2, '0');
+  final day = date.day.toString().padLeft(2, '0');
+
+  return '$year-$month-$day';
 }

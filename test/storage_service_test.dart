@@ -215,4 +215,132 @@ void main() {
     );
     expect(progress.progressLabel, '1 / 3 workouts complete');
   });
+
+  test(
+    'detects return after missed week without removing XP or level',
+    () async {
+      final today = DateTime.now();
+      final currentWeekStart = WeeklyGoalService().startOfWeek(today);
+      final previousWeekStart = currentWeekStart.subtract(
+        const Duration(days: 7),
+      );
+
+      await storageService.saveWeeklyGoal(3);
+      await storageService.addWorkoutLog(
+        WorkoutLog(
+          id: 'previous-log',
+          date: _dateKey(previousWeekStart),
+          workoutId: 'previous-workout',
+          workoutName: 'Walk',
+          category: 'Cardio',
+          isCompleted: true,
+          createdAt: previousWeekStart,
+        ),
+      );
+      await storageService.addWorkoutLog(
+        WorkoutLog(
+          id: 'return-log',
+          date: _dateKey(today),
+          workoutId: 'return-workout',
+          workoutName: 'Squat',
+          category: 'Strength',
+          isCompleted: false,
+          createdAt: today,
+        ),
+      );
+
+      await storageService.toggleWorkoutCompletion('return-log');
+
+      final status = storageService.getConsistencyRecoveryStatus(today: today);
+      expect(status.hasReturnedAfterMissedWeek, isTrue);
+      expect(storageService.getXpTotal(), StorageService.workoutCompletionXp);
+      expect(
+        LevelService()
+            .calculateProgress(storageService.getXpTotal())
+            .currentLevel,
+        1,
+      );
+      expect(
+        storageService.getLastDetectedMissedWeekStartDate(),
+        _dateKey(previousWeekStart),
+      );
+      expect(
+        storageService.getLastReturnWeekStartDate(),
+        _dateKey(currentWeekStart),
+      );
+
+      await Hive.close();
+      await LocalDatabase.init(testPath: testHiveDirectory.path);
+      storageService = StorageService();
+
+      expect(
+        storageService.getLastDetectedMissedWeekStartDate(),
+        _dateKey(previousWeekStart),
+      );
+      expect(
+        storageService.getLastReturnWeekStartDate(),
+        _dateKey(currentWeekStart),
+      );
+      expect(storageService.getXpTotal(), StorageService.workoutCompletionXp);
+    },
+  );
+
+  test(
+    'planned rest persists and prevents missed-week recovery detection',
+    () async {
+      final today = DateTime.now();
+      final previousWeekStart = WeeklyGoalService()
+          .startOfWeek(today)
+          .subtract(const Duration(days: 7));
+
+      await storageService.saveWeeklyGoal(3);
+      await storageService.markPlannedRest(_dateKey(previousWeekStart));
+      await storageService.addWorkoutLog(
+        WorkoutLog(
+          id: 'previous-log',
+          date: _dateKey(previousWeekStart),
+          workoutId: 'previous-workout',
+          workoutName: 'Walk',
+          category: 'Cardio',
+          isCompleted: true,
+          createdAt: previousWeekStart,
+        ),
+      );
+      await storageService.addWorkoutLog(
+        WorkoutLog(
+          id: 'return-log',
+          date: _dateKey(today),
+          workoutId: 'return-workout',
+          workoutName: 'Squat',
+          category: 'Strength',
+          isCompleted: true,
+          createdAt: today,
+        ),
+      );
+
+      final status = storageService.getConsistencyRecoveryStatus(today: today);
+      expect(status.hasReturnedAfterMissedWeek, isFalse);
+      expect(
+        storageService.isPlannedRestDate(_dateKey(previousWeekStart)),
+        isTrue,
+      );
+
+      await Hive.close();
+      await LocalDatabase.init(testPath: testHiveDirectory.path);
+      storageService = StorageService();
+
+      expect(
+        storageService.isPlannedRestDate(_dateKey(previousWeekStart)),
+        isTrue,
+      );
+    },
+  );
+}
+
+String _dateKey(DateTime date) {
+  final year = date.year.toString().padLeft(4, '0');
+  final month = date.month.toString().padLeft(2, '0');
+  final day = date.day.toString().padLeft(2, '0');
+
+  return '$year-$month-$day';
 }
