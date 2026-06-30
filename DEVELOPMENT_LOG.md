@@ -610,3 +610,83 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0005
+
+---
+
+## 2026-06-30
+
+### RL-0005
+
+Epic:
+
+EP-03 Workout Completion
+
+Status:
+
+Done
+
+Summary:
+
+- Completed RL-0005 workout completion release.
+- Verified existing checkbox-based completion toggling from the workout list.
+- Verified completed workouts remain visually distinct with checked state, line-through title text, softer text color, and lighter row background.
+- Verified completion can be toggled back without deleting the workout.
+- Verified completion state persists locally after Hive reopen.
+- Added focused storage-service regression coverage for completion, uncompletion, restart persistence, and delete interaction.
+- Did not change production code, Hive adapter IDs, or Hive read/write order.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `user_stories/RL-0005/RL-0005_SPRINT_PLAN.md`
+- `user_stories/RL-0005/RL-0005_UX_SPEC.md`
+- `user_stories/RL-0005/RL-0005_INTERPRETATION.md`
+- `user_stories/RL-0005/RL-0005_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0005/RL-0005_CODE_REVIEW.md`
+- `user_stories/RL-0005/RL-0005_QA_REPORT.md`
+- `user_stories/RL-0005/RL-0005_RELEASE_NOTE.md`
+- `test/storage_service_test.dart`
+
+Files Modified:
+
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `DEVELOPMENT_LOG.md`
+- `user_stories/RL-0005/RL-0005_TASKS.md`
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- None
+
+Commit References:
+
+- None
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Not Required
+
+Known Limitations:
+
+- Existing callback-write widget tests remain skipped for the documented widget-test infrastructure reason.
+- XP, levels, weekly progress, and share cards remain future-story scope.
+
+Lessons Learned:
+
+- RL-0005 completion behavior had already been implemented as part of the earlier workout list foundation.
+- Service-level Hive tests can verify restart persistence without relying on skipped widget callback-write paths.
+
+Next Recommended Story:
+
+RL-0004
