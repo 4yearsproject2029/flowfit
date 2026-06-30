@@ -441,3 +441,86 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0002
+
+---
+
+## 2026-06-30
+
+### RL-0002
+
+Epic:
+
+EP-02 Onboarding
+
+Status:
+
+Done
+
+Summary:
+
+- Closed RL-0002 after Release Manager validation.
+- Added first-launch onboarding so new users choose a weekly workout goal before reaching the main experience.
+- Added local Hive-backed weekly goal and onboarding completion persistence.
+- Confirmed returning users skip onboarding after setup.
+- Accepted the documented Hive widget-test environment limitation after user manual testing confirmed the flow works.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `lib/features/onboarding/screens/onboarding_screen.dart`
+- `user_stories/RL-0002/RL-0002_SPRINT_PLAN.md`
+- `user_stories/RL-0002/RL-0002_UX_SPEC.md`
+- `user_stories/RL-0002/RL-0002_INTERPRETATION.md`
+- `user_stories/RL-0002/RL-0002_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0002/RL-0002_CODE_REVIEW.md`
+- `user_stories/RL-0002/RL-0002_QA_REPORT.md`
+- `user_stories/RL-0002/RL-0002_RELEASE_NOTE.md`
+
+Files Modified:
+
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `user_stories/RL-0002/RL-0002_TASKS.md`
+- `DEVELOPMENT_LOG.md`
+- `lib/main.dart`
+- `lib/data/local/local_database.dart`
+- `lib/data/services/storage_service.dart`
+- `test/widget_test.dart`
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- User completed manual onboarding and persistence testing.
+- Automated Hive-backed widget test instability was waived for this release.
+
+Commit References:
+
+- None
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Not Required
+
+Known Limitations:
+
+- Hive-backed onboarding widget tests remain unstable in the local test environment and are documented as waived for this release.
+- Weekly goal editing and weekly progress tracking are deferred to future stories.
+
+Lessons Learned:
+
+- Hive persistence behavior can pass manual app validation while still requiring a more stable widget-test harness.
+- Onboarding state should remain a small app-entry concern until future goal progress stories need richer coordination.
+
+Next Recommended Story:
+
+RL-0003

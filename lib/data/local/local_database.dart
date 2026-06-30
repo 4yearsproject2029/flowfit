@@ -6,6 +6,8 @@ import '../models/workout_log.dart';
 class LocalDatabase {
   static const String workoutBoxName = 'workoutBox';
   static const String workoutLogBoxName = 'workoutLogBox';
+  static const String weeklyGoalBoxName = 'weeklyGoalBox';
+  static const String appSettingsBoxName = 'appSettingsBox';
 
   static Future<void> init({String? testPath}) async {
     if (testPath == null) {
@@ -24,5 +26,7 @@ class LocalDatabase {
 
     await Hive.openBox<Workout>(workoutBoxName);
     await Hive.openBox<WorkoutLog>(workoutLogBoxName);
+    await Hive.openBox<int>(weeklyGoalBoxName);
+    await Hive.openBox<bool>(appSettingsBoxName);
   }
 }
