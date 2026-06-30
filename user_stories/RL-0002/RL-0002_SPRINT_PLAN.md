@@ -134,7 +134,7 @@ so that RepLog can track consistency against a realistic target.
 
 RL-0002 added first-launch onboarding for selecting a weekly workout goal from 1 through 5 workouts per week. The selected goal and onboarding completion state are saved locally in Hive, and returning users skip onboarding.
 
-Manual QA confirmed the onboarding and persistence behavior. Automated Hive-backed widget tests for the onboarding-to-home transition were documented as unstable in the local test environment and waived by the user for this release.
+Manual QA confirmed the onboarding and persistence behavior. The final widget-test cleanup preserved production code and `flutter test test/widget_test.dart -r expanded` passes with 4 passing tests, 2 skipped tests, and no hang.
 
 ---
 
@@ -208,7 +208,7 @@ Not Required
 
 | Risk | Impact | Mitigation |
 | ---- | ------ | ---------- |
-| Hive-backed widget tests remain unstable in the local test environment. | Automated onboarding regression coverage is temporarily reduced. | Documented waiver; manual QA confirmed release behavior. |
+| Widget tests that depend on Hive writes inside tapped button callbacks remain unreliable in `testWidgets`. | Automated coverage is reduced for onboarding Continue save and add workout Save. | Skip those callback-write tests, keep manual coverage, and run reliable widget tests with direct Hive setup through `tester.runAsync`. |
 | Scope could expand into weekly goal progress tracking. | RL-0002 would overlap future weekly goals stories. | Deferred weekly progress and goal editing to future stories. |
 
 ---

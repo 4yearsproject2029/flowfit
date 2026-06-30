@@ -215,7 +215,8 @@ None
 
 ## Known Limitations
 
-* Hive-backed widget tests for onboarding completion and returning-user HomeScreen behavior are skipped or waived due to local test-environment instability.
+* Widget tests for onboarding Continue save and add workout Save remain skipped because they depend on Hive writes inside tapped button callbacks.
+* `flutter test test/widget_test.dart -r expanded` passes with 4 passing tests, 2 skipped tests, and no hang.
 * Weekly goal editing and weekly progress calculation are deferred to future stories.
 
 ---

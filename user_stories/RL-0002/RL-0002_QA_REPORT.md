@@ -84,7 +84,8 @@ Future stories such as weekly progress, XP, levels, badges, streaks, share cards
 * Code Review status is Approved.
 * UX Required is Yes and UX spec is present.
 * User manually tested the onboarding flow and confirmed it works.
-* Automated Hive-backed widget tests have a known test-environment limitation.
+* The widget-test harness has been cleaned up for reliable Hive-backed setup writes.
+* Widget tests that depend on Hive writes inside tapped button callbacks remain skipped due to the `testWidgets` fake async and Hive real async file I/O mismatch.
 
 ---
 
@@ -116,8 +117,8 @@ Notes:
 | ----- | ------------------- | ------ | -------- |
 | AC-01 | First-time users choose a weekly goal before reaching the main experience. | Passed | User manual testing confirmed first launch shows onboarding before HomeScreen. |
 | AC-02 | Goal options include at least 1-5 workouts per week. | Passed | Onboarding screen includes 1, 2, 3, 4, and 5 workout options. |
-| AC-03 | The selected goal is saved locally. | Passed | Focused widget persistence assertions passed; manual testing confirmed save behavior. |
-| AC-04 | Returning users skip onboarding. | Passed | User manually confirmed restart opens Home directly after goal setup. |
+| AC-03 | The selected goal is saved locally. | Passed | Manual testing confirmed save behavior; the callback-write widget test remains skipped due to test-harness async limitations. |
+| AC-04 | Returning users skip onboarding. | Passed | User manually confirmed restart opens Home directly after goal setup; returning-user widget test now passes with direct Hive setup through `tester.runAsync`. |
 | AC-05 | The goal persists after app restart. | Passed | User manually confirmed persisted goal behavior after restart. |
 
 ---
@@ -131,7 +132,8 @@ Notes:
 | RL-0002-TC03 | Weekly goal option manual test | User can choose a 1-5 weekly goal. | User confirmed behavior works. | Passed |
 | RL-0002-TC04 | Goal persistence manual test | Selected goal persists after restart. | User confirmed behavior works. | Passed |
 | RL-0002-TC05 | Returning launch manual test | Returning user skips onboarding. | User confirmed behavior works. | Passed |
-| RL-0002-TC06 | Focused widget test | Test should observe HomeScreen after onboarding. | Waived due to Hive widget-test environment instability. | Not Run |
+| RL-0002-TC06 | Widget test suite | Reliable widget tests complete without hanging. | `flutter test test/widget_test.dart -r expanded` passed with 4 passing tests and 2 skipped tests. | Passed |
+| RL-0002-TC07 | Callback-write widget tests | Tests should cover Hive writes triggered by tapped button callbacks. | Skipped because `tester.tap()` does not await async callback bodies that perform Hive file I/O. | Not Run |
 
 Allowed status values:
 
@@ -196,7 +198,8 @@ Checklist:
 Notes:
 
 * User manually tested the release candidate and confirmed the onboarding flow works.
-* Hive-backed widget regression tests remain partially skipped due to test-harness instability.
+* Reliable Hive-backed widget regression tests now pass for first-launch onboarding display, returning-user HomeScreen, small iPhone layout, and rest timer preset selection.
+* Widget tests remain skipped only where the test depends on Hive writes inside tapped button callbacks.
 
 ---
 
@@ -218,8 +221,9 @@ None blocking release.
 
 Known test limitation:
 
-* Hive-backed focused widget test does not reliably observe the onboarding-to-HomeScreen transition in the test environment.
-* User explicitly approved skipping this automated test limitation for now after manual testing passed.
+* Skipped widget tests depend on Hive writes inside tapped button callbacks.
+* In widget tests, `testWidgets` uses fake async while Hive uses real async file I/O, and `tester.tap()` does not await the async callback body.
+* `Hive.close()` is avoided in widget-test teardown because it can hang in this environment.
 
 ---
 
@@ -229,20 +233,20 @@ Commands referenced:
 
 ```bash
 flutter analyze
-flutter test --plain-name 'saves weekly goal and opens home screen'
+flutter test test/widget_test.dart -r expanded
 ```
 
 Results:
 
 * `flutter analyze`: Passed during Code Writer validation.
-* Focused widget test: Waived due to Hive widget-test environment instability.
+* `flutter test test/widget_test.dart -r expanded`: Passed with 4 tests passing, 2 tests skipped, and no hang.
 * User manual testing: Passed.
 
 ---
 
 ## Risks
 
-* Automated widget coverage is temporarily reduced until the Hive test harness is stabilized.
+* Automated widget coverage is reduced only for flows where tapped button callbacks perform Hive writes.
 
 ---
 
@@ -256,7 +260,7 @@ Decision rationale:
 
 * Acceptance criteria passed through manual validation.
 * Code Review approved the implementation.
-* Automated limitation is documented and explicitly waived by the user.
+* Reliable widget tests pass without hanging; callback-write widget-test limitations are documented.
 * No critical or major release blockers remain.
 
 ---

@@ -130,7 +130,7 @@ Notes:
 
 | Severity | Category | Issue | Recommendation | Status |
 | -------- | -------- | ----- | -------------- | ------ |
-| Minor | Testing | Hive-backed widget tests are unstable for onboarding transition and returning-user regression coverage. | Track a future test-harness stabilization task; release may proceed because user manually verified behavior and explicitly waived the blocker. | Accepted |
+| Minor | Testing | Widget tests that depend on Hive writes inside tapped button callbacks remain skipped. | Keep manual coverage for onboarding Continue save and add workout Save; reliable widget tests now run with direct Hive setup through `tester.runAsync`. | Accepted |
 
 ---
 
@@ -141,19 +141,20 @@ Review evidence:
 * Reviewed sprint plan, UX spec, interpretation, implementation notes, and architecture.
 * Reviewed `lib/main.dart`, `lib/features/onboarding/screens/onboarding_screen.dart`, `lib/data/local/local_database.dart`, `lib/data/services/storage_service.dart`, and `test/widget_test.dart`.
 * Verified no packages or excluded feature systems were added.
-* Verified user explicitly confirmed manual testing passed and requested release despite Hive widget-test environment issue.
+* Verified user explicitly confirmed manual testing passed.
 
 Commands referenced:
 
 ```bash
 flutter analyze
-flutter test --plain-name 'saves weekly goal and opens home screen'
+flutter test test/widget_test.dart -r expanded
 ```
 
 Result:
 
 * `flutter analyze` passed.
-* Focused widget test remains waived due to Hive widget-test environment instability.
+* `flutter test test/widget_test.dart -r expanded` passes with 4 passing tests, 2 skipped tests, and no hang.
+* Skipped tests are limited to Hive writes inside tapped button callbacks.
 
 ---
 
@@ -213,7 +214,7 @@ None
 
 ### Should Fix
 
-* Stabilize Hive-backed widget test setup in a future testing task.
+* Revisit callback-write widget tests in a future testing task if the harness can reliably await Hive writes triggered by `tester.tap()`.
 
 ---
 
@@ -226,7 +227,7 @@ Approved
 Decision rationale:
 
 * Acceptance criteria are satisfied by implementation and user manual testing.
-* Automated limitation is isolated to widget-test environment behavior and explicitly waived for release.
+* Remaining automated limitation is isolated to callback-write widget tests in the widget-test environment.
 * No critical or major findings remain.
 
 ---

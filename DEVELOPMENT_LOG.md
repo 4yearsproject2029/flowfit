@@ -462,7 +462,8 @@ Summary:
 - Added first-launch onboarding so new users choose a weekly workout goal before reaching the main experience.
 - Added local Hive-backed weekly goal and onboarding completion persistence.
 - Confirmed returning users skip onboarding after setup.
-- Accepted the documented Hive widget-test environment limitation after user manual testing confirmed the flow works.
+- Cleaned up the widget-test harness after release validation so reliable Hive-backed widget tests run without hanging.
+- Documented the remaining widget-test limitation for Hive writes inside tapped button callbacks.
 
 Acceptance Criteria:
 
@@ -497,7 +498,8 @@ Packages Added:
 Manual Steps:
 
 - User completed manual onboarding and persistence testing.
-- Automated Hive-backed widget test instability was waived for this release.
+- Widget-test cleanup completed with no production code changes.
+- `flutter test test/widget_test.dart -r expanded` passed with 4 tests passing, 2 tests skipped, and no hang.
 
 Commit References:
 
@@ -513,12 +515,14 @@ Not Required
 
 Known Limitations:
 
-- Hive-backed onboarding widget tests remain unstable in the local test environment and are documented as waived for this release.
+- Widget tests that depend on Hive writes inside tapped button callbacks remain skipped because `testWidgets` uses fake async, Hive uses real async file I/O, and `tester.tap()` does not await the async callback body.
+- Skipped callback-write tests: onboarding Continue save and add workout Save.
 - Weekly goal editing and weekly progress tracking are deferred to future stories.
 
 Lessons Learned:
 
-- Hive persistence behavior can pass manual app validation while still requiring a more stable widget-test harness.
+- Direct Hive setup in widget tests should use `tester.runAsync`.
+- Avoid `Hive.close()` in widget-test teardown when it hangs; isolate test state by clearing Hive boxes through `tester.runAsync`.
 - Onboarding state should remain a small app-entry concern until future goal progress stories need richer coordination.
 
 Next Recommended Story:
