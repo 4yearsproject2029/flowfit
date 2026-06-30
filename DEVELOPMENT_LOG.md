@@ -943,3 +943,88 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0008
+
+---
+
+## 2026-06-30
+
+### RL-0008
+
+Epic:
+
+EP-06 Weekly Goals
+
+Status:
+
+Done
+
+Summary:
+
+- Completed RL-0008 MVP weekly goal progress release.
+- Added weekly goal progress calculation from persisted local data.
+- Counted completed workouts in the current Monday-Sunday week.
+- Added selected weekly goal, completed count, progress indicator, and goal-complete state to the home screen.
+- Verified progress persists after restart because it derives from the local weekly goal and workout logs.
+- Verified current-week boundaries, over-goal behavior, visible home progress, and full regression suite.
+- Did not add streaks, consistency recovery, new XP awards, badges, share cards, backend, login, sync, analytics, social graph, or public ranking.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `lib/data/services/weekly_goal_service.dart`
+- `test/weekly_goal_service_test.dart`
+- `user_stories/RL-0008/RL-0008_SPRINT_PLAN.md`
+- `user_stories/RL-0008/RL-0008_INTERPRETATION.md`
+- `user_stories/RL-0008/RL-0008_UX_SPEC.md`
+- `user_stories/RL-0008/RL-0008_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0008/RL-0008_CODE_REVIEW.md`
+- `user_stories/RL-0008/RL-0008_QA_REPORT.md`
+- `user_stories/RL-0008/RL-0008_RELEASE_NOTE.md`
+
+Files Modified:
+
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `DEVELOPMENT_LOG.md`
+- `lib/data/services/storage_service.dart`
+- `lib/features/home/screens/home_screen.dart`
+- `test/storage_service_test.dart`
+- `test/widget_test.dart`
+- `user_stories/RL-0008/RL-0008_TASKS.md`
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- None
+
+Commit References:
+
+- None
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Not Required
+
+Known Limitations:
+
+- Existing callback-write widget tests remain skipped for the documented widget-test infrastructure reason.
+- Streaks, consistency recovery, weekly history, share cards, badges, and weekly goal rewards remain future-story scope.
+
+Lessons Learned:
+
+- Weekly goal progress can be derived from existing onboarding and workout completion data without adding a new Hive model.
+- Matching the visible calendar's Monday-Sunday week keeps progress behavior understandable.
+
+Next Recommended Story:
+
+RL-0009

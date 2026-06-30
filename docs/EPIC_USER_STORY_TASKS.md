@@ -167,7 +167,7 @@ Prioritization order:
 | EP-03 | Workout Logging | Preserve and improve fast workout logging and completion recognition. | P0 | Done |
 | EP-04 | Offline Experience | Ensure core RepLog data persists locally and requires no network or account. | P0 | Done |
 | EP-05 | Gamification | Reward showing up through XP and visible level progress. | P0 | Done |
-| EP-06 | Weekly Goals | Track weekly consistency and encourage recovery without harsh punishment. | P0 | Not Started |
+| EP-06 | Weekly Goals | Track weekly consistency and encourage recovery without harsh punishment. | P0 | In Progress |
 | EP-07 | Share Cards | Let users optionally celebrate progress with privacy-conscious share cards. | P1 | Not Started |
 | EP-08 | Privacy | Give users control over metrics shown on share cards. | P1 | Not Started |
 | EP-09 | MVP Validation | Calculate local metrics that help evaluate whether RepLog improves consistency. | P1 | Not Started |
@@ -221,7 +221,7 @@ RL-0013
 | Done | RL-0004 | EP-04 | Offline Experience | Must Have | P0 | S | RL-0002, RL-0005 | No | No | As a user, I want my workouts and goals to persist offline, so that I can use RepLog without an internet connection. | - Workout logs persist after app restart.<br>- Completion state persists after restart.<br>- Weekly goals and onboarding state persist after restart.<br>- No login or network connection is required.<br>- Users are informed that uninstalling the app or changing devices may result in data loss. |
 | Done | RL-0006 | EP-05 | Gamification - XP | Must Have | P0 | L | RL-0005 | No | No | As a user, I want to earn XP when I complete a workout, so that I feel motivated to stay consistent. | - Completing a workout grants XP once.<br>- XP updates immediately.<br>- XP persists after app restart.<br>- Toggling, editing, deleting, or recreating workouts does not duplicate XP.<br>- Users can see why XP was awarded. |
 | Done | RL-0007 | EP-05 | Gamification - Levels | Must Have | P0 | M | RL-0006 | Yes | No | As a user, I want to see my level and progress toward the next level, so that my consistency feels visible. | - The home screen displays current level.<br>- The app displays XP progress toward the next level.<br>- Progress updates immediately after XP changes.<br>- Levels never decrease.<br>- Level progress persists after app restart. |
-| Not Started | RL-0008 | EP-06 | Weekly Goals | Must Have | P0 | M | RL-0002, RL-0005 | Yes | No | As a user, I want to see progress toward my weekly workout goal, so that I know whether I am staying consistent. | - The app displays the selected weekly goal.<br>- The app displays completed workouts for the current week.<br>- Progress updates immediately.<br>- Goal completion is recognized when the target is reached.<br>- Goal progress persists after app restart. |
+| Done | RL-0008 | EP-06 | Weekly Goals | Must Have | P0 | M | RL-0002, RL-0005 | Yes | No | As a user, I want to see progress toward my weekly workout goal, so that I know whether I am staying consistent. | - The app displays the selected weekly goal.<br>- The app displays completed workouts for the current week.<br>- Progress updates immediately.<br>- Goal completion is recognized when the target is reached.<br>- Goal progress persists after app restart. |
 | Not Started | RL-0009 | EP-06 | Consistency Recovery | Should Have | P1 | S | RL-0008 | Yes | No | As a user, I want RepLog to handle missed weeks without harsh punishment, so that I feel encouraged to return. | - Missing a workout week does not remove XP.<br>- Missing a workout week does not reduce levels.<br>- Returning after a missed week is detectable for metrics.<br>- The app displays encouraging language after returning.<br>- Planned rest days do not count as failures. |
 | Not Started | RL-0010 | EP-07 | Share Cards | Must Have | P1 | L | RL-0006, RL-0007, RL-0008 | Yes | No | As a user, I want to create a share card for workout completion, level-up, or weekly goal completion, so that I can celebrate progress without exposing embarrassing numbers. | - Users can generate workout completion cards.<br>- Users can generate level-up cards.<br>- Users can generate weekly goal cards.<br>- Weight, sets, reps, calories, and PRs are hidden by default.<br>- Share card generation is optional and user-initiated. |
 | Not Started | RL-0011 | EP-08 | Privacy | Should Have | P1 | M | RL-0010 | Yes | No | As a user, I want control over which metrics appear on share cards, so that I can share progress comfortably. | - Share cards show consistency-focused metrics by default.<br>- Users can preview cards before sharing.<br>- Hidden performance metrics require explicit opt-in.<br>- Share cards are never published automatically.<br>- Share preferences persist locally. |
@@ -322,6 +322,8 @@ Dependency validation:
 | 2026-06-30 | RL-0006 | In Progress | Done | Release Manager | XP award behavior, duplicate prevention, persistence, QA, and release closeout completed. |
 | 2026-06-30 | RL-0007 | Not Started | In Progress | Coordinator | Next eligible P0 levels story selected after RL-0006 completion. |
 | 2026-06-30 | RL-0007 | In Progress | Done | Release Manager | Level progress display, persistence coverage, QA, and release closeout completed. |
+| 2026-06-30 | RL-0008 | Not Started | In Progress | Coordinator | Next eligible P0 weekly goals story selected after RL-0007 completion. |
+| 2026-06-30 | RL-0008 | In Progress | Done | Release Manager | Weekly goal progress display, persistence coverage, QA, and release closeout completed. |
 
 ---
 
@@ -330,23 +332,23 @@ Dependency validation:
 | Metric | Value |
 | ------ | ----- |
 | Total Stories | 14 |
-| Not Started | 6 |
+| Not Started | 5 |
 | In Progress | 0 |
 | Blocked | 0 |
 | On Hold | 0 |
-| Done | 8 |
+| Done | 9 |
 | Canceled | 0 |
 
 Completion Rate:
 
 ```text
-8 / (14 - 0) = 57.1%
+9 / (14 - 0) = 64.3%
 ```
 
 MVP Completion Rate:
 
 ```text
-8 / (14 - 0) = 57.1%
+9 / (14 - 0) = 64.3%
 ```
 
 ---
@@ -369,6 +371,7 @@ Stories updated:
 * `RL-0004`: Status updated to Done after offline persistence verification, local data-loss messaging, Code Review approval, QA pass, and release closeout.
 * `RL-0006`: Status updated to Done after XP award behavior, duplicate prevention, persistence, Code Review approval, QA pass, and release closeout.
 * `RL-0007`: Status updated to Done after level progress display, persistence coverage, Code Review approval, QA pass, and release closeout.
+* `RL-0008`: Status updated to Done after weekly goal progress display, persistence coverage, Code Review approval, QA pass, and release closeout.
 * `RL-0004`: Dependency updated from `RL-0005` to `RL-0002, RL-0005` because offline persistence acceptance criteria include onboarding and weekly goal state.
 * `RL-0013`: Dependency updated to include `RL-0007`, and acceptance criteria now explicitly include levels in MVP manual QA.
 
@@ -408,6 +411,8 @@ Reasoning:
 | v1.6 | 2026-06-30 | Release Manager Agent | Closed RL-0006 as Done after XP award behavior, duplicate prevention, persistence, QA pass, and release closeout. |
 | v1.7 | 2026-06-30 | Coordinator Agent | Selected RL-0007 as the next eligible P0 story and started the levels sprint. |
 | v1.8 | 2026-06-30 | Release Manager Agent | Closed RL-0007 as Done after level progress display, persistence coverage, QA pass, and release closeout. |
+| v1.9 | 2026-06-30 | Coordinator Agent | Selected RL-0008 as the next eligible P0 story and started the weekly goals sprint. |
+| v1.10 | 2026-06-30 | Release Manager Agent | Closed RL-0008 as Done after weekly goal progress display, persistence coverage, QA pass, and release closeout. |
 
 ---
 
@@ -431,6 +436,13 @@ user_stories/RL-0007/RL-0007_IMPLEMENTATION_NOTES.md
 user_stories/RL-0007/RL-0007_CODE_REVIEW.md
 user_stories/RL-0007/RL-0007_QA_REPORT.md
 user_stories/RL-0007/RL-0007_RELEASE_NOTE.md
+user_stories/RL-0008/RL-0008_SPRINT_PLAN.md
+user_stories/RL-0008/RL-0008_INTERPRETATION.md
+user_stories/RL-0008/RL-0008_UX_SPEC.md
+user_stories/RL-0008/RL-0008_IMPLEMENTATION_NOTES.md
+user_stories/RL-0008/RL-0008_CODE_REVIEW.md
+user_stories/RL-0008/RL-0008_QA_REPORT.md
+user_stories/RL-0008/RL-0008_RELEASE_NOTE.md
 ```
 
 Next Agent:
@@ -452,7 +464,7 @@ Required Input Files:
 * `docs/PROJECT_CONTEXT.md`
 * `docs/ARCHITECTURE.md`
 * `docs/EPIC_USER_STORY_TASKS.md`
-* `user_stories/RL-0007/RL-0007_RELEASE_NOTE.md`
+* `user_stories/RL-0008/RL-0008_RELEASE_NOTE.md`
 
 Optional Input Files:
 
@@ -471,6 +483,7 @@ Blocking Conditions:
 Instructions:
 
 * RL-0007 is complete and must remain Done.
+* RL-0008 is complete and must remain Done.
 * Preserve Story IDs and completed story state.
 * Select exactly one story when Coordinator stage begins.
-* Recommended next story is `RL-0008` because `RL-0007` is Done and `RL-0008` is the next eligible P0 story.
+* Recommended next story is `RL-0009` because `RL-0008` is Done and `RL-0009` depends on weekly goal progress.

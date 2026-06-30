@@ -3,13 +3,13 @@
 ## Current Story
 
 Story ID:
-RL-0007
+RL-0008
 
 Status:
 Done
 
 Reason:
-RL-0007 completed the workflow through Release Manager. MVP level progress was implemented, Code Review approved, QA passed, and the story was closed as Done.
+RL-0008 completed the workflow through Release Manager. MVP weekly goal progress was implemented, Code Review approved, QA passed, and the story was closed as Done.
 
 ## Routing Decision Traceability
 
@@ -17,7 +17,7 @@ Decision Point:
 Release Closeout
 
 Selected Story:
-RL-0007
+RL-0008
 
 Previous Story State:
 In Progress
@@ -33,25 +33,26 @@ Inputs Considered:
 - docs/ARCHITECTURE.md
 - docs/SPRINT_PLAN.md
 - DEVELOPMENT_LOG.md
-- user_stories/RL-0007/RL-0007_TASKS.md
-- user_stories/RL-0007/RL-0007_SPRINT_PLAN.md
-- user_stories/RL-0007/RL-0007_INTERPRETATION.md
-- user_stories/RL-0007/RL-0007_UX_SPEC.md
-- user_stories/RL-0007/RL-0007_IMPLEMENTATION_NOTES.md
-- user_stories/RL-0007/RL-0007_CODE_REVIEW.md
-- user_stories/RL-0007/RL-0007_QA_REPORT.md
-- user_stories/RL-0007/RL-0007_RELEASE_NOTE.md
+- user_stories/RL-0008/RL-0008_TASKS.md
+- user_stories/RL-0008/RL-0008_SPRINT_PLAN.md
+- user_stories/RL-0008/RL-0008_INTERPRETATION.md
+- user_stories/RL-0008/RL-0008_UX_SPEC.md
+- user_stories/RL-0008/RL-0008_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0008/RL-0008_CODE_REVIEW.md
+- user_stories/RL-0008/RL-0008_QA_REPORT.md
+- user_stories/RL-0008/RL-0008_RELEASE_NOTE.md
 
 Dependency and Blocker Status:
 
-- RL-0007 depends on RL-0006.
-- RL-0006 is Done in docs/EPIC_USER_STORY_TASKS.md.
-- Code Review approved RL-0007.
-- QA passed RL-0007.
+- RL-0008 depends on RL-0002 and RL-0005.
+- RL-0002 is Done in docs/EPIC_USER_STORY_TASKS.md.
+- RL-0005 is Done in docs/EPIC_USER_STORY_TASKS.md.
+- Code Review approved RL-0008.
+- QA passed RL-0008.
 - No release blockers remain.
 
 Selection Rationale:
-RL-0007 was selected because RL-0006 was Done and level progress could build on persisted XP. It completes EP-05 by making XP progress visible as current level and next-level progress.
+RL-0008 was selected because RL-0002 and RL-0005 were Done and weekly goal progress could build on persisted goal selection and workout completion. It makes weekly consistency visible on the home screen.
 
 Next Agent:
 Coordinator
@@ -65,23 +66,23 @@ Next Prompt:
 - PROJECT_CONTEXT.md: Present.
 - ARCHITECTURE.md: Present.
 - EPIC_USER_STORY_TASKS.md: Present.
-- RL-0007 task file: Present.
-- Story dependencies: RL-0006.
-- Dependency status: RL-0006 is Done.
-- MVP scope: Completed as EP-05 Gamification - Levels.
+- RL-0008 task file: Present.
+- Story dependencies: RL-0002, RL-0005.
+- Dependency status: RL-0002 and RL-0005 are Done.
+- MVP scope: Completed as EP-06 Weekly Goals.
 - Current blocker status: No release blocker identified.
 
 ## Execution Order
 
-1. Select RL-0007 and create sprint plan.
-2. Interpret MVP level progression requirements and define level rules.
-3. Design the home-screen level and next-level progress presentation.
-4. Implement level calculation from persisted XP.
-5. Display current level and progress toward the next level.
-6. Ensure levels never decrease due to missed workouts, toggles, edits, deleted logs, or recreated logs.
-7. Test level display, XP progress updates, persistence, and non-decreasing level behavior.
-8. Review implementation for accuracy, scope fit, and maintainability.
-9. Release Manager closes RL-0007 after validation and documentation updates.
+1. Select RL-0008 and create sprint plan.
+2. Interpret weekly goal progress rules, current-week boundaries, and completion behavior.
+3. Design the weekly goal progress presentation for the home experience.
+4. Implement weekly goal progress calculation from completed workouts.
+5. Display selected weekly goal, completed count, and goal completion state.
+6. Update weekly progress immediately when workouts are completed or uncompleted.
+7. Test weekly goal calculation, completion threshold, restart persistence, and toggle updates.
+8. Review weekly goal behavior for consistency and edge cases.
+9. Release Manager closes RL-0008 after validation and documentation updates.
 
 ## Assigned Agents
 
@@ -95,7 +96,7 @@ Next Prompt:
 
 ## Required Deliverables
 
-- RL-0007 sprint plan.
+- RL-0008 sprint plan.
 - Interpretation output.
 - UX specification.
 - Implementation notes.
@@ -105,15 +106,13 @@ Next Prompt:
 
 ## Risks Or Blockers
 
-- `flutter analyze` was not completed because Flutter SDK cache access was blocked and the escalation request was rejected.
 - Existing callback-write widget tests remain skipped for the documented widget-test infrastructure reason.
-- Badges, streaks, weekly goal progress, level-up celebrations, and share cards remain future-story scope.
+- Streaks, consistency recovery, weekly history, share cards, badges, and weekly goal rewards remain future-story scope.
 
 ## Expected Outcome
 
-- RL-0007 is Done.
-- EP-05 Gamification is Done.
-- RL-0008 becomes the recommended next P0 story because RL-0007 is Done.
+- RL-0008 is Done.
+- RL-0009 becomes the recommended next story because RL-0008 is Done and consistency recovery depends on weekly goal progress.
 
 ## Agent Handoff
 
@@ -127,7 +126,7 @@ Completed Output:
 
 ```text
 docs/SPRINT_PLAN.md
-user_stories/RL-0007/RL-0007_RELEASE_NOTE.md
+user_stories/RL-0008/RL-0008_RELEASE_NOTE.md
 ```
 
 Next Agent:
@@ -148,7 +147,7 @@ Required Input Files:
 - docs/PRODUCT_BRIEF.md
 - docs/PROJECT_CONTEXT.md
 - docs/ARCHITECTURE.md
-- user_stories/RL-0007/RL-0007_RELEASE_NOTE.md
+- user_stories/RL-0008/RL-0008_RELEASE_NOTE.md
 
 Optional Input Files:
 
@@ -165,7 +164,7 @@ Blocking Conditions:
 
 Instructions:
 
-- RL-0007 is complete and must remain Done.
+- RL-0008 is complete and must remain Done.
 - Select exactly one next story when the next Coordinator stage begins.
-- Recommended next story is RL-0008.
+- Recommended next story is RL-0009.
 - Do not implement code from this closeout handoff.

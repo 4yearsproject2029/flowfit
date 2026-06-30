@@ -5,6 +5,7 @@ import '../../../data/models/workout_category.dart';
 import '../../../data/models/workout_log.dart';
 import '../../../data/services/level_service.dart';
 import '../../../data/services/storage_service.dart';
+import '../../../data/services/weekly_goal_service.dart';
 import '../../calendar/widgets/weekly_calendar.dart';
 import '../../timer/widgets/rest_timer.dart';
 import '../../workout/widgets/add_workout_button.dart';
@@ -75,6 +76,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       xpTotal: storageService.getXpTotal(),
                       explanation: storageService.getXpExplanation(),
                     );
+                  },
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              sliver: SliverToBoxAdapter(
+                child: ValueListenableBuilder<Box<WorkoutLog>>(
+                  valueListenable: storageService.workoutLogsListenable,
+                  builder: (context, box, child) {
+                    final weeklyGoal = storageService.getWeeklyGoal();
+                    if (weeklyGoal == null) {
+                      return const SizedBox.shrink();
+                    }
+
+                    final progress = WeeklyGoalService().calculateProgress(
+                      weeklyGoal: weeklyGoal,
+                      workoutLogs: storageService.getWorkoutLogs(),
+                      today: DateTime.now(),
+                    );
+
+                    return _WeeklyGoalSummarySection(progress: progress);
                   },
                 ),
               ),
@@ -231,6 +254,75 @@ class _XpSummarySection extends StatelessWidget {
             explanation,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: colorScheme.onPrimaryContainer,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WeeklyGoalSummarySection extends StatelessWidget {
+  const _WeeklyGoalSummarySection({required this.progress});
+
+  final WeeklyGoalProgress progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final borderColor = progress.isComplete
+        ? colorScheme.tertiary.withValues(alpha: 0.32)
+        : colorScheme.outlineVariant;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: borderColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            progress.title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          LinearProgressIndicator(
+            value: progress.progressValue,
+            minHeight: 8,
+            borderRadius: BorderRadius.circular(999),
+            backgroundColor: colorScheme.surface.withValues(alpha: 0.72),
+            color: progress.isComplete
+                ? colorScheme.tertiary
+                : colorScheme.primary,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            progress.progressLabel,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            progress.goalLabel,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            progress.statusMessage,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
         ],

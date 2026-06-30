@@ -7,6 +7,7 @@ import 'package:flowfit/data/local/local_database.dart';
 import 'package:flowfit/data/models/workout_log.dart';
 import 'package:flowfit/data/services/level_service.dart';
 import 'package:flowfit/data/services/storage_service.dart';
+import 'package:flowfit/data/services/weekly_goal_service.dart';
 
 void main() {
   late Directory testHiveDirectory;
@@ -180,4 +181,38 @@ void main() {
       expect(levelProgress.progressLabel, '10 / 100 XP to Level 2');
     },
   );
+
+  test('weekly goal progress persists after restart', () async {
+    await storageService.saveWeeklyGoal(3);
+    await storageService.addWorkoutLog(
+      WorkoutLog(
+        id: 'log-1',
+        date: '2026-06-30',
+        workoutId: 'workout-1',
+        workoutName: 'Squat',
+        category: 'Strength',
+        isCompleted: false,
+        createdAt: DateTime(2026, 6, 30, 9),
+      ),
+    );
+    await storageService.toggleWorkoutCompletion('log-1');
+
+    var progress = WeeklyGoalService().calculateProgress(
+      weeklyGoal: storageService.getWeeklyGoal()!,
+      workoutLogs: storageService.getWorkoutLogs(),
+      today: DateTime(2026, 6, 30),
+    );
+    expect(progress.progressLabel, '1 / 3 workouts complete');
+
+    await Hive.close();
+    await LocalDatabase.init(testPath: testHiveDirectory.path);
+    storageService = StorageService();
+
+    progress = WeeklyGoalService().calculateProgress(
+      weeklyGoal: storageService.getWeeklyGoal()!,
+      workoutLogs: storageService.getWorkoutLogs(),
+      today: DateTime(2026, 6, 30),
+    );
+    expect(progress.progressLabel, '1 / 3 workouts complete');
+  });
 }

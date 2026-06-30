@@ -69,6 +69,13 @@ class StorageService {
     return logs;
   }
 
+  List<WorkoutLog> getWorkoutLogs() {
+    final logs = _workoutLogBox.values.toList();
+
+    logs.sort((first, second) => first.createdAt.compareTo(second.createdAt));
+    return logs;
+  }
+
   Future<void> toggleWorkoutCompletion(String workoutLogId) async {
     final workoutLog = _workoutLogBox.get(workoutLogId);
 
