@@ -228,6 +228,7 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
   final setsController = TextEditingController();
   final repsController = TextEditingController();
   final weightController = TextEditingController();
+  final memoController = TextEditingController();
 
   String selectedCategory = workoutCategories.first;
 
@@ -237,6 +238,7 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
     setsController.dispose();
     repsController.dispose();
     weightController.dispose();
+    memoController.dispose();
     super.dispose();
   }
 
@@ -338,6 +340,17 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
                   decimal: true,
                 ),
               ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: memoController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Memo',
+                ),
+                minLines: 1,
+                maxLines: 3,
+                textInputAction: TextInputAction.done,
+              ),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
@@ -370,6 +383,7 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
       sets: int.tryParse(setsController.text.trim()),
       reps: int.tryParse(repsController.text.trim()),
       weight: double.tryParse(weightController.text.trim()),
+      memo: _optionalText(memoController.text),
       createdAt: now,
     );
 
@@ -378,5 +392,10 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
     if (mounted) {
       Navigator.pop(context);
     }
+  }
+
+  String? _optionalText(String value) {
+    final trimmedValue = value.trim();
+    return trimmedValue.isEmpty ? null : trimmedValue;
   }
 }

@@ -528,3 +528,85 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0003
+
+---
+
+## 2026-06-30
+
+### RL-0003
+
+Epic:
+
+EP-03 Workout Logging
+
+Status:
+
+Done
+
+Summary:
+
+- Completed RL-0003 workout logging refinement.
+- Added optional memo capture to the Add Workout flow.
+- Displayed saved workout memo text in workout list items when present.
+- Preserved selected-date workout logging, required workout name validation, default category selection, and immediate list updates.
+- Did not change production onboarding behavior, Hive adapter IDs, or Hive read/write order.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `user_stories/RL-0003/RL-0003_SPRINT_PLAN.md`
+- `user_stories/RL-0003/RL-0003_UX_SPEC.md`
+- `user_stories/RL-0003/RL-0003_INTERPRETATION.md`
+- `user_stories/RL-0003/RL-0003_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0003/RL-0003_CODE_REVIEW.md`
+- `user_stories/RL-0003/RL-0003_QA_REPORT.md`
+- `user_stories/RL-0003/RL-0003_RELEASE_NOTE.md`
+- `test/workout_item_test.dart`
+
+Files Modified:
+
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `DEVELOPMENT_LOG.md`
+- `user_stories/RL-0003/RL-0003_TASKS.md`
+- `user_stories/RL-0003/RL-0003_SPRINT_PLAN.md`
+- `lib/features/home/screens/home_screen.dart`
+- `lib/features/workout/widgets/workout_item.dart`
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- None
+
+Commit References:
+
+- None
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Not Required
+
+Known Limitations:
+
+- Existing callback-write widget tests remain skipped for the documented widget-test infrastructure reason.
+- Editing existing workout logs is out of scope.
+- Completion, XP, levels, weekly progress, and share cards remain future-story scope.
+
+Lessons Learned:
+
+- `WorkoutLog.memo` already existed, so memo support could be added without a Hive migration.
+- Reliable RL-0003 widget coverage can target presentational widgets without reopening the Hive callback-write test issue.
+
+Next Recommended Story:
+
+RL-0005

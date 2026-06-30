@@ -18,6 +18,7 @@ class WorkoutItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isCompleted = workoutLog.isCompleted;
     final textColor = isCompleted ? Colors.grey.shade600 : Colors.black87;
+    final memo = workoutLog.memo?.trim();
     final details = <String>[
       workoutLog.category,
       if (workoutLog.sets != null) '${workoutLog.sets} sets',
@@ -48,7 +49,16 @@ class WorkoutItem extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        subtitle: Text(details, style: TextStyle(color: textColor)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(details, style: TextStyle(color: textColor)),
+            if (memo != null && memo.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(memo, style: TextStyle(color: textColor)),
+            ],
+          ],
+        ),
         trailing: IconButton(
           onPressed: onDelete,
           icon: const Icon(Icons.delete_outline),
