@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 
 import '../../../data/models/workout_category.dart';
 import '../../../data/models/workout_log.dart';
+import '../../../data/services/level_service.dart';
 import '../../../data/services/storage_service.dart';
 import '../../calendar/widgets/weekly_calendar.dart';
 import '../../timer/widgets/rest_timer.dart';
@@ -180,6 +181,7 @@ class _XpSummarySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final levelProgress = LevelService().calculateProgress(xpTotal);
 
     return Container(
       width: double.infinity,
@@ -194,8 +196,32 @@ class _XpSummarySection extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '$xpTotal XP',
+            'Level ${levelProgress.currentLevel}',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: colorScheme.onPrimaryContainer,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          LinearProgressIndicator(
+            value: levelProgress.progressValue,
+            minHeight: 8,
+            borderRadius: BorderRadius.circular(999),
+            backgroundColor: colorScheme.surface.withValues(alpha: 0.56),
+            color: colorScheme.primary,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            levelProgress.progressLabel,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onPrimaryContainer,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '$xpTotal XP',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: colorScheme.onPrimaryContainer,
               fontWeight: FontWeight.bold,
             ),

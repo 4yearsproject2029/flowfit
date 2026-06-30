@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 
 import 'package:flowfit/data/local/local_database.dart';
 import 'package:flowfit/data/models/workout_log.dart';
+import 'package:flowfit/data/services/level_service.dart';
 import 'package:flowfit/data/services/storage_service.dart';
 
 void main() {
@@ -137,4 +138,46 @@ void main() {
       'Earned +10 XP for completing Squat.',
     );
   });
+
+  test(
+    'level progress persists and does not decrease after deleting logs',
+    () async {
+      final workoutLog = WorkoutLog(
+        id: 'log-1',
+        date: '2026-06-30',
+        workoutId: 'workout-1',
+        workoutName: 'Squat',
+        category: 'Strength',
+        isCompleted: false,
+        createdAt: DateTime(2026, 6, 30, 9),
+      );
+
+      await storageService.addWorkoutLog(workoutLog);
+      await storageService.toggleWorkoutCompletion('log-1');
+
+      var levelProgress = LevelService().calculateProgress(
+        storageService.getXpTotal(),
+      );
+      expect(levelProgress.currentLevel, 1);
+      expect(levelProgress.progressLabel, '10 / 100 XP to Level 2');
+
+      await storageService.deleteWorkoutLog('log-1');
+
+      levelProgress = LevelService().calculateProgress(
+        storageService.getXpTotal(),
+      );
+      expect(levelProgress.currentLevel, 1);
+      expect(levelProgress.progressLabel, '10 / 100 XP to Level 2');
+
+      await Hive.close();
+      await LocalDatabase.init(testPath: testHiveDirectory.path);
+      storageService = StorageService();
+
+      levelProgress = LevelService().calculateProgress(
+        storageService.getXpTotal(),
+      );
+      expect(levelProgress.currentLevel, 1);
+      expect(levelProgress.progressLabel, '10 / 100 XP to Level 2');
+    },
+  );
 }

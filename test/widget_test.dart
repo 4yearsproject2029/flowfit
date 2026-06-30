@@ -84,6 +84,8 @@ void main() {
 
     expect(find.text('RepLog'), findsOneWidget);
     expect(find.text('This Week'), findsOneWidget);
+    expect(find.text('Level 1'), findsOneWidget);
+    expect(find.text('0 / 100 XP to Level 2'), findsOneWidget);
     expect(find.text('0 XP'), findsOneWidget);
     expect(
       find.textContaining('Complete a workout to earn 10 XP'),
