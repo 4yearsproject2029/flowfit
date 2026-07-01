@@ -8,6 +8,7 @@ import '../../../data/services/level_service.dart';
 import '../../../data/services/storage_service.dart';
 import '../../../data/services/weekly_goal_service.dart';
 import '../../calendar/widgets/weekly_calendar.dart';
+import '../../share_cards/widgets/share_cards_section.dart';
 import '../../timer/widgets/rest_timer.dart';
 import '../../workout/widgets/add_workout_button.dart';
 import '../../workout/widgets/workout_list.dart';
@@ -122,6 +123,39 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
 
                         return _ConsistencyRecoverySection(status: status);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              sliver: SliverToBoxAdapter(
+                child: ValueListenableBuilder<Box<WorkoutLog>>(
+                  valueListenable: storageService.workoutLogsListenable,
+                  builder: (context, _, child) {
+                    return ValueListenableBuilder<Box<int>>(
+                      valueListenable: storageService.xpTotalListenable,
+                      builder: (context, _, child) {
+                        final selectedDateKey = _dateKey(selectedDate);
+                        final weeklyGoal = storageService.getWeeklyGoal();
+                        final weeklyGoalProgress = weeklyGoal == null
+                            ? null
+                            : WeeklyGoalService().calculateProgress(
+                                weeklyGoal: weeklyGoal,
+                                workoutLogs: storageService.getWorkoutLogs(),
+                                today: DateTime.now(),
+                              );
+
+                        return ShareCardsSection(
+                          selectedDateLabel: _selectedDateLabel(selectedDate),
+                          workoutLogs: storageService.getWorkoutLogsByDate(
+                            selectedDateKey,
+                          ),
+                          xpTotal: storageService.getXpTotal(),
+                          weeklyGoalProgress: weeklyGoalProgress,
+                        );
                       },
                     );
                   },

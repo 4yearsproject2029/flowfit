@@ -168,6 +168,82 @@ void main() {
     );
   });
 
+  testWidgets('generates privacy-safe workout share card on request', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester, weeklyGoal: 1);
+    await tester.runAsync(() async {
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'share-log',
+          date: _dateKey(DateTime.now()),
+          workoutId: 'share-workout',
+          workoutName: 'Bench Press',
+          category: 'Strength',
+          isCompleted: true,
+          sets: 5,
+          reps: 5,
+          weight: 225,
+          memo: 'PR attempt',
+          createdAt: DateTime.now(),
+        ),
+      );
+    });
+    await pumpFlowFitApp(tester);
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
+    await tester.pump();
+
+    expect(find.text('Share cards'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Workout'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Share card preview'), findsOneWidget);
+    expect(find.text('Workout Complete'), findsOneWidget);
+    expect(find.text('Showed up today.'), findsOneWidget);
+    expect(find.textContaining('Bench Press'), findsWidgets);
+    expect(find.text('225'), findsNothing);
+    expect(find.textContaining('PR attempt'), findsNothing);
+
+    await tester.tap(find.text('Generate'));
+    await tester.pump();
+
+    expect(find.text('Workout card generated'), findsOneWidget);
+  });
+
+  testWidgets('shows weekly share card only after weekly goal is complete', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester, weeklyGoal: 1);
+    await tester.runAsync(() async {
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'weekly-log',
+          date: _dateKey(DateTime.now()),
+          workoutId: 'weekly-workout',
+          workoutName: 'Walk',
+          category: 'Cardio',
+          isCompleted: true,
+          createdAt: DateTime.now(),
+        ),
+      );
+    });
+    await pumpFlowFitApp(tester);
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
+    await tester.pump();
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Weekly'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Weekly Goal Complete'), findsWidgets);
+    expect(find.text('Consistency unlocked.'), findsOneWidget);
+    expect(find.text('1 / 1 workouts this week'), findsOneWidget);
+  });
+
   testWidgets('fits on a small iPhone-sized screen', (
     WidgetTester tester,
   ) async {

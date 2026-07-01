@@ -3,13 +3,13 @@
 ## Current Story
 
 Story ID:
-RL-0009
+RL-0010
 
 Status:
-Done
+In Progress
 
 Reason:
-RL-0009 release is complete. Consistency recovery now detects return-after-missed-week behavior locally, preserves XP and levels, treats planned rest as neutral, and displays encouraging home-screen language.
+RL-0010 is the next eligible story after RL-0009. Its dependencies, RL-0006, RL-0007, and RL-0008, are Done, and share cards can now build on workout completion, level progress, and weekly goal progress without adding public social features or exposing performance metrics by default.
 
 ## Routing Decision Traceability
 
@@ -17,7 +17,7 @@ Decision Point:
 Coordinator Story Selection
 
 Selected Story:
-RL-0009
+RL-0010
 
 Previous Story State:
 Not Started
@@ -32,24 +32,24 @@ Inputs Considered:
 - docs/PROJECT_CONTEXT.md
 - docs/ARCHITECTURE.md
 - docs/SPRINT_PLAN.md
-- user_stories/RL-0008/RL-0008_RELEASE_NOTE.md
-- user_stories/RL-0009/RL-0009_TASKS.md
+- user_stories/RL-0009/RL-0009_RELEASE_NOTE.md
+- user_stories/RL-0010/RL-0010_TASKS.md
 
 Dependency and Blocker Status:
 
-- RL-0009 depends on RL-0008.
-- RL-0008 is Done in docs/EPIC_USER_STORY_TASKS.md.
-- RL-0009 task file is present.
+- RL-0010 depends on RL-0006, RL-0007, and RL-0008.
+- RL-0006, RL-0007, and RL-0008 are Done in docs/EPIC_USER_STORY_TASKS.md.
+- RL-0010 task file is present.
 - No coordinator-stage blockers identified.
 
 Selection Rationale:
-RL-0009 was selected because RL-0008 is Done and the next product need is consistency recovery: handling missed weeks in a way that protects XP and levels, detects returns for local metrics, and keeps RepLog encouraging for returning users.
+RL-0010 was selected because the app now has completion, XP, levels, and weekly goal progress available locally. The next product need is optional, privacy-conscious share cards for celebrating workout completion, level-up, and weekly goal completion without exposing embarrassing numbers.
 
 Next Agent:
-Coordinator
+UX Designer
 
 Next Prompt:
-/Users/jounghwapak/Developer/AI_Agents/prompts/create_sprint_plan.md
+/Users/jounghwapak/Developer/AI_Agents/prompts/interpret_user_story.md
 
 ## Dependency Validation
 
@@ -57,23 +57,23 @@ Next Prompt:
 - PROJECT_CONTEXT.md: Present.
 - ARCHITECTURE.md: Present.
 - EPIC_USER_STORY_TASKS.md: Present.
-- RL-0009 task file: Present.
-- Story dependencies: RL-0008.
-- Dependency status: RL-0008 is Done.
-- MVP scope: Selected as EP-06 Consistency Recovery.
+- RL-0010 task file: Present.
+- Story dependencies: RL-0006, RL-0007, RL-0008.
+- Dependency status: RL-0006, RL-0007, and RL-0008 are Done.
+- MVP scope: Selected as EP-07 Share Cards.
 - Current blocker status: No coordinator-stage blocker identified.
 
 ## Execution Order
 
-1. Select RL-0009 and create sprint plan.
-2. Interpret missed-week, return-after-missed-week, and planned-rest-day behavior.
-3. Design encouraging return-state language that avoids guilt or punishment.
-4. Implement local return-after-missed-week detection for future MVP validation metrics.
-5. Preserve XP totals and level progress when a workout week is missed.
-6. Ensure planned rest days do not create failure states.
-7. Test missed-week, return-week, planned-rest-day, XP preservation, and level preservation behavior.
-8. Review consistency recovery behavior for product tone and data correctness.
-9. Release Manager closes RL-0009 after validation and documentation updates.
+1. Select RL-0010 and create sprint plan.
+2. Define required MVP share-card types and trigger moments.
+3. Design workout completion, level-up, and weekly goal completion share-card layouts.
+4. Implement share-card data preparation for the three card types.
+5. Implement on-device share-card preview and generation.
+6. Ensure weight, sets, reps, calories, and PRs are hidden by default.
+7. Test card availability, hidden default metrics, optional generation, and generated card output.
+8. Review share-card implementation for privacy, MVP scope, and platform behavior.
+9. Release Manager closes RL-0010 after validation and documentation updates.
 
 ## Assigned Agents
 
@@ -87,7 +87,7 @@ Next Prompt:
 
 ## Required Deliverables
 
-- RL-0009 sprint plan.
+- RL-0010 sprint plan.
 - Interpretation output.
 - UX specification.
 - Implementation notes.
@@ -97,25 +97,22 @@ Next Prompt:
 
 ## Risks Or Blockers
 
-- Missed-week and planned-rest-day definitions need interpretation before implementation.
-- Recovery behavior must avoid penalties, XP loss, level loss, and streak scope.
-- Return detection should remain local and small, not a full analytics system.
+- Share-card scope could drift into public social features.
+- Hidden default metrics must be preserved to avoid embarrassing users.
+- Platform sharing dependencies should not be added unless needed for MVP value.
+- Card generation should remain optional and user-initiated.
 
 ## Expected Outcome
 
-- RL-0009 is interpreted, designed, implemented, reviewed, QAed, and closed as Done.
-- RL-0010 becomes the likely next eligible story after RL-0009, subject to coordinator validation.
-
-## Release Summary
-
-RL-0009 released MVP consistency recovery using local missed-week detection, primitive Hive-backed planned rest and recovery metric dates, supportive return messaging, and regression coverage for XP and level preservation.
+- RL-0010 is interpreted, designed, implemented, reviewed, QAed, and closed as Done.
+- RL-0011 becomes the likely next eligible story after RL-0010, subject to coordinator validation.
 
 ## Agent Handoff
 
 Current Agent:
 
 ```text
-Release Manager
+User Story Interpreter
 ```
 
 Completed Output:
@@ -123,25 +120,21 @@ Completed Output:
 ```text
 docs/SPRINT_PLAN.md
 docs/EPIC_USER_STORY_TASKS.md
-user_stories/RL-0009/RL-0009_SPRINT_PLAN.md
-user_stories/RL-0009/RL-0009_INTERPRETATION.md
-user_stories/RL-0009/RL-0009_UX_SPEC.md
-user_stories/RL-0009/RL-0009_IMPLEMENTATION_NOTES.md
-user_stories/RL-0009/RL-0009_CODE_REVIEW.md
-user_stories/RL-0009/RL-0009_QA_REPORT.md
-user_stories/RL-0009/RL-0009_RELEASE_NOTE.md
+user_stories/RL-0010/RL-0010_SPRINT_PLAN.md
+user_stories/RL-0010/RL-0010_INTERPRETATION.md
+user_stories/RL-0010/RL-0010_UX_SPEC.md
 ```
 
 Next Agent:
 
 ```text
-Coordinator
+Code Writer
 ```
 
 Next Prompt:
 
 ```text
-/Users/jounghwapak/Developer/AI_Agents/prompts/create_sprint_plan.md
+/Users/jounghwapak/Developer/AI_Agents/prompts/generate_code.md
 ```
 
 Required Input Files:
@@ -151,33 +144,36 @@ Required Input Files:
 - docs/PROJECT_CONTEXT.md
 - docs/ARCHITECTURE.md
 - docs/SPRINT_PLAN.md
-- user_stories/RL-0009/RL-0009_TASKS.md
-- user_stories/RL-0009/RL-0009_SPRINT_PLAN.md
-- user_stories/RL-0009/RL-0009_INTERPRETATION.md
-- user_stories/RL-0009/RL-0009_UX_SPEC.md
-- user_stories/RL-0009/RL-0009_RELEASE_NOTE.md
+- user_stories/RL-0010/RL-0010_TASKS.md
+- user_stories/RL-0010/RL-0010_SPRINT_PLAN.md
+- user_stories/RL-0010/RL-0010_INTERPRETATION.md
+- user_stories/RL-0010/RL-0010_UX_SPEC.md
 
 Optional Input Files:
 
+- user_stories/RL-0006/RL-0006_RELEASE_NOTE.md
+- user_stories/RL-0007/RL-0007_RELEASE_NOTE.md
 - user_stories/RL-0008/RL-0008_RELEASE_NOTE.md
-- lib/data/services/weekly_goal_service.dart
 - lib/data/services/storage_service.dart
+- lib/data/services/level_service.dart
+- lib/data/services/weekly_goal_service.dart
 - lib/features/home/screens/home_screen.dart
-- DEVELOPMENT_LOG.md
 
 Expected Output:
 
-- Coordinator story selection and sprint plan for the next eligible story.
+- user_stories/RL-0010/RL-0010_IMPLEMENTATION_NOTES.md
 
 Blocking Conditions:
 
-- None identified for release closeout.
+- If RL-0006, RL-0007, or RL-0008 is no longer Done.
+- If implementation would require backend, login, cloud sync, analytics SDK, public ranking, social graph, or automatic publishing.
 
 Instructions:
 
-- RL-0008 is complete and must remain Done.
-- RL-0009 is Done.
-- RL-0009 release is complete.
-- Stop before selecting RL-0010 unless the Coordinator workflow is explicitly resumed.
-- Preserve working onboarding, workout logging, completion, XP, levels, and weekly goal progress behavior.
-- Do not add penalties, XP loss, level loss, streak systems, share cards, backend services, login, cloud sync, analytics SDK, social graph, or public ranking.
+- RL-0006, RL-0007, and RL-0008 are complete and must remain Done.
+- RL-0010 is selected and In Progress.
+- RL-0010-T01 interpretation is complete.
+- RL-0010-T02 UX design is complete.
+- Complete RL-0010-T03, RL-0010-T04, and RL-0010-T05 only.
+- Preserve working onboarding, workout logging, completion, XP, levels, weekly goal progress, and consistency recovery behavior.
+- Do not add backend services, login, cloud sync, analytics SDK, social graph, public ranking, automatic publishing, public feed, likes, comments, followers, or performance metrics visible by default.
