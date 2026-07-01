@@ -115,14 +115,18 @@ void main() {
     expect(find.text('Level 1'), findsOneWidget);
     expect(find.text('0 / 100 XP to Level 2'), findsOneWidget);
     expect(find.text('0 XP'), findsOneWidget);
-    expect(find.text('Weekly Goal'), findsOneWidget);
-    expect(find.text('0 / 3 workouts complete'), findsOneWidget);
-    expect(find.text('Goal: 3 workouts this week'), findsOneWidget);
     expect(
       find.textContaining('Complete a workout to earn 10 XP'),
       findsOneWidget,
     );
     expect(find.textContaining('Uninstalling RepLog'), findsOneWidget);
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+    await tester.pump();
+
+    expect(find.text('Weekly Goal'), findsOneWidget);
+    expect(find.text('0 / 3 workouts complete'), findsOneWidget);
+    expect(find.text('Goal: 3 workouts this week'), findsOneWidget);
     expect(find.text('Set your weekly goal'), findsNothing);
   });
 
@@ -410,6 +414,28 @@ void main() {
     await tester.pump();
 
     expect(find.text('01:30'), findsOneWidget);
+  });
+
+  testWidgets('uses large touch targets for rest timer controls', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await pumpFlowFitApp(tester);
+
+    final timerControls = <Finder>[
+      find.widgetWithText(ChoiceChip, '30s'),
+      find.widgetWithText(ChoiceChip, '1m'),
+      find.widgetWithText(ChoiceChip, '90s'),
+      find.widgetWithText(FilledButton, 'Start'),
+      find.widgetWithText(OutlinedButton, 'Stop'),
+      find.widgetWithText(TextButton, 'Reset'),
+    ];
+
+    for (final control in timerControls) {
+      final size = tester.getSize(control);
+      expect(size.height, greaterThanOrEqualTo(48));
+    }
   });
 
   testWidgets('adds a workout log from the bottom sheet', (

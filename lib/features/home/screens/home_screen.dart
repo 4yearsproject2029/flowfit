@@ -525,10 +525,10 @@ class _WeeklyGoalSummarySection extends StatelessWidget {
 
 class _RestTimerHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
-  double get minExtent => 148;
+  double get minExtent => 172;
 
   @override
-  double get maxExtent => 148;
+  double get maxExtent => 172;
 
   @override
   Widget build(

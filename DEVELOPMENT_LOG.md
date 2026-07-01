@@ -1350,3 +1350,70 @@ Not Required
 Next Recommended Story:
 
 RL-0013
+
+---
+
+### RL-0013
+
+Epic:
+
+EP-10 MVP Quality
+
+Status:
+
+Done
+
+Summary:
+
+- Released the MVP quality pass for RepLog.
+- Improved rest timer preset and action controls to use 48px-compatible touch targets.
+- Preserved the scrollable HomeScreen layout and stable pinned timer header.
+- Updated widget expectations to scroll to below-fold weekly-goal content.
+- Kept backend, login, cloud sync, external analytics SDK, social graph, public ranking, and new post-MVP product systems out of scope.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `user_stories/RL-0013/RL-0013_INTERPRETATION.md`
+- `user_stories/RL-0013/RL-0013_UX_SPEC.md`
+- `user_stories/RL-0013/RL-0013_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0013/RL-0013_CODE_REVIEW.md`
+- `user_stories/RL-0013/RL-0013_QA_REPORT.md`
+- `user_stories/RL-0013/RL-0013_RELEASE_NOTE.md`
+
+Files Modified:
+
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `DEVELOPMENT_LOG.md`
+- `lib/features/home/screens/home_screen.dart`
+- `lib/features/timer/widgets/rest_timer.dart`
+- `test/widget_test.dart`
+- `user_stories/RL-0013/RL-0013_TASKS.md`
+- `user_stories/RL-0013/RL-0013_SPRINT_PLAN.md`
+
+Verification:
+
+- `flutter test test/widget_test.dart -r expanded` passed with 8 passing tests and 4 documented skipped tests.
+- `flutter analyze` passed with no issues.
+- `flutter test -r expanded` passed with 38 passing tests and 4 documented skipped tests.
+
+Known Limitations:
+
+- Four widget tests remain skipped for the existing Hive async callback cleanup limitation.
+- The skipped tests are documented and were not reopened during RL-0013 because the widget suite, static analysis, and full test suite passed.
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by user instruction to continue until RL-0013 is closed as Done and to complete QA/release closeout after the one widget-suite validation pass.
+
+Next Recommended Story:
+
+None. Current MVP backlog is complete.

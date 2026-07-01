@@ -69,9 +69,8 @@ class _RestTimerState extends State<RestTimer> {
                   child: ChoiceChip(
                     label: Text(_presetLabel(seconds)),
                     selected: isSelected,
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    visualDensity: VisualDensity.compact,
-                    labelPadding: const EdgeInsets.symmetric(horizontal: 6),
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 8),
                     onSelected: (selected) {
                       _selectDuration(seconds);
                     },
@@ -85,19 +84,19 @@ class _RestTimerState extends State<RestTimer> {
             children: [
               FilledButton(
                 onPressed: isRunning ? null : _startTimer,
-                style: _compactButtonStyle(),
+                style: _timerButtonStyle(),
                 child: const Text('Start'),
               ),
               const SizedBox(width: 8),
               OutlinedButton(
                 onPressed: isRunning ? _stopTimer : null,
-                style: _compactButtonStyle(),
+                style: _timerButtonStyle(),
                 child: const Text('Stop'),
               ),
               const SizedBox(width: 8),
               TextButton(
                 onPressed: _resetTimer,
-                style: _compactButtonStyle(),
+                style: _timerButtonStyle(),
                 child: const Text('Reset'),
               ),
             ],
@@ -185,12 +184,12 @@ class _RestTimerState extends State<RestTimer> {
     return '${seconds}s';
   }
 
-  ButtonStyle _compactButtonStyle() {
+  ButtonStyle _timerButtonStyle() {
     return const ButtonStyle(
-      visualDensity: VisualDensity.compact,
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      tapTargetSize: MaterialTapTargetSize.padded,
+      minimumSize: WidgetStatePropertyAll(Size(64, 48)),
       padding: WidgetStatePropertyAll(
-        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
     );
   }
