@@ -3,13 +3,13 @@
 ## Current Story
 
 Story ID:
-RL-0011
+RL-0012
 
 Status:
 Done
 
 Reason:
-RL-0011 is complete. Share-card privacy controls were implemented, verified, and released with a documented widget-test/Hive cleanup limitation for one skipped opt-in widget test.
+RL-0012 is complete. Local MVP validation metrics were implemented, verified through service/storage tests, and released with a documented widget-test/Hive cleanup limitation for one skipped share-card generation widget test.
 
 ## Routing Decision Traceability
 
@@ -17,7 +17,7 @@ Decision Point:
 Coordinator Story Selection
 
 Selected Story:
-RL-0011
+RL-0012
 
 Previous Story State:
 Not Started
@@ -32,18 +32,19 @@ Inputs Considered:
 - docs/PROJECT_CONTEXT.md
 - docs/ARCHITECTURE.md
 - docs/SPRINT_PLAN.md
-- user_stories/RL-0010/RL-0010_RELEASE_NOTE.md
-- user_stories/RL-0011/RL-0011_TASKS.md
+- user_stories/RL-0011/RL-0011_RELEASE_NOTE.md
+- user_stories/RL-0012/RL-0012_TASKS.md
 
 Dependency and Blocker Status:
 
-- RL-0011 depends on RL-0010.
-- RL-0010 is Done in docs/EPIC_USER_STORY_TASKS.md.
-- RL-0011 task file is present.
-- No coordinator-stage blockers identified.
+- RL-0012 depends on RL-0004, RL-0008, and RL-0010.
+- RL-0004 is Done.
+- RL-0008 is Done.
+- RL-0010 is Done.
+- No release blockers remain.
 
 Selection Rationale:
-RL-0011 was selected because RL-0010 established optional, private-by-default share-card generation. Privacy controls are now the next eligible share-card story, allowing users to preview cards and explicitly opt in before any hidden-by-default performance metrics appear.
+RL-0012 was selected because RepLog already had local persistence, weekly-goal progress, consistency recovery, and share-card generation foundations. The story added local-only MVP validation metrics without introducing accounts, backend services, cloud sync, external analytics SDKs, dashboard UI, or social features.
 
 Next Agent:
 Coordinator
@@ -57,39 +58,36 @@ Next Prompt:
 - PROJECT_CONTEXT.md: Present.
 - ARCHITECTURE.md: Present.
 - EPIC_USER_STORY_TASKS.md: Present.
-- RL-0011 task file: Present.
-- Story dependency: RL-0010.
-- Dependency status: RL-0010 is Done.
-- MVP scope: Selected as EP-08 Privacy.
+- RL-0012 task file: Present.
+- Story dependencies: RL-0004, RL-0008, RL-0010.
+- Dependency status: all dependencies are Done.
+- MVP scope: Completed as EP-09 MVP Validation.
 - Current blocker status: No release blockers identified.
 
 ## Execution Order
 
-1. Select RL-0011 and create sprint plan.
-2. Define privacy defaults and explicit opt-in metric rules.
-3. Design share-card preview and metric visibility control flow.
-4. Implement preview of visible share-card information before sharing.
-5. Implement explicit opt-in for hidden-by-default performance metrics if included in MVP.
-6. Persist supported share preference choices locally.
-7. Test preview behavior, hidden defaults, opt-in behavior, persistence, and no automatic publishing.
-8. Review privacy behavior against private-by-default product requirements.
-9. Release Manager closes RL-0011 after validation and documentation updates.
+1. Selected RL-0012 and created sprint plan.
+2. Defined local metric rules for weekly goal completion rate, average workouts per week, average share cards generated, and return-after-missed-week detection.
+3. Implemented local MVP validation metric calculations.
+4. Persisted user-initiated share-card generation counts locally.
+5. Tested representative metric histories and storage-backed behavior.
+6. Reviewed traceability to acceptance criteria and MVP boundaries.
+7. Completed QA validation with targeted tests, full tests, widget baseline, and static analysis.
+8. Release Manager closed RL-0012 as Done.
 
 ## Assigned Agents
 
 1. Coordinator
 2. User Story Interpreter
-3. UX Designer
-4. Code Writer
-5. Code Reviewer
-6. QA Tester
-7. Release Manager
+3. Code Writer
+4. Code Reviewer
+5. QA Tester
+6. Release Manager
 
 ## Required Deliverables
 
-- RL-0011 sprint plan.
+- RL-0012 sprint plan.
 - Interpretation output.
-- UX specification.
 - Implementation notes.
 - Code review report.
 - QA report.
@@ -97,15 +95,15 @@ Next Prompt:
 
 ## Risks Or Blockers
 
-- Privacy controls could drift into broad share-card customization beyond MVP.
-- Hidden-by-default performance metrics must remain hidden unless the user explicitly opts in.
-- Preference persistence should remain local and should not introduce backend, login, sync, analytics SDK, or public sharing features.
-- The story should not add automatic publishing or native sharing behavior beyond the existing RL-0010 preview/generation scope unless required by interpretation and UX.
+- The share-card generation widget test is skipped due to the known widget-test/Hive async cleanup limitation around modal callbacks that perform writes.
+- Production behavior is covered by service/storage tests.
+- Follow-up recommended: storage abstraction or fake implementation for Hive-backed widget tests.
 
 ## Expected Outcome
 
-- RL-0011 is interpreted, designed, implemented, reviewed, QAed, and closed as Done.
-- RL-0012 becomes the likely next eligible story after RL-0011, subject to coordinator validation.
+- RL-0012 is closed as Done.
+- RepLog calculates local MVP validation metrics from on-device workout, weekly-goal, planned-rest, recovery, and share-card generation data.
+- RL-0013 becomes the likely next eligible story after RL-0012, subject to coordinator validation.
 
 ## Agent Handoff
 
@@ -120,13 +118,12 @@ Completed Output:
 ```text
 docs/SPRINT_PLAN.md
 docs/EPIC_USER_STORY_TASKS.md
-user_stories/RL-0011/RL-0011_SPRINT_PLAN.md
-user_stories/RL-0011/RL-0011_INTERPRETATION.md
-user_stories/RL-0011/RL-0011_UX_SPEC.md
-user_stories/RL-0011/RL-0011_IMPLEMENTATION_NOTES.md
-user_stories/RL-0011/RL-0011_CODE_REVIEW.md
-user_stories/RL-0011/RL-0011_QA_REPORT.md
-user_stories/RL-0011/RL-0011_RELEASE_NOTE.md
+user_stories/RL-0012/RL-0012_SPRINT_PLAN.md
+user_stories/RL-0012/RL-0012_INTERPRETATION.md
+user_stories/RL-0012/RL-0012_IMPLEMENTATION_NOTES.md
+user_stories/RL-0012/RL-0012_CODE_REVIEW.md
+user_stories/RL-0012/RL-0012_QA_REPORT.md
+user_stories/RL-0012/RL-0012_RELEASE_NOTE.md
 ```
 
 Next Agent:
@@ -148,16 +145,11 @@ Required Input Files:
 - docs/PROJECT_CONTEXT.md
 - docs/ARCHITECTURE.md
 - docs/SPRINT_PLAN.md
-- user_stories/RL-0011/RL-0011_RELEASE_NOTE.md
+- user_stories/RL-0012/RL-0012_RELEASE_NOTE.md
 
 Optional Input Files:
 
-- docs/brainstorm/share_cards.md
-- user_stories/RL-0010/RL-0010_RELEASE_NOTE.md
-- lib/features/share_cards/models/share_card_data.dart
-- lib/features/share_cards/services/share_card_service.dart
-- lib/features/share_cards/widgets/share_card_preview.dart
-- lib/features/share_cards/widgets/share_cards_section.dart
+- user_stories/RL-0012/RL-0012_QA_REPORT.md
 
 Expected Output:
 
@@ -169,6 +161,6 @@ Blocking Conditions:
 
 Instructions:
 
-- RL-0011 is Done.
-- RL-0012 is the likely next eligible story, subject to Coordinator validation.
+- RL-0012 is Done.
+- RL-0013 is the likely next eligible story, subject to Coordinator validation.
 - Preserve completed story state and Story IDs.

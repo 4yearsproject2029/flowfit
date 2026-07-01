@@ -5,6 +5,7 @@ import '../local/local_database.dart';
 import '../models/workout.dart';
 import '../models/workout_log.dart';
 import 'consistency_recovery_service.dart';
+import 'mvp_validation_metrics_service.dart';
 
 class StorageService {
   static const int workoutCompletionXp = 10;
@@ -53,6 +54,10 @@ class StorageService {
     return Hive.box<String>(LocalDatabase.recoveryMetricBoxName);
   }
 
+  Box<int> get _shareCardGenerationBox {
+    return Hive.box<int>(LocalDatabase.shareCardGenerationBoxName);
+  }
+
   ValueListenable<Box<WorkoutLog>> get workoutLogsListenable {
     return _workoutLogBox.listenable();
   }
@@ -67,6 +72,31 @@ class StorageService {
 
   bool shouldShowShareCardWorkoutMetrics() {
     return _appSettingsBox.get(_showShareCardWorkoutMetricsKey) ?? false;
+  }
+
+  Future<void> recordShareCardGenerated({DateTime? generatedAt}) async {
+    final dateKey = _dateKey(generatedAt ?? DateTime.now());
+    final generationCount = _shareCardGenerationBox.get(dateKey) ?? 0;
+
+    await _shareCardGenerationBox.put(dateKey, generationCount + 1);
+  }
+
+  Map<String, int> getShareCardGenerationCounts() {
+    final generationCounts = <String, int>{};
+    for (final key in _shareCardGenerationBox.keys.whereType<String>()) {
+      generationCounts[key] = _shareCardGenerationBox.get(key) ?? 0;
+    }
+    return Map.unmodifiable(generationCounts);
+  }
+
+  MvpValidationMetrics getMvpValidationMetrics({DateTime? today}) {
+    return MvpValidationMetricsService().calculateMetrics(
+      weeklyGoal: getWeeklyGoal() ?? 0,
+      workoutLogs: getWorkoutLogs(),
+      shareCardGenerationCounts: getShareCardGenerationCounts(),
+      today: today ?? DateTime.now(),
+      plannedRestDates: getPlannedRestDates(),
+    );
   }
 
   Future<void> saveShareCardWorkoutMetricsPreference(bool isEnabled) async {

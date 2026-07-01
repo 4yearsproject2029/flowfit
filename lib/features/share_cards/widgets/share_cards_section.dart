@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../data/models/workout_log.dart';
@@ -71,10 +73,15 @@ class ShareCardsSection extends StatelessWidget {
               unavailableMessage:
                   'Complete a workout on this date to make a card.',
             ),
-            _ShareCardAction(label: 'Level', card: levelCard),
+            _ShareCardAction(
+              label: 'Level',
+              card: levelCard,
+              storageService: storageService,
+            ),
             _ShareCardAction(
               label: 'Weekly',
               card: weeklyCard,
+              storageService: storageService,
               unavailableMessage: 'Reach your weekly goal to make this card.',
             ),
           ],
@@ -241,6 +248,10 @@ class _ShareCardPreviewSheetState extends State<_ShareCardPreviewSheet> {
                     setState(() {
                       hasGenerated = true;
                     });
+                    final storageService = widget.storageService;
+                    if (storageService != null) {
+                      unawaited(storageService.recordShareCardGenerated());
+                    }
                   },
                   child: const Text('Generate'),
                 ),

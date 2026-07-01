@@ -102,6 +102,32 @@ void main() {
     expect(StorageService().shouldShowShareCardWorkoutMetrics(), isFalse);
   });
 
+  test('persists share card generation counts after restart', () async {
+    await storageService.recordShareCardGenerated(
+      generatedAt: DateTime(2026, 7, 1),
+    );
+    await storageService.recordShareCardGenerated(
+      generatedAt: DateTime(2026, 7, 1),
+    );
+    await storageService.recordShareCardGenerated(
+      generatedAt: DateTime(2026, 7, 2),
+    );
+
+    expect(storageService.getShareCardGenerationCounts(), {
+      '2026-07-01': 2,
+      '2026-07-02': 1,
+    });
+
+    await Hive.close();
+    await LocalDatabase.init(testPath: testHiveDirectory.path);
+    storageService = StorageService();
+
+    expect(storageService.getShareCardGenerationCounts(), {
+      '2026-07-01': 2,
+      '2026-07-02': 1,
+    });
+  });
+
   test('awards completion XP once and persists the total', () async {
     final workoutLog = WorkoutLog(
       id: 'log-1',
@@ -451,6 +477,70 @@ void main() {
       );
     },
   );
+
+  test('calculates MVP validation metrics from local storage', () async {
+    final today = DateTime(2026, 7, 15);
+
+    await storageService.saveWeeklyGoal(2);
+    await storageService.addWorkoutLog(
+      WorkoutLog(
+        id: 'week-one-a',
+        date: '2026-06-30',
+        workoutId: 'workout-one-a',
+        workoutName: 'Walk',
+        category: 'Cardio',
+        isCompleted: true,
+        createdAt: DateTime(2026, 6, 30),
+      ),
+    );
+    await storageService.addWorkoutLog(
+      WorkoutLog(
+        id: 'week-one-b',
+        date: '2026-07-01',
+        workoutId: 'workout-one-b',
+        workoutName: 'Squat',
+        category: 'Strength',
+        isCompleted: true,
+        createdAt: DateTime(2026, 7, 1),
+      ),
+    );
+    await storageService.addWorkoutLog(
+      WorkoutLog(
+        id: 'week-two-a',
+        date: '2026-07-08',
+        workoutId: 'workout-two-a',
+        workoutName: 'Ride',
+        category: 'Cardio',
+        isCompleted: true,
+        createdAt: DateTime(2026, 7, 8),
+      ),
+    );
+    await storageService.addWorkoutLog(
+      WorkoutLog(
+        id: 'week-three-a',
+        date: '2026-07-15',
+        workoutId: 'workout-three-a',
+        workoutName: 'Press',
+        category: 'Strength',
+        isCompleted: true,
+        createdAt: today,
+      ),
+    );
+    await storageService.recordShareCardGenerated(
+      generatedAt: DateTime(2026, 7, 1),
+    );
+    await storageService.recordShareCardGenerated(
+      generatedAt: DateTime(2026, 7, 15),
+    );
+
+    final metrics = storageService.getMvpValidationMetrics(today: today);
+
+    expect(metrics.measuredWeeks, 3);
+    expect(metrics.weeklyGoalCompletionRate, closeTo(1 / 3, 0.001));
+    expect(metrics.averageWorkoutsPerWeek, closeTo(4 / 3, 0.001));
+    expect(metrics.averageShareCardsGeneratedPerWeek, closeTo(2 / 3, 0.001));
+    expect(metrics.hasReturnedAfterMissedWorkoutWeek, isTrue);
+  });
 }
 
 String _dateKey(DateTime date) {
