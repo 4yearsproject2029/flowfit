@@ -6,10 +6,10 @@ Story ID:
 RL-0009
 
 Status:
-In Progress
+Done
 
 Reason:
-RL-0009 is the next eligible story after RL-0008. RL-0008 is Done, and consistency recovery can now build on weekly goal progress without introducing punishment, XP loss, level loss, backend services, or public comparison.
+RL-0009 release is complete. Consistency recovery now detects return-after-missed-week behavior locally, preserves XP and levels, treats planned rest as neutral, and displays encouraging home-screen language.
 
 ## Routing Decision Traceability
 
@@ -46,10 +46,10 @@ Selection Rationale:
 RL-0009 was selected because RL-0008 is Done and the next product need is consistency recovery: handling missed weeks in a way that protects XP and levels, detects returns for local metrics, and keeps RepLog encouraging for returning users.
 
 Next Agent:
-Code Reviewer
+Coordinator
 
 Next Prompt:
-/Users/jounghwapak/Developer/AI_Agents/prompts/review_code.md
+/Users/jounghwapak/Developer/AI_Agents/prompts/create_sprint_plan.md
 
 ## Dependency Validation
 
@@ -106,12 +106,16 @@ Next Prompt:
 - RL-0009 is interpreted, designed, implemented, reviewed, QAed, and closed as Done.
 - RL-0010 becomes the likely next eligible story after RL-0009, subject to coordinator validation.
 
+## Release Summary
+
+RL-0009 released MVP consistency recovery using local missed-week detection, primitive Hive-backed planned rest and recovery metric dates, supportive return messaging, and regression coverage for XP and level preservation.
+
 ## Agent Handoff
 
 Current Agent:
 
 ```text
-Code Writer
+Release Manager
 ```
 
 Completed Output:
@@ -123,18 +127,21 @@ user_stories/RL-0009/RL-0009_SPRINT_PLAN.md
 user_stories/RL-0009/RL-0009_INTERPRETATION.md
 user_stories/RL-0009/RL-0009_UX_SPEC.md
 user_stories/RL-0009/RL-0009_IMPLEMENTATION_NOTES.md
+user_stories/RL-0009/RL-0009_CODE_REVIEW.md
+user_stories/RL-0009/RL-0009_QA_REPORT.md
+user_stories/RL-0009/RL-0009_RELEASE_NOTE.md
 ```
 
 Next Agent:
 
 ```text
-Code Reviewer
+Coordinator
 ```
 
 Next Prompt:
 
 ```text
-/Users/jounghwapak/Developer/AI_Agents/prompts/review_code.md
+/Users/jounghwapak/Developer/AI_Agents/prompts/create_sprint_plan.md
 ```
 
 Required Input Files:
@@ -148,7 +155,7 @@ Required Input Files:
 - user_stories/RL-0009/RL-0009_SPRINT_PLAN.md
 - user_stories/RL-0009/RL-0009_INTERPRETATION.md
 - user_stories/RL-0009/RL-0009_UX_SPEC.md
-- user_stories/RL-0009/RL-0009_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0009/RL-0009_RELEASE_NOTE.md
 
 Optional Input Files:
 
@@ -160,19 +167,17 @@ Optional Input Files:
 
 Expected Output:
 
-- user_stories/RL-0009/RL-0009_CODE_REVIEW.md
+- Coordinator story selection and sprint plan for the next eligible story.
 
 Blocking Conditions:
 
-- None identified for Code Review stage.
+- None identified for release closeout.
 
 Instructions:
 
 - RL-0008 is complete and must remain Done.
-- RL-0009 is selected and In Progress.
-- RL-0009-T01 interpretation is complete.
-- RL-0009-T02 UX design is complete.
-- RL-0009-T03, RL-0009-T04, and RL-0009-T05 implementation tasks are complete.
-- Complete RL-0009-T07 only.
+- RL-0009 is Done.
+- RL-0009 release is complete.
+- Stop before selecting RL-0010 unless the Coordinator workflow is explicitly resumed.
 - Preserve working onboarding, workout logging, completion, XP, levels, and weekly goal progress behavior.
 - Do not add penalties, XP loss, level loss, streak systems, share cards, backend services, login, cloud sync, analytics SDK, social graph, or public ranking.

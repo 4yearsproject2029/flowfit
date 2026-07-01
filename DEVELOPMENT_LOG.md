@@ -1028,3 +1028,92 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0009
+
+---
+
+## 2026-06-30
+
+### RL-0009
+
+Epic:
+
+EP-06 Consistency Recovery
+
+Status:
+
+Done
+
+Summary:
+
+- Completed RL-0009 MVP consistency recovery release.
+- Added local return-after-missed-week detection using completed workout logs and the selected weekly goal.
+- Preserved XP totals and level progress when missed-week recovery is detected.
+- Added primitive Hive-backed planned rest dates and recovery metric dates without adapter migration.
+- Added encouraging home-screen recovery language and neutral planned-rest selected-date messaging.
+- Fixed stale recovery metric cleanup after a return workout is uncompleted or deleted.
+- Did not add penalties, XP loss, level loss, streaks, share cards, backend, login, sync, analytics, social graph, or public ranking.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `lib/data/services/consistency_recovery_service.dart`
+- `test/consistency_recovery_service_test.dart`
+- `user_stories/RL-0009/RL-0009_SPRINT_PLAN.md`
+- `user_stories/RL-0009/RL-0009_INTERPRETATION.md`
+- `user_stories/RL-0009/RL-0009_UX_SPEC.md`
+- `user_stories/RL-0009/RL-0009_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0009/RL-0009_CODE_REVIEW.md`
+- `user_stories/RL-0009/RL-0009_QA_REPORT.md`
+- `user_stories/RL-0009/RL-0009_RELEASE_NOTE.md`
+
+Files Modified:
+
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `DEVELOPMENT_LOG.md`
+- `lib/data/local/local_database.dart`
+- `lib/data/services/storage_service.dart`
+- `lib/features/home/screens/home_screen.dart`
+- `test/storage_service_test.dart`
+- `test/widget_test.dart`
+- `user_stories/RL-0009/RL-0009_TASKS.md`
+- `user_stories/RL-0009/RL-0009_SPRINT_PLAN.md`
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- None
+
+Commit References:
+
+- None
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Not Required
+
+Known Limitations:
+
+- Existing callback-write widget tests remain skipped for the documented widget-test infrastructure reason.
+- Planned rest is MVP-small and selected-date based, not a full rest-day planning calendar.
+- Recovery metrics remain local primitive signals for later RL-0012 use.
+- Share cards, privacy controls, and MVP validation dashboards remain future-story scope.
+
+Lessons Learned:
+
+- Recovery state needs cleanup when the underlying return workout state changes, not only when a new completion is added.
+- Primitive Hive boxes are still sufficient for RL-0009 because no adapter-backed model fields were required.
+
+Next Recommended Story:
+
+RL-0010

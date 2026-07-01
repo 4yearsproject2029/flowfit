@@ -107,12 +107,14 @@ class StorageService {
 
     if (shouldAwardXp) {
       await _awardWorkoutCompletionXp(workoutLog);
-      await refreshConsistencyRecoveryMetrics();
     }
+
+    await refreshConsistencyRecoveryMetrics();
   }
 
   Future<void> deleteWorkoutLog(String workoutLogId) async {
     await _workoutLogBox.delete(workoutLogId);
+    await refreshConsistencyRecoveryMetrics();
   }
 
   int? getWeeklyGoal() {

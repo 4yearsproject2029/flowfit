@@ -286,6 +286,105 @@ void main() {
   );
 
   test(
+    'clears recovery metric dates when return workout is uncompleted',
+    () async {
+      final today = DateTime.now();
+      final currentWeekStart = WeeklyGoalService().startOfWeek(today);
+      final previousWeekStart = currentWeekStart.subtract(
+        const Duration(days: 7),
+      );
+
+      await storageService.saveWeeklyGoal(3);
+      await storageService.addWorkoutLog(
+        WorkoutLog(
+          id: 'previous-log',
+          date: _dateKey(previousWeekStart),
+          workoutId: 'previous-workout',
+          workoutName: 'Walk',
+          category: 'Cardio',
+          isCompleted: true,
+          createdAt: previousWeekStart,
+        ),
+      );
+      await storageService.addWorkoutLog(
+        WorkoutLog(
+          id: 'return-log',
+          date: _dateKey(today),
+          workoutId: 'return-workout',
+          workoutName: 'Squat',
+          category: 'Strength',
+          isCompleted: false,
+          createdAt: today,
+        ),
+      );
+
+      await storageService.toggleWorkoutCompletion('return-log');
+
+      expect(
+        storageService.getLastDetectedMissedWeekStartDate(),
+        _dateKey(previousWeekStart),
+      );
+      expect(
+        storageService.getLastReturnWeekStartDate(),
+        _dateKey(currentWeekStart),
+      );
+
+      await storageService.toggleWorkoutCompletion('return-log');
+
+      expect(storageService.getLastDetectedMissedWeekStartDate(), isNull);
+      expect(storageService.getLastReturnWeekStartDate(), isNull);
+    },
+  );
+
+  test('clears recovery metric dates when return workout is deleted', () async {
+    final today = DateTime.now();
+    final currentWeekStart = WeeklyGoalService().startOfWeek(today);
+    final previousWeekStart = currentWeekStart.subtract(
+      const Duration(days: 7),
+    );
+
+    await storageService.saveWeeklyGoal(3);
+    await storageService.addWorkoutLog(
+      WorkoutLog(
+        id: 'previous-log',
+        date: _dateKey(previousWeekStart),
+        workoutId: 'previous-workout',
+        workoutName: 'Walk',
+        category: 'Cardio',
+        isCompleted: true,
+        createdAt: previousWeekStart,
+      ),
+    );
+    await storageService.addWorkoutLog(
+      WorkoutLog(
+        id: 'return-log',
+        date: _dateKey(today),
+        workoutId: 'return-workout',
+        workoutName: 'Squat',
+        category: 'Strength',
+        isCompleted: false,
+        createdAt: today,
+      ),
+    );
+
+    await storageService.toggleWorkoutCompletion('return-log');
+
+    expect(
+      storageService.getLastDetectedMissedWeekStartDate(),
+      _dateKey(previousWeekStart),
+    );
+    expect(
+      storageService.getLastReturnWeekStartDate(),
+      _dateKey(currentWeekStart),
+    );
+
+    await storageService.deleteWorkoutLog('return-log');
+
+    expect(storageService.getLastDetectedMissedWeekStartDate(), isNull);
+    expect(storageService.getLastReturnWeekStartDate(), isNull);
+  });
+
+  test(
     'planned rest persists and prevents missed-week recovery detection',
     () async {
       final today = DateTime.now();

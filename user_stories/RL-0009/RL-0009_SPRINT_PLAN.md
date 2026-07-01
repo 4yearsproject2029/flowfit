@@ -29,7 +29,7 @@ Coordinator Agent
 Status:
 
 ```text
-In Progress
+Done
 ```
 
 ---
@@ -135,6 +135,10 @@ RL-0008 is Done in docs/EPIC_USER_STORY_TASKS.md and released persisted weekly g
 * Release note created.
 * Story status synchronized to Done.
 
+## Release Summary
+
+RL-0009 released MVP consistency recovery. The app now detects return-after-missed-week behavior locally, preserves XP and level progress, records local recovery metric dates, treats planned rest as neutral, and shows encouraging private recovery language on the home screen.
+
 ---
 
 ## Scope Boundaries
@@ -163,7 +167,7 @@ Out of scope:
 Current Agent:
 
 ```text
-Code Writer
+Release Manager
 ```
 
 Completed Output:
@@ -175,18 +179,21 @@ user_stories/RL-0009/RL-0009_SPRINT_PLAN.md
 user_stories/RL-0009/RL-0009_INTERPRETATION.md
 user_stories/RL-0009/RL-0009_UX_SPEC.md
 user_stories/RL-0009/RL-0009_IMPLEMENTATION_NOTES.md
+user_stories/RL-0009/RL-0009_CODE_REVIEW.md
+user_stories/RL-0009/RL-0009_QA_REPORT.md
+user_stories/RL-0009/RL-0009_RELEASE_NOTE.md
 ```
 
 Next Agent:
 
 ```text
-Code Reviewer
+Coordinator
 ```
 
 Next Prompt:
 
 ```text
-/Users/jounghwapak/Developer/AI_Agents/prompts/review_code.md
+/Users/jounghwapak/Developer/AI_Agents/prompts/create_sprint_plan.md
 ```
 
 Required Input Files:
@@ -200,7 +207,7 @@ Required Input Files:
 * user_stories/RL-0009/RL-0009_SPRINT_PLAN.md
 * user_stories/RL-0009/RL-0009_INTERPRETATION.md
 * user_stories/RL-0009/RL-0009_UX_SPEC.md
-* user_stories/RL-0009/RL-0009_IMPLEMENTATION_NOTES.md
+* user_stories/RL-0009/RL-0009_RELEASE_NOTE.md
 
 Optional Input Files:
 
@@ -213,7 +220,7 @@ Optional Input Files:
 Expected Output:
 
 ```text
-user_stories/RL-0009/RL-0009_CODE_REVIEW.md
+Coordinator story selection and sprint plan for the next eligible story.
 ```
 
 Blocking Conditions:
@@ -226,8 +233,8 @@ Instructions:
 
 * RL-0009-T01 interpretation is complete.
 * RL-0009-T02 UX design is complete.
-* RL-0009-T03, RL-0009-T04, and RL-0009-T05 implementation tasks are complete.
-* Complete RL-0009-T07 only.
+* RL-0009 release is complete.
+* Stop before selecting RL-0010 unless the Coordinator workflow is explicitly resumed.
 * RL-0008 is complete and must remain Done.
 * Preserve working onboarding, workout logging, completion, XP, levels, and weekly goal progress behavior.
 * Do not add penalties, XP loss, level loss, streak systems, share cards, backend services, login, cloud sync, analytics SDK, social graph, or public ranking.

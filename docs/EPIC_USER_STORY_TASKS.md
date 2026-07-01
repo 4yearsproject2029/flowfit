@@ -222,7 +222,7 @@ RL-0013
 | Done | RL-0006 | EP-05 | Gamification - XP | Must Have | P0 | L | RL-0005 | No | No | As a user, I want to earn XP when I complete a workout, so that I feel motivated to stay consistent. | - Completing a workout grants XP once.<br>- XP updates immediately.<br>- XP persists after app restart.<br>- Toggling, editing, deleting, or recreating workouts does not duplicate XP.<br>- Users can see why XP was awarded. |
 | Done | RL-0007 | EP-05 | Gamification - Levels | Must Have | P0 | M | RL-0006 | Yes | No | As a user, I want to see my level and progress toward the next level, so that my consistency feels visible. | - The home screen displays current level.<br>- The app displays XP progress toward the next level.<br>- Progress updates immediately after XP changes.<br>- Levels never decrease.<br>- Level progress persists after app restart. |
 | Done | RL-0008 | EP-06 | Weekly Goals | Must Have | P0 | M | RL-0002, RL-0005 | Yes | No | As a user, I want to see progress toward my weekly workout goal, so that I know whether I am staying consistent. | - The app displays the selected weekly goal.<br>- The app displays completed workouts for the current week.<br>- Progress updates immediately.<br>- Goal completion is recognized when the target is reached.<br>- Goal progress persists after app restart. |
-| In Progress | RL-0009 | EP-06 | Consistency Recovery | Should Have | P1 | S | RL-0008 | Yes | No | As a user, I want RepLog to handle missed weeks without harsh punishment, so that I feel encouraged to return. | - Missing a workout week does not remove XP.<br>- Missing a workout week does not reduce levels.<br>- Returning after a missed week is detectable for metrics.<br>- The app displays encouraging language after returning.<br>- Planned rest days do not count as failures. |
+| Done | RL-0009 | EP-06 | Consistency Recovery | Should Have | P1 | S | RL-0008 | Yes | No | As a user, I want RepLog to handle missed weeks without harsh punishment, so that I feel encouraged to return. | - Missing a workout week does not remove XP.<br>- Missing a workout week does not reduce levels.<br>- Returning after a missed week is detectable for metrics.<br>- The app displays encouraging language after returning.<br>- Planned rest days do not count as failures. |
 | Not Started | RL-0010 | EP-07 | Share Cards | Must Have | P1 | L | RL-0006, RL-0007, RL-0008 | Yes | No | As a user, I want to create a share card for workout completion, level-up, or weekly goal completion, so that I can celebrate progress without exposing embarrassing numbers. | - Users can generate workout completion cards.<br>- Users can generate level-up cards.<br>- Users can generate weekly goal cards.<br>- Weight, sets, reps, calories, and PRs are hidden by default.<br>- Share card generation is optional and user-initiated. |
 | Not Started | RL-0011 | EP-08 | Privacy | Should Have | P1 | M | RL-0010 | Yes | No | As a user, I want control over which metrics appear on share cards, so that I can share progress comfortably. | - Share cards show consistency-focused metrics by default.<br>- Users can preview cards before sharing.<br>- Hidden performance metrics require explicit opt-in.<br>- Share cards are never published automatically.<br>- Share preferences persist locally. |
 | Not Started | RL-0012 | EP-09 | MVP Validation | Should Have | P1 | M | RL-0004, RL-0008, RL-0010 | No | No | As a product stakeholder, I want local MVP validation metrics, so that I can evaluate whether RepLog improves consistency. | - The app calculates weekly goal completion rate locally.<br>- The app calculates average workouts per week locally.<br>- The app calculates average share cards generated locally.<br>- The app detects returns after missed weeks.<br>- Metrics require no login or backend. |
@@ -325,6 +325,7 @@ Dependency validation:
 | 2026-06-30 | RL-0008 | Not Started | In Progress | Coordinator | Next eligible P0 weekly goals story selected after RL-0007 completion. |
 | 2026-06-30 | RL-0008 | In Progress | Done | Release Manager | Weekly goal progress display, persistence coverage, QA, and release closeout completed. |
 | 2026-06-30 | RL-0009 | Not Started | In Progress | Coordinator | Next eligible consistency recovery story selected after RL-0008 completion. |
+| 2026-06-30 | RL-0009 | In Progress | Done | Release Manager | Consistency recovery behavior, planned-rest handling, QA pass, and release closeout completed. |
 
 ---
 
@@ -334,22 +335,22 @@ Dependency validation:
 | ------ | ----- |
 | Total Stories | 14 |
 | Not Started | 4 |
-| In Progress | 1 |
+| In Progress | 0 |
 | Blocked | 0 |
 | On Hold | 0 |
-| Done | 9 |
+| Done | 10 |
 | Canceled | 0 |
 
 Completion Rate:
 
 ```text
-9 / (14 - 0) = 64.3%
+10 / (14 - 0) = 71.4%
 ```
 
 MVP Completion Rate:
 
 ```text
-9 / (14 - 0) = 64.3%
+10 / (14 - 0) = 71.4%
 ```
 
 ---
@@ -373,7 +374,7 @@ Stories updated:
 * `RL-0006`: Status updated to Done after XP award behavior, duplicate prevention, persistence, Code Review approval, QA pass, and release closeout.
 * `RL-0007`: Status updated to Done after level progress display, persistence coverage, Code Review approval, QA pass, and release closeout.
 * `RL-0008`: Status updated to Done after weekly goal progress display, persistence coverage, Code Review approval, QA pass, and release closeout.
-* `RL-0009`: Status updated to In Progress after Coordinator selected consistency recovery as the next eligible story after RL-0008.
+* `RL-0009`: Status updated to Done after consistency recovery behavior, planned-rest handling, Code Review approval, QA pass, and release closeout.
 * `RL-0004`: Dependency updated from `RL-0005` to `RL-0002, RL-0005` because offline persistence acceptance criteria include onboarding and weekly goal state.
 * `RL-0013`: Dependency updated to include `RL-0007`, and acceptance criteria now explicitly include levels in MVP manual QA.
 
@@ -416,6 +417,7 @@ Reasoning:
 | v1.9 | 2026-06-30 | Coordinator Agent | Selected RL-0008 as the next eligible P0 story and started the weekly goals sprint. |
 | v1.10 | 2026-06-30 | Release Manager Agent | Closed RL-0008 as Done after weekly goal progress display, persistence coverage, QA pass, and release closeout. |
 | v1.11 | 2026-06-30 | Coordinator Agent | Selected RL-0009 as the next eligible consistency recovery story and started the sprint. |
+| v1.12 | 2026-06-30 | Release Manager Agent | Closed RL-0009 as Done after consistency recovery, planned-rest handling, QA pass, and release closeout. |
 
 ---
 
@@ -424,7 +426,7 @@ Reasoning:
 Current Agent:
 
 ```text
-Code Writer
+Release Manager
 ```
 
 Completed Output:
@@ -436,18 +438,21 @@ user_stories/RL-0009/RL-0009_SPRINT_PLAN.md
 user_stories/RL-0009/RL-0009_INTERPRETATION.md
 user_stories/RL-0009/RL-0009_UX_SPEC.md
 user_stories/RL-0009/RL-0009_IMPLEMENTATION_NOTES.md
+user_stories/RL-0009/RL-0009_CODE_REVIEW.md
+user_stories/RL-0009/RL-0009_QA_REPORT.md
+user_stories/RL-0009/RL-0009_RELEASE_NOTE.md
 ```
 
 Next Agent:
 
 ```text
-Code Reviewer
+Coordinator
 ```
 
 Next Prompt:
 
 ```text
-/Users/jounghwapak/Developer/AI_Agents/prompts/review_code.md
+/Users/jounghwapak/Developer/AI_Agents/prompts/create_sprint_plan.md
 ```
 
 Required Input Files:
@@ -462,20 +467,17 @@ Required Input Files:
 * `user_stories/RL-0009/RL-0009_SPRINT_PLAN.md`
 * `user_stories/RL-0009/RL-0009_INTERPRETATION.md`
 * `user_stories/RL-0009/RL-0009_UX_SPEC.md`
-* `user_stories/RL-0009/RL-0009_IMPLEMENTATION_NOTES.md`
+* `user_stories/RL-0009/RL-0009_RELEASE_NOTE.md`
 
 Optional Input Files:
 
 * `docs/REPLOG_CODEBASE_AUDIT.md`
-* `user_stories/RL-0008/RL-0008_RELEASE_NOTE.md`
-* `lib/data/services/weekly_goal_service.dart`
-* `lib/data/services/storage_service.dart`
-* `lib/features/home/screens/home_screen.dart`
-* Existing Flutter source files as reference only
+* `user_stories/RL-0009/RL-0009_CODE_REVIEW.md`
+* `user_stories/RL-0009/RL-0009_QA_REPORT.md`
 
 Expected Output:
 
-* RL-0009 code review report covering local recovery detection, XP and level preservation, planned-rest handling, verification evidence, and out-of-scope exclusions.
+* Coordinator story selection and sprint plan for the next eligible story.
 
 Blocking Conditions:
 
@@ -484,10 +486,8 @@ Blocking Conditions:
 Instructions:
 
 * RL-0008 is complete and must remain Done.
-* RL-0009 is selected and In Progress.
+* RL-0009 is Done.
 * Preserve Story IDs and completed story state.
-* RL-0009-T01 interpretation is complete.
-* RL-0009-T02 UX design is complete.
-* RL-0009-T03, RL-0009-T04, and RL-0009-T05 implementation tasks are complete.
-* Complete RL-0009-T07 only.
+* RL-0009 release is complete.
+* Stop before selecting RL-0010 unless the Coordinator workflow is explicitly resumed.
 * Do not add penalties, XP loss, level loss, streak systems, share cards, backend services, login, cloud sync, analytics SDK, social graph, or public ranking.
