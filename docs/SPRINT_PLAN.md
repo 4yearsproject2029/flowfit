@@ -6,10 +6,10 @@ Story ID:
 RL-0010
 
 Status:
-In Progress
+Done
 
 Reason:
-RL-0010 is the next eligible story after RL-0009. Its dependencies, RL-0006, RL-0007, and RL-0008, are Done, and share cards can now build on workout completion, level progress, and weekly goal progress without adding public social features or exposing performance metrics by default.
+RL-0010 released MVP share cards after implementation, Code Review approval, QA pass, `flutter analyze`, and the full automated test suite. Share cards remain optional, user-initiated, local, and private by default.
 
 ## Routing Decision Traceability
 
@@ -46,10 +46,10 @@ Selection Rationale:
 RL-0010 was selected because the app now has completion, XP, levels, and weekly goal progress available locally. The next product need is optional, privacy-conscious share cards for celebrating workout completion, level-up, and weekly goal completion without exposing embarrassing numbers.
 
 Next Agent:
-UX Designer
+Coordinator
 
 Next Prompt:
-/Users/jounghwapak/Developer/AI_Agents/prompts/interpret_user_story.md
+/Users/jounghwapak/Developer/AI_Agents/prompts/create_sprint_plan.md
 
 ## Dependency Validation
 
@@ -112,7 +112,7 @@ Next Prompt:
 Current Agent:
 
 ```text
-User Story Interpreter
+Release Manager
 ```
 
 Completed Output:
@@ -123,18 +123,22 @@ docs/EPIC_USER_STORY_TASKS.md
 user_stories/RL-0010/RL-0010_SPRINT_PLAN.md
 user_stories/RL-0010/RL-0010_INTERPRETATION.md
 user_stories/RL-0010/RL-0010_UX_SPEC.md
+user_stories/RL-0010/RL-0010_IMPLEMENTATION_NOTES.md
+user_stories/RL-0010/RL-0010_CODE_REVIEW.md
+user_stories/RL-0010/RL-0010_QA_REPORT.md
+user_stories/RL-0010/RL-0010_RELEASE_NOTE.md
 ```
 
 Next Agent:
 
 ```text
-Code Writer
+Coordinator
 ```
 
 Next Prompt:
 
 ```text
-/Users/jounghwapak/Developer/AI_Agents/prompts/generate_code.md
+/Users/jounghwapak/Developer/AI_Agents/prompts/create_sprint_plan.md
 ```
 
 Required Input Files:
@@ -144,10 +148,7 @@ Required Input Files:
 - docs/PROJECT_CONTEXT.md
 - docs/ARCHITECTURE.md
 - docs/SPRINT_PLAN.md
-- user_stories/RL-0010/RL-0010_TASKS.md
-- user_stories/RL-0010/RL-0010_SPRINT_PLAN.md
-- user_stories/RL-0010/RL-0010_INTERPRETATION.md
-- user_stories/RL-0010/RL-0010_UX_SPEC.md
+- user_stories/RL-0010/RL-0010_RELEASE_NOTE.md
 
 Optional Input Files:
 
@@ -161,7 +162,7 @@ Optional Input Files:
 
 Expected Output:
 
-- user_stories/RL-0010/RL-0010_IMPLEMENTATION_NOTES.md
+- Coordinator story selection and sprint plan for the next eligible story.
 
 Blocking Conditions:
 
@@ -171,9 +172,9 @@ Blocking Conditions:
 Instructions:
 
 - RL-0006, RL-0007, and RL-0008 are complete and must remain Done.
-- RL-0010 is selected and In Progress.
+- RL-0010 is Done.
 - RL-0010-T01 interpretation is complete.
 - RL-0010-T02 UX design is complete.
-- Complete RL-0010-T03, RL-0010-T04, and RL-0010-T05 only.
+- Select the next eligible story only after validating dependencies and preserving completed story state.
 - Preserve working onboarding, workout logging, completion, XP, levels, weekly goal progress, and consistency recovery behavior.
 - Do not add backend services, login, cloud sync, analytics SDK, social graph, public ranking, automatic publishing, public feed, likes, comments, followers, or performance metrics visible by default.

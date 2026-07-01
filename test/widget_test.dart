@@ -9,6 +9,7 @@ import 'package:flowfit/data/models/workout.dart';
 import 'package:flowfit/data/models/workout_log.dart';
 import 'package:flowfit/data/services/storage_service.dart';
 import 'package:flowfit/data/services/weekly_goal_service.dart';
+import 'package:flowfit/features/share_cards/widgets/share_card_preview.dart';
 import 'package:flowfit/main.dart';
 
 void main() {
@@ -203,11 +204,23 @@ void main() {
     expect(find.text('Share card preview'), findsOneWidget);
     expect(find.text('Workout Complete'), findsOneWidget);
     expect(find.text('Showed up today.'), findsOneWidget);
-    expect(find.textContaining('Bench Press'), findsWidgets);
-    expect(find.text('225'), findsNothing);
-    expect(find.textContaining('PR attempt'), findsNothing);
+    final preview = find.byType(ShareCardPreview);
+    expect(
+      find.descendant(of: preview, matching: find.textContaining('Bench Press')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: preview, matching: find.text('225')),
+      findsNothing,
+    );
+    expect(
+      find.descendant(of: preview, matching: find.textContaining('PR attempt')),
+      findsNothing,
+    );
 
-    await tester.tap(find.text('Generate'));
+    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Generate'));
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, 'Generate'));
     await tester.pump();
 
     expect(find.text('Workout card generated'), findsOneWidget);

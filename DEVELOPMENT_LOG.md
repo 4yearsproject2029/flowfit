@@ -1117,3 +1117,87 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0010
+
+---
+
+## 2026-07-01
+
+### RL-0010
+
+Epic:
+
+EP-07 Share Cards
+
+Status:
+
+Done
+
+Summary:
+
+- Completed RL-0010 MVP share-card release.
+- Added optional, user-initiated workout completion, level progress, and weekly goal share-card generation.
+- Added a compact home-screen Share cards section and on-device preview sheet.
+- Kept generated card content private by default by hiding weight, sets, reps, calories, PRs, and memo text.
+- Did not add backend, login, cloud sync, analytics SDK, public feed, social graph, ranking, automatic publishing, or native share-sheet dependency.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `lib/features/share_cards/models/share_card_data.dart`
+- `lib/features/share_cards/services/share_card_service.dart`
+- `lib/features/share_cards/widgets/share_card_preview.dart`
+- `lib/features/share_cards/widgets/share_cards_section.dart`
+- `test/share_card_service_test.dart`
+- `user_stories/RL-0010/RL-0010_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0010/RL-0010_CODE_REVIEW.md`
+- `user_stories/RL-0010/RL-0010_QA_REPORT.md`
+- `user_stories/RL-0010/RL-0010_RELEASE_NOTE.md`
+
+Files Modified:
+
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `DEVELOPMENT_LOG.md`
+- `lib/features/home/screens/home_screen.dart`
+- `test/widget_test.dart`
+- `user_stories/RL-0010/RL-0010_TASKS.md`
+- `user_stories/RL-0010/RL-0010_SPRINT_PLAN.md`
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- None
+
+Commit References:
+
+- None
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Not Required
+
+Known Limitations:
+
+- Existing callback-write widget tests remain skipped for the documented widget-test infrastructure reason.
+- Native share-sheet export remains future scope unless product requires it.
+- Share-card privacy customization and persisted share preferences remain RL-0011 scope.
+- MVP validation metrics for generated share cards remain RL-0012 scope.
+
+Lessons Learned:
+
+- MVP share cards can be generated from existing local workout, XP, level, and weekly-goal data without new persistence.
+- Scoping privacy assertions to the generated preview surface keeps tests accurate while preserving normal workout-list memo display.
+
+Next Recommended Story:
+
+RL-0011
