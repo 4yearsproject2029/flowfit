@@ -155,6 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           xpTotal: storageService.getXpTotal(),
                           weeklyGoalProgress: weeklyGoalProgress,
+                          storageService: storageService,
                         );
                       },
                     );

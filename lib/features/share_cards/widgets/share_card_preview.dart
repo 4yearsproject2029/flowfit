@@ -55,6 +55,16 @@ class ShareCardPreview extends StatelessWidget {
                 context,
               ).textTheme.bodyMedium?.copyWith(color: cardColors.foreground),
             ),
+            for (final extraDetail in card.extraDetails) ...[
+              const SizedBox(height: 6),
+              Text(
+                extraDetail,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: cardColors.foreground,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ],
         ),
       ),

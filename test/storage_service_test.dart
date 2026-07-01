@@ -85,6 +85,23 @@ void main() {
     expect(storageService.hasCompletedOnboarding(), isTrue);
   });
 
+  test('persists share card workout metric preference after restart', () async {
+    expect(storageService.shouldShowShareCardWorkoutMetrics(), isFalse);
+
+    await storageService.saveShareCardWorkoutMetricsPreference(true);
+
+    expect(storageService.shouldShowShareCardWorkoutMetrics(), isTrue);
+
+    await Hive.close();
+    await LocalDatabase.init(testPath: testHiveDirectory.path);
+
+    expect(StorageService().shouldShowShareCardWorkoutMetrics(), isTrue);
+
+    await StorageService().saveShareCardWorkoutMetricsPreference(false);
+
+    expect(StorageService().shouldShowShareCardWorkoutMetrics(), isFalse);
+  });
+
   test('awards completion XP once and persists the total', () async {
     final workoutLog = WorkoutLog(
       id: 'log-1',

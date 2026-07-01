@@ -14,6 +14,8 @@ class StorageService {
   static const String _lastXpMessageKey = 'lastXpMessage';
   static const String _lastMissedWeekStartKey = 'lastMissedWeekStart';
   static const String _lastReturnWeekStartKey = 'lastReturnWeekStart';
+  static const String _showShareCardWorkoutMetricsKey =
+      'showShareCardWorkoutMetrics';
 
   Box<Workout> get _workoutBox {
     return Hive.box<Workout>(LocalDatabase.workoutBoxName);
@@ -61,6 +63,14 @@ class StorageService {
 
   ValueListenable<Box<bool>> get plannedRestListenable {
     return _plannedRestBox.listenable();
+  }
+
+  bool shouldShowShareCardWorkoutMetrics() {
+    return _appSettingsBox.get(_showShareCardWorkoutMetricsKey) ?? false;
+  }
+
+  Future<void> saveShareCardWorkoutMetricsPreference(bool isEnabled) async {
+    await _appSettingsBox.put(_showShareCardWorkoutMetricsKey, isEnabled);
   }
 
   Future<void> addWorkout(Workout workout) async {

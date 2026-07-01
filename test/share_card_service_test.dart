@@ -38,6 +38,33 @@ void main() {
     expect(card.detail.contains('225'), isFalse);
     expect(card.detail.contains('5'), isFalse);
     expect(card.detail.contains('PR'), isFalse);
+    expect(card.extraDetails, isEmpty);
+  });
+
+  test('adds supported workout metrics only after explicit opt-in', () {
+    final card = shareCardService.workoutCompletionCard(
+      dateLabel: 'Jul 1, 2026',
+      includePerformanceMetrics: true,
+      workoutLogs: [
+        WorkoutLog(
+          id: 'log-1',
+          date: '2026-07-01',
+          workoutId: 'workout-1',
+          workoutName: 'Bench Press',
+          category: 'Strength',
+          isCompleted: true,
+          sets: 5,
+          reps: 5,
+          weight: 225,
+          memo: 'PR attempt',
+          createdAt: DateTime(2026, 7, 1, 9),
+        ),
+      ],
+    );
+
+    expect(card, isNotNull);
+    expect(card!.extraDetails, ['5 sets', '5 reps', '225 kg']);
+    expect(card.detail.contains('PR'), isFalse);
   });
 
   test('does not create workout card without completed workout', () {

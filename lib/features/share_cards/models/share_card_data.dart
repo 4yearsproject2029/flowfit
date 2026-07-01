@@ -6,12 +6,14 @@ class ShareCardData {
     required this.title,
     required this.message,
     required this.detail,
+    this.extraDetails = const [],
   });
 
   final ShareCardType type;
   final String title;
   final String message;
   final String detail;
+  final List<String> extraDetails;
 
   String get actionLabel {
     switch (type) {

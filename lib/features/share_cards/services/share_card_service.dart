@@ -7,6 +7,7 @@ class ShareCardService {
   ShareCardData? workoutCompletionCard({
     required List<WorkoutLog> workoutLogs,
     required String dateLabel,
+    bool includePerformanceMetrics = false,
   }) {
     final completedWorkouts = workoutLogs
         .where((workoutLog) => workoutLog.isCompleted)
@@ -19,13 +20,17 @@ class ShareCardService {
     completedWorkouts.sort(
       (first, second) => first.createdAt.compareTo(second.createdAt),
     );
-    final workoutName = completedWorkouts.first.workoutName.trim();
+    final completedWorkout = completedWorkouts.first;
+    final workoutName = completedWorkout.workoutName.trim();
 
     return ShareCardData(
       type: ShareCardType.workout,
       title: 'Workout Complete',
       message: 'Showed up today.',
       detail: '${workoutName.isEmpty ? 'Workout' : workoutName} - $dateLabel',
+      extraDetails: includePerformanceMetrics
+          ? _performanceMetricDetails(completedWorkout)
+          : const [],
     );
   }
 
@@ -52,5 +57,29 @@ class ShareCardService {
       detail:
           '${progress.completedWorkouts} / ${progress.weeklyGoal} workouts this week',
     );
+  }
+
+  List<String> _performanceMetricDetails(WorkoutLog workoutLog) {
+    final details = <String>[];
+
+    if (workoutLog.sets != null) {
+      details.add('${workoutLog.sets} sets');
+    }
+    if (workoutLog.reps != null) {
+      details.add('${workoutLog.reps} reps');
+    }
+    if (workoutLog.weight != null) {
+      details.add('${_formatWeight(workoutLog.weight!)} kg');
+    }
+
+    return details;
+  }
+
+  String _formatWeight(double weight) {
+    if (weight == weight.roundToDouble()) {
+      return weight.toInt().toString();
+    }
+
+    return weight.toStringAsFixed(1);
   }
 }
