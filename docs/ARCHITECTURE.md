@@ -2,43 +2,142 @@
 
 ## High-Level Design
 
-RepLog uses a local-first Flutter architecture built around feature modules, Riverpod state management, and Hive persistence.
+RepLog uses a local-first Flutter architecture organized around the approved user journeys in `docs/USER_JOURNEY.md`.
 
-The existing FlowFit app already has a workable foundation:
+RepLog is not a workout logging app. It is a Workout Flow Assistant.
 
-* Flutter and Dart application shell
-* Feature folders for home, workout, calendar, and timer
-* Hive initialization in `LocalDatabase`
-* Hive-backed workout and workout-log models
-* `StorageService` as the current persistence access layer
-* Offline-first behavior without authentication or backend services
+Architectural direction:
 
-RepLog should evolve from the existing codebase instead of being redesigned from scratch.
+```text
+Home Dashboard -> Current Workout -> Workout Summary -> Achievement / Return Motivation
+```
+
+The architecture should strengthen the core product loop:
+
+```text
+Guide -> Complete -> Celebrate -> Reward -> Come Back
+```
 
 Decision:
 
-Use a feature-based, local-first architecture with shared data, service, repository, and provider layers.
+Use a feature-based, local-first architecture with clear screen responsibilities, shared local data services, and gradual extraction from existing MVP surfaces.
 
 Reason:
 
-This keeps MVP development simple while allowing RepLog-specific modules such as goals, gamification, onboarding, and share cards to grow independently.
+The MVP is complete and functional. Phase 2 should refine UI/UX, navigation, and feature boundaries without rewriting working local persistence or completed MVP behavior.
 
 ---
 
-## Components
+## Journey-Aligned Components
 
-* `App Shell`: initializes Flutter, Hive, app theme, routing, and root screen.
-* `Onboarding Feature`: first-run flow for weekly goal setup and basic user preference selection.
-* `Home Feature`: dashboard for level, XP progress, weekly goal, selected date, workout list, and quick actions.
-* `Workout Feature`: workout creation, completion, deletion, and workout-list display.
-* `Calendar Feature`: week navigation and date selection.
-* `Timer Feature`: rest timer support.
-* `Goals Feature`: weekly workout target, progress calculation, and weekly completion history.
-* `Gamification Feature`: XP rewards, level progression, badges, streaks, and celebration state.
-* `Share Cards Feature`: share-card preview, visible metrics, privacy defaults, and platform export.
-* `Data Layer`: Hive models, local database initialization, repositories, and local services.
-* `Shared UI`: reusable widgets, layouts, empty states, and common components.
-* `Core`: constants, theme, utilities, and app-wide configuration.
+| Component | Responsibility | Journey |
+| --------- | -------------- | ------- |
+| `App Shell` | Initializes Flutter, Hive, app theme, routing, and root navigation. | Shared |
+| `Home Feature` | Daily overview and entry point. Answers "What should I do today?" | Workout Flow |
+| `Current Workout Feature` | Guided workout execution. Answers "What should I do next?" | Workout Flow |
+| `Workout Summary Feature` | Immediate post-completion celebration, XP/reward explanation, and optional share-card entry point. | Workout Flow / Achievement & Growth |
+| `Week Feature` | Lightweight weekly workout planning. | Workout Planning |
+| `History Feature` | Read-only review of completed workout records. | Workout Review |
+| `Achievement Feature` | Level, XP, achievements, milestones, and long-term recognition. | Achievement & Growth |
+| `Floating Rest Timer` | Global workout-flow overlay that remains available while navigating. | Workout Flow |
+| `Onboarding Feature` | First-run weekly goal setup and simple starting preference collection. | Shared |
+| `Goals Feature` | Weekly target, progress calculation, completion recognition, and recovery state. | Workout Planning / Achievement & Growth |
+| `Gamification Feature` | XP rewards, level progression, achievement unlocks, and celebration state. | Achievement & Growth |
+| `Share Cards Feature` | User-initiated card preview, privacy controls, and local generation events. | Achievement & Growth |
+| `Data Layer` | Hive models, local database initialization, repositories, and local services. | Shared |
+| `Shared UI` | Reusable widgets, layouts, empty states, overlays, and common controls. | Shared |
+| `Core` | Constants, theme, utilities, and app-wide configuration. | Shared |
+
+---
+
+## Screen Responsibility Rules
+
+### Home Dashboard
+
+Home Dashboard answers:
+
+```text
+What should I do today?
+```
+
+Home may show:
+
+* Achievement card.
+* Today's workout card.
+* Weekly workout card.
+* Start or resume workout action.
+
+Home must not become:
+
+* Workout history.
+* Exercise editor.
+* Rest timer screen.
+* Muscle map.
+* Share-card gallery.
+* Detailed statistics or analytics dashboard.
+
+### Current Workout
+
+Current Workout answers:
+
+```text
+What should I do next?
+```
+
+Current Workout owns:
+
+* Active workout steps.
+* Exercise-to-rest-to-next-exercise flow.
+* Completion action.
+* Active rest timer entry points.
+* Resume state for an interrupted workout.
+
+Current Workout should not become a historical record editor or analytics surface.
+
+### Workout Summary
+
+Workout Summary appears immediately after completion.
+
+It owns:
+
+* Completion celebration.
+* XP/reward explanation.
+* Weekly goal progress update.
+* Level or achievement recognition.
+* Optional share-card entry point.
+
+Workout Summary cannot be reopened from History. History reviews completed records; Summary celebrates the just-completed workout.
+
+### Week
+
+Week owns planning:
+
+* Weekly workout plan.
+* Add, edit, delete, reorder, and change-day planning actions.
+* Auto-save planning behavior.
+
+Workout execution belongs to Current Workout.
+
+### History
+
+History owns read-only review:
+
+* Completed workout record list.
+* Completed workout detail.
+
+History should avoid editing historical records unless a later story explicitly expands the review journey.
+
+### Achievement
+
+Achievement owns long-term recognition:
+
+* Level.
+* XP.
+* Achievements.
+* Milestones.
+* Rewards.
+
+Achievement should reinforce motivation and consistency, not competition.
 
 ---
 
@@ -46,86 +145,84 @@ This keeps MVP development simple while allowing RepLog-specific modules such as
 
 Decision:
 
-Use Riverpod for state management.
+Use the simplest state management that preserves completed MVP behavior while allowing journey-aligned extraction.
 
-Alternatives Considered:
+Current rule:
 
-* Provider
-* Bloc
-* StatefulWidget-only state
-* GetX
+* Preserve existing local state and service patterns where they work.
+* Introduce or expand Riverpod gradually only when a Phase 2 story needs shared reactive state across Home, Current Workout, Summary, Week, History, Achievement, or the floating Rest Timer.
+* Do not perform a standalone state-management rewrite.
 
-Pros:
+Target shared state areas:
 
-* Good balance between simplicity and scalability
-* Explicit dependency management
-* Easier testing of providers and services
-* Suitable for feature-based architecture
-* Supports future modular growth
-
-Cons:
-
-* Requires additional learning and structure
-* Existing stateful logic may need gradual migration
-
-Reason:
-
-RepLog will need reactive updates for workout completion, XP, level progress, weekly goals, badges, and share-card events. Riverpod provides enough structure without forcing heavy architecture.
-
-Migration rule:
-
-Do not refactor all existing screens at once. Introduce Riverpod gradually when implementing new RepLog features.
+* Active workout session.
+* Floating rest timer.
+* Workout records.
+* Weekly goal progress.
+* XP and level progress.
+* Achievement unlocks.
+* Share-card preferences and events.
 
 ---
 
 ## Data Flow
 
-Primary workout completion flow:
+### Guided Workout Flow
 
 ```text
-User selects date
-→ User logs or completes workout
-→ Workout feature validates input
-→ Repository/service writes WorkoutLog to Hive
-→ Gamification service evaluates XP, weekly goal, level, and badge changes
-→ XP ledger and progress records are written to Hive
-→ Riverpod providers notify UI
-→ User sees updated workout list, XP bar, and progress
-→ User may generate a share card
-→ Share-card event is stored locally
+Home Dashboard
+-> Start / Resume Workout
+-> Current Workout loads today's plan or selected workout
+-> User completes exercise step
+-> Rest Timer starts when relevant
+-> Current Workout advances to next step
+-> User completes workout
+-> Workout record is saved locally
+-> Rewards and weekly progress are evaluated
+-> Workout Summary celebrates completion
+-> User returns to Home with updated daily and weekly state
 ```
 
-Weekly goal flow:
+### Reward Flow
 
 ```text
-Workout logs for current week
-→ WeeklyGoal target
-→ Goal progress calculation
-→ Weekly goal completion event
-→ XP ledger entry
-→ UserProgress update
-→ Optional share card moment
+Workout completion
+-> Idempotent XP evaluation
+-> Weekly goal progress evaluation
+-> Level and achievement evaluation
+-> Local persistence update
+-> Workout Summary and Achievement state refresh
 ```
 
-Onboarding flow:
+### Planning Flow
 
 ```text
-First app launch
-→ User selects weekly workout target
-→ App creates WeeklyGoal
-→ App initializes UserProgress
-→ User lands on Home screen
+Week
+-> User edits weekly plan
+-> Plan auto-saves locally
+-> Home Dashboard updates today's workout preview
+-> Current Workout uses plan as execution input
 ```
 
-Share card flow:
+### Review Flow
 
 ```text
-Workout / Level / Goal event
-→ Share card data prepared
-→ Flutter widget rendered as image
-→ User previews card
-→ User exports or shares through native share sheet
-→ ShareCardEvent stored locally
+History
+-> Completed workout list
+-> Workout detail
+-> Read-only record display
+-> Return to History or Home
+```
+
+### Share Card Flow
+
+```text
+Completion / Level / Goal event
+-> Share card data prepared
+-> User previews card
+-> Hidden performance metrics remain hidden unless opted in
+-> User exports or dismisses
+-> ShareCardEvent stored locally
 ```
 
 ---
@@ -148,45 +245,135 @@ lib/
       workout.dart
       workout_log.dart
       weekly_goal.dart
+      workout_plan.dart
+      workout_session.dart
       xp_ledger_entry.dart
       user_progress.dart
-      badge.dart
+      achievement.dart
       share_card_event.dart
       app_settings.dart
     repositories/
       workout_repository.dart
+      plan_repository.dart
       progress_repository.dart
       goal_repository.dart
+      achievement_repository.dart
       share_card_repository.dart
     services/
       storage_service.dart
+      workout_flow_service.dart
+      rest_timer_service.dart
       xp_service.dart
       level_service.dart
+      achievement_service.dart
       metrics_service.dart
   features/
     onboarding/
     home/
-    workout/
-    calendar/
-    timer/
+    current_workout/
+    workout_summary/
+    week/
+    history/
+    achievement/
     goals/
     gamification/
     share_cards/
   shared/
     layouts/
     widgets/
+    overlays/
 test/
 docs/
 user_stories/
 ```
 
-Existing files should be moved only when there is a product reason or clear maintainability benefit.
+Existing files should be moved only when a Phase 2 story needs the new boundary. Do not move files for cosmetic architecture alignment alone.
+
+---
+
+## Persistence Strategy
+
+RepLog persists data locally with Hive.
+
+Existing and completed MVP storage covers:
+
+* Workouts and workout logs.
+* Weekly goal and onboarding state.
+* XP and progress state.
+* Planned rest and recovery state.
+* Share-card preferences and events.
+* Local validation metrics.
+
+Potential Phase 2 additions:
+
+* Workout plan records.
+* Active workout session state.
+* Workout summary event state.
+* Achievement unlock records if distinct from existing level/progress state.
+* Floating rest timer state if it must survive navigation or app lifecycle transitions.
+
+Model rules:
+
+* Use stable IDs for persisted records.
+* Keep reward and share-card events idempotent.
+* Version adapters carefully.
+* Avoid changing Hive read/write order without a migration plan.
+* Keep date keys consistent with the existing `yyyy-MM-dd` pattern unless a migration is documented.
+
+---
+
+## XP, Achievement, And Recognition Strategy
+
+Decision:
+
+Reward consistency and completion, not athletic superiority.
+
+Rules:
+
+* Workout completion XP must be idempotent.
+* Levels never decrease.
+* Missed weeks do not remove XP or levels.
+* Planned rest should not feel like failure.
+* Achievement language should recognize showing up, returning, finishing, and maintaining consistency.
+* Performance metrics should not drive the primary reward experience.
+
+Reward surfaces:
+
+* Workout Summary for immediate completion recognition.
+* Home Dashboard for short-term progress and next action.
+* Achievement for long-term growth.
+* Share Cards for optional private-by-default celebration.
+
+---
+
+## Rest Timer Strategy
+
+The Rest Timer belongs to Workout Flow.
+
+It should behave as a global floating overlay while a workout is active.
+
+Target behavior:
+
+```text
+Current Workout
+-> Rest Started
+-> User navigates Home / Week / History / Achievement
+-> Floating Rest Timer remains available
+-> User resumes Current Workout
+```
+
+The timer should not be presented as Dashboard content.
 
 ---
 
 ## External Dependencies
 
-Current dependencies:
+Current dependency policy:
+
+* Add dependencies only when they directly support Phase 2 user value.
+* Avoid dependencies that introduce backend, login, cloud sync, social graph, public ranking, or external analytics SDK requirements.
+
+Existing dependencies:
 
 * Flutter SDK
 * Dart
@@ -196,170 +383,58 @@ Current dependencies:
 * `flutter_lints`
 * `flutter_test`
 
-Recommended MVP additions:
-
-* `flutter_riverpod` for state management
-* `share_plus` for native sharing when share cards are implemented
-
-Optional later additions:
-
-* `path_provider`
-* `screenshot` or equivalent widget-to-image package
-* `confetti`
-* `lottie`
-
-Dependency policy:
-
-Add dependencies only when they directly support MVP user value.
+Potential additions should be story-driven and reviewed against the approved user journey.
 
 ---
 
 ## Authentication
 
-RepLog MVP has no authentication.
+RepLog MVP and Phase 2 have no authentication.
 
 Decision:
 
-Do not implement login, account creation, or anonymous remote identity for MVP.
+Do not implement login, account creation, or anonymous remote identity.
 
 Reason:
 
-Authentication is explicitly out of MVP scope and would add friction before the core habit loop is validated.
-
----
-
-## Persistence Strategy
-
-RepLog persists MVP data locally with Hive boxes.
-
-Existing boxes:
-
-* `workoutBox`
-* `workoutLogBox`
-
-Recommended new boxes:
-
-* `weeklyGoalBox`
-* `xpLedgerBox`
-* `userProgressBox`
-* `badgeBox`
-* `shareCardEventBox`
-* `appSettingsBox`
-
-Model rules:
-
-* Use stable IDs for persisted records.
-* Keep immutable ledger entries for XP and share-card events.
-* Version adapters carefully.
-* Avoid changing Hive read/write order without a migration plan.
-* Keep date keys consistent with the existing `yyyy-MM-dd` pattern unless a migration is documented.
-
----
-
-## XP and Progress Strategy
-
-Decision:
-
-Use immutable XP ledger entries and derive `UserProgress` from the ledger.
-
-Flow:
-
-```text
-Rewardable action
-→ Create XpLedgerEntry
-→ Recalculate UserProgress
-→ Update UI
-```
-
-Reasons:
-
-* Prevents duplicate XP rewards
-* Makes XP history auditable
-* Supports future badges and achievements
-* Allows recalculation if reward rules change later
-
-Important rule:
-
-Workout completion XP must be idempotent. Toggling, editing, deleting, or recreating workouts must not create duplicate XP rewards.
+Authentication adds friction before the core guided workout loop is validated.
 
 ---
 
 ## Error Handling Strategy
 
-* Validate required workout fields before saving.
+* Validate required workout and planning fields before saving.
 * Treat storage failures as user-visible errors, not silent failures.
+* Preserve completed workout records if reward calculation fails, then allow progress recalculation.
 * Keep XP award operations idempotent.
-* If gamification update fails after workout save, preserve the workout and allow progress recalculation.
-* Show non-alarming recovery messages for local storage or share failures.
+* Show non-alarming recovery messages for local storage, timer, or share failures.
 * Log local debug information during development without collecting private user data.
 
 ---
 
 ## Testing Strategy
 
-Testing should focus on behavior that can easily break user trust.
+Testing should focus on behavior that can break user trust or interrupt the core loop.
 
 Priority test areas:
 
-* Workout creation and persistence
-* Workout completion toggle behavior
-* Duplicate XP prevention
-* Weekly goal calculation
-* XP ledger creation
-* UserProgress recalculation
-* Hive adapter compatibility
-* App restart persistence
-* Existing FlowFit features after RepLog additions
+* Dashboard next-action state.
+* Current Workout step progression.
+* Workout completion and Summary display.
+* Rest Timer continuity across navigation.
+* Workout planning auto-save.
+* History read-only review behavior.
+* XP and level idempotency.
+* Weekly goal calculation.
+* Achievement and reward display.
+* Share-card privacy defaults.
+* Local persistence after app restart.
+* Common iPhone layouts and accessibility touch targets.
 
-Recommended test types:
+Recommended validation:
 
-* Unit tests for `xp_service.dart`
-* Unit tests for `level_service.dart`
-* Unit tests for weekly goal calculation
-* Widget tests for XP bar and goal progress display
-* Manual QA scripts for full user flows
-
-Minimum before release:
-
-* `flutter analyze`
-* `flutter test`
-* Manual test on real iPhone
-
----
-
-## Scalability Considerations
-
-MVP scale is single-user, single-device, local-first.
-
-Expected local data volume is low:
-
-* Workout logs
-* Weekly goals
-* XP ledger entries
-* Badge unlock records
-* Share-card events
-* App settings
-
-Architecture should support future growth by:
-
-* Keeping persistence behind repositories/services
-* Avoiding direct Hive usage throughout UI widgets
-* Maintaining stable model IDs and timestamps
-* Separating derived summaries from source records
-* Keeping future cloud sync optional
-
----
-
-## Future Considerations
-
-* RepLog brand migration from FlowFit package names, app labels, README content, and UI strings
-* Optional cloud backup and synchronization
-* Authentication through Apple Sign In or Google Sign In if cloud sync is introduced
-* Android and web support after MVP validation
-* Share-card image export and native platform sharing
-* External analytics if local validation is insufficient
-* Apple Watch integration
-* Push notifications for habit reminders
-* Seasonal challenges and cosmetic rewards
-* Data migration from local-only Hive boxes to synced storage
-* Accessibility review for all core logging, progress, and sharing flows
+* Unit tests for services and calculations.
+* Widget tests for screen responsibility and primary flows.
+* Manual QA scripts for full journey validation.
+* `flutter analyze`.
+* `flutter test`.
