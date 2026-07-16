@@ -23,7 +23,7 @@ Created Date:
 Last Updated:
 
 ```text
-2026-07-13
+2026-07-16
 ```
 
 Owner:
@@ -131,6 +131,12 @@ The project is now in Phase 2: UI/UX Redesign & Product Refinement.
 
 The key product refinement is to make the completed MVP feel like a Workout Flow Assistant rather than a workout logging app.
 
+Phase 2 progress:
+
+* RL-0014 Dashboard Redesign is Done.
+* The Home Dashboard now uses the approved dark dashboard direction and focuses on today's action, XP/level context, weekly progress, next achievement, and bottom navigation.
+* Accepted remaining Home visual differences are tracked in `docs/IMPROVEMENT_BACKLOG.md` and should not reopen RL-0014 unless a significant UX issue is discovered later.
+
 ---
 
 ## Phase 2 Target State
@@ -161,6 +167,12 @@ Target user-facing responsibilities:
 | Cross-Screen Rest Timer Continuity | Keep active rest state recoverable across navigation after the overlay exists. |
 
 Phase 2 should preserve completed MVP behavior while reshaping navigation, information hierarchy, and screen responsibilities around the approved journeys.
+
+Completed Phase 2 screen foundations:
+
+| Story ID | Area | Status |
+| -------- | ---- | ------ |
+| RL-0014 | Home Dashboard | Done |
 
 ---
 

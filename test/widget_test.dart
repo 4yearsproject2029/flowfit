@@ -10,6 +10,7 @@ import 'package:flowfit/data/models/workout_log.dart';
 import 'package:flowfit/data/services/storage_service.dart';
 import 'package:flowfit/data/services/weekly_goal_service.dart';
 import 'package:flowfit/features/share_cards/widgets/share_card_preview.dart';
+import 'package:flowfit/features/timer/widgets/rest_timer.dart';
 import 'package:flowfit/main.dart';
 
 void main() {
@@ -22,6 +23,20 @@ void main() {
     });
 
     await tester.pumpWidget(const FlowFitApp());
+    await tester.pump();
+  }
+
+  Future<void> pumpRestTimer(WidgetTester tester) async {
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
+    });
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: SafeArea(child: RestTimer())),
+      ),
+    );
     await tester.pump();
   }
 
@@ -110,24 +125,29 @@ void main() {
     await completeOnboardingForTest(tester);
     await pumpFlowFitApp(tester);
 
-    expect(find.text('RepLog'), findsOneWidget);
-    expect(find.text('This Week'), findsOneWidget);
+    expect(find.textContaining('Good'), findsOneWidget);
+    expect(find.text("Let's crush your goals today."), findsOneWidget);
+    expect(find.text("TODAY'S FOCUS"), findsOneWidget);
+    expect(find.text('No workout planned'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Plan Workout'), findsOneWidget);
     expect(find.text('Level 1'), findsOneWidget);
-    expect(find.text('0 / 100 XP to Level 2'), findsOneWidget);
     expect(find.text('0 XP'), findsOneWidget);
-    expect(
-      find.textContaining('Complete a workout to earn 10 XP'),
-      findsOneWidget,
-    );
-    expect(find.textContaining('Uninstalling RepLog'), findsOneWidget);
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Today'), findsOneWidget);
+    expect(find.text('Week'), findsOneWidget);
+    expect(find.text('Achievement'), findsOneWidget);
+    expect(find.text('History'), findsOneWidget);
 
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
     await tester.pump();
 
-    expect(find.text('Weekly Goal'), findsOneWidget);
+    expect(find.text('WEEKLY PROGRESS'), findsOneWidget);
     expect(find.text('0 / 3 workouts complete'), findsOneWidget);
     expect(find.text('Goal: 3 workouts this week'), findsOneWidget);
+    expect(find.textContaining('Uninstalling RepLog'), findsOneWidget);
     expect(find.text('Set your weekly goal'), findsNothing);
+    expect(find.text('Share cards'), findsNothing);
+    expect(find.text('Rest Timer'), findsNothing);
   });
 
   testWidgets(
@@ -357,38 +377,12 @@ void main() {
   testWidgets('shows weekly share card only after weekly goal is complete', (
     WidgetTester tester,
   ) async {
-    await resetHiveBoxesForTest(tester);
-    await completeOnboardingForTest(tester, weeklyGoal: 1);
-    await tester.runAsync(() async {
-      await StorageService().addWorkoutLog(
-        WorkoutLog(
-          id: 'weekly-log',
-          date: _dateKey(DateTime.now()),
-          workoutId: 'weekly-workout',
-          workoutName: 'Walk',
-          category: 'Cardio',
-          isCompleted: true,
-          createdAt: DateTime.now(),
-        ),
-      );
-    });
-    await pumpFlowFitApp(tester);
+    // Skipped because RL-0014 removes share-card generation from the Home
+    // Dashboard. Coverage must remain in dedicated share-card tests or future
+    // tests for the screen that owns share-card generation.
+  }, skip: true);
 
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
-    await tester.pump();
-
-    await tester.tap(find.widgetWithText(OutlinedButton, 'Weekly'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
-
-    expect(find.text('Weekly Goal Complete'), findsWidgets);
-    expect(find.text('Consistency unlocked.'), findsOneWidget);
-    expect(find.text('1 / 1 workouts this week'), findsOneWidget);
-
-    await closeShareCardPreviewForTest(tester);
-  });
-
-  testWidgets('fits on a small iPhone-sized screen', (
+  testWidgets('dashboard fits on a small iPhone-sized screen', (
     WidgetTester tester,
   ) async {
     await resetHiveBoxesForTest(tester);
@@ -400,15 +394,14 @@ void main() {
     await completeOnboardingForTest(tester);
     await pumpFlowFitApp(tester);
 
-    expect(find.text('RepLog'), findsOneWidget);
-    expect(find.text('This Week'), findsOneWidget);
+    expect(find.textContaining('Good'), findsOneWidget);
+    expect(find.text("TODAY'S FOCUS"), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
   testWidgets('selects a rest timer preset', (WidgetTester tester) async {
     await resetHiveBoxesForTest(tester);
-    await completeOnboardingForTest(tester);
-    await pumpFlowFitApp(tester);
+    await pumpRestTimer(tester);
 
     await tester.tap(find.text('90s'));
     await tester.pump();
@@ -420,8 +413,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await resetHiveBoxesForTest(tester);
-    await completeOnboardingForTest(tester);
-    await pumpFlowFitApp(tester);
+    await pumpRestTimer(tester);
 
     final timerControls = <Finder>[
       find.widgetWithText(ChoiceChip, '30s'),

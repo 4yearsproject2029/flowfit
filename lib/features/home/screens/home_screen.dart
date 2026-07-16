@@ -7,11 +7,18 @@ import '../../../data/services/consistency_recovery_service.dart';
 import '../../../data/services/level_service.dart';
 import '../../../data/services/storage_service.dart';
 import '../../../data/services/weekly_goal_service.dart';
-import '../../calendar/widgets/weekly_calendar.dart';
-import '../../share_cards/widgets/share_cards_section.dart';
-import '../../timer/widgets/rest_timer.dart';
-import '../../workout/widgets/add_workout_button.dart';
-import '../../workout/widgets/workout_list.dart';
+
+class _DashboardColors {
+  static const background = Color(0xFF050606);
+  static const surface = Color(0xFF101214);
+  static const elevated = Color(0xFF181B1F);
+  static const border = Color(0xFF252A2E);
+  static const accent = Color(0xFF18F7D3);
+  static const accentDark = Color(0xFF073F39);
+  static const primaryText = Color(0xFFF5F6F7);
+  static const secondaryText = Color(0xFFA8AFB7);
+  static const mutedText = Color(0xFF6F767E);
+}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,62 +35,53 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('RepLog'), centerTitle: false),
+      backgroundColor: _DashboardColors.background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
               sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'This Week',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    WeeklyCalendar(
-                      selectedDate: selectedDate,
-                      onDateSelected: (date) {
-                        setState(() {
-                          selectedDate = date;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Saved only on this device. Uninstalling RepLog or switching devices may result in data loss.',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
+                child: _DashboardHeader(storageService: storageService),
               ),
             ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _RestTimerHeaderDelegate(),
-            ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
               sliver: SliverToBoxAdapter(
-                child: ValueListenableBuilder<Box<int>>(
-                  valueListenable: storageService.xpTotalListenable,
-                  builder: (context, box, child) {
-                    return _XpSummarySection(
-                      xpTotal: storageService.getXpTotal(),
-                      explanation: storageService.getXpExplanation(),
+                child: ValueListenableBuilder<Box<WorkoutLog>>(
+                  valueListenable: storageService.workoutLogsListenable,
+                  builder: (context, _, child) {
+                    return ValueListenableBuilder<Box<bool>>(
+                      valueListenable: storageService.plannedRestListenable,
+                      builder: (context, _, child) {
+                        final selectedDateKey = _dateKey(selectedDate);
+                        final workoutLogs = storageService.getWorkoutLogsByDate(
+                          selectedDateKey,
+                        );
+                        final isPlannedRest = storageService.isPlannedRestDate(
+                          selectedDateKey,
+                        );
+
+                        return _TodaysFocusSection(
+                          selectedDateLabel: _selectedDateLabel(selectedDate),
+                          workoutLogs: workoutLogs,
+                          isPlannedRest: isPlannedRest,
+                          onPrimaryAction: workoutLogs.isEmpty || isPlannedRest
+                              ? null
+                              : () => _toggleNextWorkout(workoutLogs),
+                          onPlanWorkout: _showAddWorkoutSheet,
+                          onMarkPlannedRest: () {
+                            _markSelectedDateAsPlannedRest(selectedDateKey);
+                          },
+                        );
+                      },
                     );
                   },
                 ),
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
               sliver: SliverToBoxAdapter(
                 child: ValueListenableBuilder<Box<WorkoutLog>>(
                   valueListenable: storageService.workoutLogsListenable,
@@ -105,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
               sliver: SliverToBoxAdapter(
                 child: ValueListenableBuilder<Box<WorkoutLog>>(
                   valueListenable: storageService.workoutLogsListenable,
@@ -130,109 +128,32 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              padding: const EdgeInsets.fromLTRB(20, 22, 20, 100),
               sliver: SliverToBoxAdapter(
-                child: ValueListenableBuilder<Box<WorkoutLog>>(
-                  valueListenable: storageService.workoutLogsListenable,
-                  builder: (context, _, child) {
-                    return ValueListenableBuilder<Box<int>>(
-                      valueListenable: storageService.xpTotalListenable,
-                      builder: (context, _, child) {
-                        final selectedDateKey = _dateKey(selectedDate);
-                        final weeklyGoal = storageService.getWeeklyGoal();
-                        final weeklyGoalProgress = weeklyGoal == null
-                            ? null
-                            : WeeklyGoalService().calculateProgress(
-                                weeklyGoal: weeklyGoal,
-                                workoutLogs: storageService.getWorkoutLogs(),
-                                today: DateTime.now(),
-                              );
-
-                        return ShareCardsSection(
-                          selectedDateLabel: _selectedDateLabel(selectedDate),
-                          workoutLogs: storageService.getWorkoutLogsByDate(
-                            selectedDateKey,
-                          ),
-                          xpTotal: storageService.getXpTotal(),
-                          weeklyGoalProgress: weeklyGoalProgress,
-                          storageService: storageService,
-                        );
-                      },
+                child: ValueListenableBuilder<Box<int>>(
+                  valueListenable: storageService.xpTotalListenable,
+                  builder: (context, box, child) {
+                    return _NextAchievementSection(
+                      xpTotal: storageService.getXpTotal(),
                     );
                   },
                 ),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-              sliver: SliverToBoxAdapter(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Workouts for ${_dateKey(selectedDate)}',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    AddWorkoutButton(onPressed: _showAddWorkoutSheet),
-                  ],
-                ),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              sliver: SliverToBoxAdapter(
-                child: ValueListenableBuilder<Box<bool>>(
-                  valueListenable: storageService.plannedRestListenable,
-                  builder: (context, _, child) {
-                    final selectedDateKey = _dateKey(selectedDate);
-                    final isPlannedRest = storageService.isPlannedRestDate(
-                      selectedDateKey,
-                    );
-
-                    return _PlannedRestSection(
-                      isPlannedRest: isPlannedRest,
-                      onMarkPlannedRest: () {
-                        _markSelectedDateAsPlannedRest(selectedDateKey);
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-              sliver: ValueListenableBuilder<Box<WorkoutLog>>(
-                valueListenable: storageService.workoutLogsListenable,
-                builder: (context, box, child) {
-                  final workoutLogs = storageService.getWorkoutLogsByDate(
-                    _dateKey(selectedDate),
-                  );
-
-                  if (workoutLogs.isEmpty) {
-                    return SliverToBoxAdapter(
-                      child: _EmptyWorkoutSection(
-                        selectedDateLabel: _selectedDateLabel(selectedDate),
-                      ),
-                    );
-                  }
-
-                  return SliverToBoxAdapter(
-                    child: WorkoutList(
-                      workoutLogs: workoutLogs,
-                      onToggle: storageService.toggleWorkoutCompletion,
-                      onDelete: storageService.deleteWorkoutLog,
-                    ),
-                  );
-                },
               ),
             ),
           ],
         ),
       ),
+      bottomNavigationBar: const _DashboardBottomNavigation(),
     );
+  }
+
+  Future<void> _toggleNextWorkout(List<WorkoutLog> workoutLogs) async {
+    final nextWorkout = workoutLogs.firstWhere(
+      (log) => !log.isCompleted,
+      orElse: () => workoutLogs.last,
+    );
+
+    await storageService.toggleWorkoutCompletion(nextWorkout.id);
   }
 
   Future<void> _markSelectedDateAsPlannedRest(String selectedDateKey) async {
@@ -281,175 +202,302 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _ConsistencyRecoverySection extends StatelessWidget {
-  const _ConsistencyRecoverySection({required this.status});
+class _DashboardHeader extends StatelessWidget {
+  const _DashboardHeader({required this.storageService});
 
-  final ConsistencyRecoveryStatus status;
+  final StorageService storageService;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    return ValueListenableBuilder<Box<int>>(
+      valueListenable: storageService.xpTotalListenable,
+      builder: (context, box, child) {
+        final xpTotal = storageService.getXpTotal();
+        final levelProgress = LevelService().calculateProgress(xpTotal);
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: colorScheme.secondary.withValues(alpha: 0.24),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            status.title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: colorScheme.onSecondaryContainer,
-              fontWeight: FontWeight.bold,
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _greeting(),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: _DashboardColors.primaryText,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Let's crush your goals today.",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: _DashboardColors.secondaryText,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Level ${levelProgress.currentLevel}',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: _DashboardColors.accent,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            status.message,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSecondaryContainer,
+            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: _DashboardColors.surface,
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(
+                  color: _DashboardColors.accent.withValues(alpha: 0.18),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.local_fire_department,
+                    color: _DashboardColors.accent,
+                    size: 17,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    '$xpTotal XP',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: _DashboardColors.accent,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            status.reassurance,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSecondaryContainer,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
+          ],
+        );
+      },
+    );
+  }
+
+  String _greeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good morning';
+    }
+    if (hour < 18) {
+      return 'Good afternoon';
+    }
+    return 'Good evening';
+  }
+}
+
+class _DashboardSectionLabel extends StatelessWidget {
+  const _DashboardSectionLabel(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label.toUpperCase(),
+      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+        color: _DashboardColors.secondaryText,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 0,
       ),
     );
   }
 }
 
-class _PlannedRestSection extends StatelessWidget {
-  const _PlannedRestSection({
+class _TodaysFocusSection extends StatelessWidget {
+  const _TodaysFocusSection({
+    required this.selectedDateLabel,
+    required this.workoutLogs,
     required this.isPlannedRest,
+    required this.onPrimaryAction,
+    required this.onPlanWorkout,
     required this.onMarkPlannedRest,
   });
 
+  final String selectedDateLabel;
+  final List<WorkoutLog> workoutLogs;
   final bool isPlannedRest;
+  final VoidCallback? onPrimaryAction;
+  final VoidCallback onPlanWorkout;
   final VoidCallback onMarkPlannedRest;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final completedCount = workoutLogs.where((log) => log.isCompleted).length;
+    final totalCount = workoutLogs.length;
+    final progressValue = totalCount == 0 ? 0.0 : completedCount / totalCount;
+    final primaryLabel = completedCount == 0
+        ? 'Start Workout'
+        : 'Resume Workout';
+    final title = isPlannedRest
+        ? 'Planned rest day'
+        : totalCount == 0
+        ? 'No workout planned'
+        : _focusTitle();
+    final status = isPlannedRest
+        ? 'Rest counts as part of staying consistent.'
+        : totalCount == 0
+        ? 'Add a simple plan when you are ready.'
+        : '$completedCount / $totalCount exercises completed';
 
-    if (isPlannedRest) {
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: colorScheme.outlineVariant),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Planned rest day',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: colorScheme.onSurface,
-                fontWeight: FontWeight.bold,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _DashboardSectionLabel("Today's Focus"),
+        const SizedBox(height: 10),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(18, 22, 18, 18),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [_DashboardColors.elevated, _DashboardColors.surface],
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Rest counts as part of staying consistent.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: _DashboardColors.border),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.28),
+                blurRadius: 22,
+                offset: const Offset(0, 12),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                color: _DashboardColors.primaryText,
+                                fontWeight: FontWeight.w900,
+                                height: 1.02,
+                              ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          status,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: _DashboardColors.secondaryText,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    width: 76,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: _DashboardColors.accentDark.withValues(
+                        alpha: 0.46,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      isPlannedRest
+                          ? Icons.self_improvement
+                          : Icons.fitness_center,
+                      color: _DashboardColors.accent,
+                      size: 40,
+                    ),
+                  ),
+                ],
+              ),
+              if (totalCount > 0 && !isPlannedRest) ...[
+                const SizedBox(height: 14),
+                _AccentProgressBar(value: progressValue),
+              ],
+              const SizedBox(height: 18),
+              if (onPrimaryAction == null)
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: isPlannedRest ? null : onPlanWorkout,
+                    style: _primaryActionStyle(),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Plan Workout'),
+                  ),
+                )
+              else
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: onPrimaryAction,
+                    style: _primaryActionStyle(),
+                    icon: const Icon(Icons.play_arrow),
+                    label: Text(primaryLabel),
+                  ),
+                ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    selectedDateLabel,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: _DashboardColors.mutedText,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (!isPlannedRest)
+                    TextButton(
+                      onPressed: onMarkPlannedRest,
+                      style: TextButton.styleFrom(
+                        foregroundColor: _DashboardColors.accent,
+                      ),
+                      child: const Text('Mark planned rest'),
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
-      );
-    }
-
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: OutlinedButton(
-        onPressed: onMarkPlannedRest,
-        child: const Text('Mark planned rest'),
-      ),
+      ],
     );
   }
-}
 
-class _XpSummarySection extends StatelessWidget {
-  const _XpSummarySection({required this.xpTotal, required this.explanation});
+  String _focusTitle() {
+    final firstIncomplete = workoutLogs.where((log) => !log.isCompleted);
+    if (firstIncomplete.isNotEmpty) {
+      return firstIncomplete.first.workoutName;
+    }
 
-  final int xpTotal;
-  final String explanation;
+    return 'Workout complete';
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final levelProgress = LevelService().calculateProgress(xpTotal);
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.24)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Level ${levelProgress.currentLevel}',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: colorScheme.onPrimaryContainer,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 10),
-          LinearProgressIndicator(
-            value: levelProgress.progressValue,
-            minHeight: 8,
-            borderRadius: BorderRadius.circular(999),
-            backgroundColor: colorScheme.surface.withValues(alpha: 0.56),
-            color: colorScheme.primary,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            levelProgress.progressLabel,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onPrimaryContainer,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '$xpTotal XP',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: colorScheme.onPrimaryContainer,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            explanation,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onPrimaryContainer,
-            ),
-          ),
-        ],
-      ),
+  ButtonStyle _primaryActionStyle() {
+    return FilledButton.styleFrom(
+      backgroundColor: _DashboardColors.accent,
+      foregroundColor: Colors.black,
+      disabledBackgroundColor: _DashboardColors.border,
+      disabledForegroundColor: _DashboardColors.mutedText,
+      minimumSize: const Size.fromHeight(54),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17),
     );
   }
 }
@@ -461,60 +509,121 @@ class _WeeklyGoalSummarySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final borderColor = progress.isComplete
-        ? colorScheme.tertiary.withValues(alpha: 0.32)
-        : colorScheme.outlineVariant;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _DashboardSectionLabel('Weekly Progress'),
+        const SizedBox(height: 10),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: _DashboardColors.surface,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: _DashboardColors.border),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      progress.progressLabel,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: _DashboardColors.primaryText,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      progress.statusMessage,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: _DashboardColors.secondaryText,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _AccentProgressBar(value: progress.progressValue),
+                    const SizedBox(height: 8),
+                    Text(
+                      progress.goalLabel,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: _DashboardColors.mutedText,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _DashboardColors.accentDark,
+                  border: Border.all(
+                    color: _DashboardColors.accent.withValues(alpha: 0.34),
+                    width: 2,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.directions_run,
+                  color: _DashboardColors.accent,
+                  size: 24,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
 
+class _ConsistencyRecoverySection extends StatelessWidget {
+  const _ConsistencyRecoverySection({required this.status});
+
+  final ConsistencyRecoveryStatus status;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
+        color: _DashboardColors.accentDark,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: borderColor),
+        border: Border.all(
+          color: _DashboardColors.accent.withValues(alpha: 0.24),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            progress.title,
+            status.title,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: colorScheme.onSurface,
+              color: _DashboardColors.primaryText,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 10),
-          LinearProgressIndicator(
-            value: progress.progressValue,
-            minHeight: 8,
-            borderRadius: BorderRadius.circular(999),
-            backgroundColor: colorScheme.surface.withValues(alpha: 0.72),
-            color: progress.isComplete
-                ? colorScheme.tertiary
-                : colorScheme.primary,
-          ),
           const SizedBox(height: 8),
           Text(
-            progress.progressLabel,
+            status.message,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurface,
+              color: _DashboardColors.primaryText,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            status.reassurance,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: _DashboardColors.accent,
               fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            progress.goalLabel,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            progress.statusMessage,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -523,59 +632,187 @@ class _WeeklyGoalSummarySection extends StatelessWidget {
   }
 }
 
-class _RestTimerHeaderDelegate extends SliverPersistentHeaderDelegate {
-  @override
-  double get minExtent => 172;
+class _NextAchievementSection extends StatelessWidget {
+  const _NextAchievementSection({required this.xpTotal});
+
+  final int xpTotal;
 
   @override
-  double get maxExtent => 172;
+  Widget build(BuildContext context) {
+    final levelProgress = LevelService().calculateProgress(xpTotal);
+    final remainingXp =
+        levelProgress.xpPerLevel - levelProgress.xpIntoCurrentLevel;
 
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: const RestTimer(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _DashboardSectionLabel('Next Achievement'),
+        const SizedBox(height: 10),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: _DashboardColors.surface,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: _DashboardColors.border),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 58,
+                height: 58,
+                decoration: BoxDecoration(
+                  color: _DashboardColors.accentDark,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.emoji_events_outlined,
+                  color: _DashboardColors.accent,
+                  size: 32,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Level ${levelProgress.nextLevel}',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: _DashboardColors.primaryText,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '$remainingXp XP until your next level.',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: _DashboardColors.secondaryText,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      levelProgress.progressLabel,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: _DashboardColors.accent,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          'Saved only on this device. Uninstalling RepLog or switching devices may result in data loss.',
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: _DashboardColors.mutedText),
+        ),
+      ],
     );
-  }
-
-  @override
-  bool shouldRebuild(covariant _RestTimerHeaderDelegate oldDelegate) {
-    return false;
   }
 }
 
-class _EmptyWorkoutSection extends StatelessWidget {
-  const _EmptyWorkoutSection({required this.selectedDateLabel});
+class _AccentProgressBar extends StatelessWidget {
+  const _AccentProgressBar({required this.value});
 
-  final String selectedDateLabel;
+  final double value;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(999),
+      child: SizedBox(
+        height: 7,
+        child: LinearProgressIndicator(
+          value: value,
+          backgroundColor: Colors.white.withValues(alpha: 0.08),
+          color: _DashboardColors.accent,
+        ),
+      ),
+    );
+  }
+}
+
+class _DashboardBottomNavigation extends StatelessWidget {
+  const _DashboardBottomNavigation();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+      decoration: const BoxDecoration(
+        color: _DashboardColors.surface,
+        border: Border(top: BorderSide(color: _DashboardColors.border)),
       ),
+      padding: const EdgeInsets.fromLTRB(8, 7, 8, 8),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: const [
+            _DashboardNavItem(
+              icon: Icons.home_outlined,
+              selectedIcon: Icons.home,
+              label: 'Home',
+              isSelected: true,
+            ),
+            _DashboardNavItem(icon: Icons.today_outlined, label: 'Today'),
+            _DashboardNavItem(
+              icon: Icons.calendar_month_outlined,
+              label: 'Week',
+            ),
+            _DashboardNavItem(
+              icon: Icons.emoji_events_outlined,
+              label: 'Achievement',
+            ),
+            _DashboardNavItem(icon: Icons.history, label: 'History'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DashboardNavItem extends StatelessWidget {
+  const _DashboardNavItem({
+    required this.icon,
+    required this.label,
+    this.selectedIcon,
+    this.isSelected = false,
+  });
+
+  final IconData icon;
+  final IconData? selectedIcon;
+  final String label;
+  final bool isSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isSelected
+        ? _DashboardColors.accent
+        : _DashboardColors.secondaryText;
+
+    return Expanded(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            selectedDateLabel,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+          Icon(
+            isSelected ? selectedIcon ?? icon : icon,
+            color: color,
+            size: 24,
           ),
-          const SizedBox(height: 8),
-          const Text('No workouts added yet.'),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: color,
+              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );
@@ -632,7 +869,7 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Add Workout',
+                'Plan Workout',
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -729,7 +966,7 @@ class _AddWorkoutSheetState extends State<_AddWorkoutSheet> {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: _saveWorkout,
-                  child: const Text('Save'),
+                  child: const Text('Save Plan'),
                 ),
               ),
             ],
