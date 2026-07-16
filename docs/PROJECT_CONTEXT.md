@@ -145,6 +145,8 @@ design/approved/
 
 These PNGs are authoritative for Phase 2 screen layout and composition. Product behavior, local-first technical boundaries, persistence rules, privacy rules, and business constraints remain governed by the project documents listed in Source Of Truth.
 
+Phase 2 implementation should use a design handoff step to translate the approved PNGs into build-ready notes, asset decisions, and QA checkpoints. This step supports implementation consistency and must not redesign the approved UX.
+
 Target user-facing responsibilities:
 
 | Area | Responsibility |
@@ -155,7 +157,8 @@ Target user-facing responsibilities:
 | Week | Plan upcoming workouts. |
 | History | Review completed workout records without editing history. |
 | Achievement | Show long-term consistency, level, XP, and recognition. |
-| Floating Rest Timer | Support the active workout flow across screens. |
+| Rest Timer Overlay | Support rest inside Current Workout with overlay/modal countdown controls. |
+| Cross-Screen Rest Timer Continuity | Keep active rest state recoverable across navigation after the overlay exists. |
 
 Phase 2 should preserve completed MVP behavior while reshaping navigation, information hierarchy, and screen responsibilities around the approved journeys.
 
@@ -174,7 +177,9 @@ Project-specific goals:
 * Keep Week focused on lightweight planning.
 * Keep History read-only.
 * Keep Achievement focused on long-term motivation and recognition.
-* Keep the floating Rest Timer tied to workout flow, not dashboard content.
+* Keep the Rest Timer tied to workout flow, not dashboard content.
+* Implement Rest Timer overlay behavior separately from cross-screen/global timer continuity.
+* Keep Phase 2 implementation stories small enough to isolate one screen responsibility or one major behavior/state at a time.
 * Avoid backend, login, cloud sync, social graph, public ranking, external analytics SDKs, and broad rewrites during Phase 2.
 * Keep architecture simple, maintainable, low-cost, and suitable for a solo developer.
 

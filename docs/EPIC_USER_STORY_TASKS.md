@@ -27,7 +27,7 @@ Created Date:
 Last Updated:
 
 ```text
-2026-07-15
+2026-07-16
 ```
 
 Owner:
@@ -106,7 +106,7 @@ Rules:
 * Completed stories keep their IDs permanently.
 * Canceled stories keep their IDs permanently.
 * Split stories receive new IDs.
-* The next new Story ID after the current backlog is `RL-0021`.
+* The next new Story ID after the current backlog is `RL-0033`.
 
 ---
 
@@ -344,8 +344,8 @@ Dependency validation:
 
 | Metric | Value |
 | ------ | ----- |
-| Total Stories | 21 |
-| Not Started | 7 |
+| Total Stories | 33 |
+| Not Started | 19 |
 | In Progress | 0 |
 | Blocked | 0 |
 | On Hold | 0 |
@@ -355,7 +355,7 @@ Dependency validation:
 Completion Rate:
 
 ```text
-14 / (21 - 0) = 66.7%
+14 / (33 - 0) = 42.4%
 ```
 
 MVP Completion Rate:
@@ -373,10 +373,22 @@ Stories added:
 * `RL-0014`: Dashboard Redesign.
 * `RL-0015`: Guided Workout Flow.
 * `RL-0016`: Completion Celebration.
-* `RL-0017`: Planning And Review Separation.
+* `RL-0017`: Week Planning.
 * `RL-0018`: Floating Rest Timer.
-* `RL-0019`: Achievement Motivation Refinement.
-* `RL-0020`: Phase 2 Journey QA.
+* `RL-0019`: Achievement Hub Foundation.
+* `RL-0020`: Phase 2 Final Journey QA.
+* `RL-0021`: Phase 2 Design Handoff.
+* `RL-0022`: Current Workout Set Progression.
+* `RL-0023`: Current Workout Control States.
+* `RL-0024`: Workout Summary Private Details And Sharing.
+* `RL-0025`: Planned Session Detail And Start Today.
+* `RL-0026`: Read-Only History.
+* `RL-0027`: Completed Workout Detail.
+* `RL-0028`: Achievement Milestones And Titles.
+* `RL-0029`: Achievement Unlock And Share Moments.
+* `RL-0030`: Phase 2 Screen QA.
+* `RL-0031`: Phase 2 Journey Regression QA.
+* `RL-0032`: Cross-Screen Rest Timer Continuity.
 
 Stories removed:
 
@@ -403,6 +415,11 @@ Stories updated:
 * `RL-0004`: Dependency updated from `RL-0005` to `RL-0002, RL-0005` because offline persistence acceptance criteria include onboarding and weekly goal state.
 * `RL-0013`: Dependency updated to include `RL-0007`, and acceptance criteria now explicitly include levels in MVP manual QA.
 * `RL-0014` through `RL-0020`: Acceptance criteria aligned with approved Phase 2 visual design files in `design/approved/`.
+* `RL-0015`, `RL-0016`, `RL-0017`, `RL-0019`, and `RL-0020`: Scope narrowed so each story remains independently implementable and testable.
+* `RL-0021` through `RL-0031`: Added split Phase 2 stories for design handoff, Current Workout states, Workout Summary details, Week/History/Detail separation, Achievement depth, and QA slices.
+* `RL-0018`: Scope narrowed to Rest Timer overlay/modal only.
+* `RL-0032`: Added Cross-Screen Rest Timer Continuity for global timer state, navigation survival, and return-to-workout entry.
+* `RL-0022`, `RL-0023`, `RL-0028`, `RL-0030`, `RL-0031`, and `RL-0020`: Acceptance criteria clarified to reduce implementation and QA overlap risk.
 
 Priority changes:
 
@@ -414,7 +431,7 @@ Reasoning:
 * Story IDs were preserved.
 * Done story `RL-0000` was not modified beyond being represented in the template-compatible backlog.
 * Done stories `RL-0000` through `RL-0013` remain preserved.
-* Phase 2 updates were limited to design traceability, missing story/task coverage, requirement clarification, and acceptance-criteria alignment.
+* Phase 2 updates were limited to design traceability, missing design handoff coverage, oversized-story splitting, requirement clarification, dependency updates, and acceptance-criteria alignment.
 
 ---
 
@@ -458,6 +475,8 @@ Reasoning:
 | v1.19 | 2026-07-01 | Coordinator Agent | Selected RL-0013 as the next eligible MVP quality story and started the sprint. |
 | v1.20 | 2026-07-01 | Release Manager Agent | Closed RL-0013 as Done after MVP quality validation, touch-target improvement, QA pass, and release closeout. |
 | v1.21 | 2026-07-15 | Business Analyst Agent | Synchronized Phase 2 backlog with approved UI designs, added screen-story mapping, clarified conflicts, and added RL-0014 through RL-0020 task coverage. |
+| v1.22 | 2026-07-16 | Business Analyst Agent | Split oversized Phase 2 stories into independently implementable stories RL-0021 through RL-0031, added design handoff coverage, and updated dependencies, metrics, task files, and implementation order. |
+| v1.23 | 2026-07-16 | Business Analyst Agent | Final Phase 2 risk-reduction pass: split Rest Timer continuity into RL-0032, clarified adjustment, rest-state, Week planning, milestone, QA, and RL-0014/RL-0021 sequencing rules. |
 
 ---
 
@@ -482,6 +501,18 @@ user_stories/RL-0017/RL-0017_TASKS.md
 user_stories/RL-0018/RL-0018_TASKS.md
 user_stories/RL-0019/RL-0019_TASKS.md
 user_stories/RL-0020/RL-0020_TASKS.md
+user_stories/RL-0021/RL-0021_TASKS.md
+user_stories/RL-0022/RL-0022_TASKS.md
+user_stories/RL-0023/RL-0023_TASKS.md
+user_stories/RL-0024/RL-0024_TASKS.md
+user_stories/RL-0025/RL-0025_TASKS.md
+user_stories/RL-0026/RL-0026_TASKS.md
+user_stories/RL-0027/RL-0027_TASKS.md
+user_stories/RL-0028/RL-0028_TASKS.md
+user_stories/RL-0029/RL-0029_TASKS.md
+user_stories/RL-0030/RL-0030_TASKS.md
+user_stories/RL-0031/RL-0031_TASKS.md
+user_stories/RL-0032/RL-0032_TASKS.md
 ```
 
 Next Agent:
@@ -493,7 +524,7 @@ Coordinator
 Next Prompt:
 
 ```text
-Select the next eligible Phase 2 story from `docs/EPIC_USER_STORY_TASKS.md` and prepare the sprint handoff without reopening completed MVP stories.
+Select the next eligible Phase 2 story from `docs/EPIC_USER_STORY_TASKS.md` and prepare the sprint handoff without reopening completed MVP stories or combining split Phase 2 stories into oversized implementation cycles.
 ```
 
 Required Input Files:
@@ -513,7 +544,7 @@ Optional Input Files:
 
 Expected Output:
 
-* Phase 2 Coordinator handoff for the selected story, expected to start with `RL-0014`.
+* Phase 2 Coordinator handoff for the selected story, expected to respect the updated split order. Ideally run `RL-0021` before remaining screen implementation; if `RL-0014` implementation has already started, do not reset it and use `RL-0021` to audit or adjust it before release closure.
 
 Blocking Conditions:
 
@@ -568,26 +599,27 @@ Approved Phase 2 design references:
 | Design File | Approved Screen | Primary Story Mapping |
 | ----------- | --------------- | --------------------- |
 | `design/approved/01_home_screen.png` | Home Dashboard | `RL-0014` |
-| `design/approved/02_current_workout.png` | Current Workout Active | `RL-0015` |
-| `design/approved/03_timer.png` | Rest Timer Overlay | `RL-0018`, supports `RL-0015` |
-| `design/approved/04_workkout_summary.png` | Workout Summary | `RL-0016` |
-| `design/approved/05_weekly_plan.png` | Week Planning | `RL-0017`, supports `RL-0015` |
-| `design/approved/06_achievement.png` | Achievement Hub | `RL-0019` |
-| `design/approved/07_history.png` | History | `RL-0017` |
-| `design/approved/08_workout_detail.png` | Workout Detail / Session Detail | `RL-0017`, supports `RL-0015` |
+| `design/approved/02_current_workout.png` | Current Workout Active | `RL-0015`, `RL-0022`, `RL-0023` |
+| `design/approved/03_timer.png` | Rest Timer Overlay | `RL-0018`, `RL-0032`, supports `RL-0022` |
+| `design/approved/04_workkout_summary.png` | Workout Summary | `RL-0016`, `RL-0024` |
+| `design/approved/05_weekly_plan.png` | Week Planning | `RL-0017`, supports `RL-0025` |
+| `design/approved/06_achievement.png` | Achievement Hub | `RL-0019`, `RL-0028`, `RL-0029` |
+| `design/approved/07_history.png` | History | `RL-0026` |
+| `design/approved/08_workout_detail.png` | Workout Detail / Session Detail | `RL-0025`, `RL-0027`, supports `RL-0015` |
 
 Screen to story mapping:
 
 | Approved Screen | Existing MVP Capability Reused | Phase 2 Story | Notes |
 | --------------- | ------------------------------ | ------------- | ----- |
 | Home Dashboard | RepLog identity, XP total, level progress, weekly goal progress, selected workout data | `RL-0014` | Refocuses Home into greeting, XP signal, Today's Focus, Weekly Progress, Next Achievement, and bottom navigation. Removes dashboard role overlap from timer, history, share cards, and editing. |
-| Current Workout Active | Workout log completion, local workout data, timer provider | `RL-0015` | Introduces the guided Today/Current Workout execution surface with active exercise, set progress, pause, adjust, skip, complete-set, and resume states. |
-| Rest Timer Overlay | Existing rest timer presets and accessibility improvements | `RL-0018` | Moves rest from pinned dashboard content to an overlay/modal tied to active workout flow. |
-| Workout Summary | XP, levels, weekly goal progress, achievement/share-card systems | `RL-0016` | Creates immediate post-completion celebration and reward summary. History must not reopen this celebration state. |
-| Week Planning | Weekly calendar, weekly goal, workout logs | `RL-0017` | Separates planning from Home and History with date navigation, today's plan, reschedule, session preview, and Start Today. |
-| Achievement Hub | XP, levels, share card privacy, consistency/recovery signals | `RL-0019` | Turns long-term reward display into a dedicated hub while keeping comparison/social features out of scope. |
-| History | Existing workout logs and completion state | `RL-0017` | Makes completed-workout review read-only and distinct from planning and summary. |
-| Workout Detail / Session Detail | Existing workout detail fields and startable workout data | `RL-0017`, `RL-0015` | Must distinguish planned/session detail that can start a workout from completed history detail that is read-only. |
+| Phase 2 Design Handoff | Approved PNGs, source-of-truth docs, current Material 3 foundation | `RL-0021` | Converts approved visual direction into implementation-ready screen notes, asset decisions, and QA checkpoints without redesigning the approved UX. |
+| Current Workout Active | Workout log completion, local workout data, timer provider | `RL-0015`, `RL-0022`, `RL-0023` | `RL-0015` establishes the screen foundation, `RL-0022` adds set progression/rest handoff, and `RL-0023` adds pause, adjust, skip, and resume states. |
+| Rest Timer Overlay | Existing rest timer presets and accessibility improvements | `RL-0018`, `RL-0032` | `RL-0018` owns only the rest overlay/modal UI and timer controls in Current Workout. `RL-0032` owns cross-screen/global timer continuity after the overlay exists. |
+| Workout Summary | XP, levels, weekly goal progress, achievement/share-card systems | `RL-0016`, `RL-0024` | `RL-0016` creates the immediate celebration/reward shell; `RL-0024` adds private session details, optional sharing, and return actions. History must not reopen this celebration state. |
+| Week Planning | Weekly calendar, weekly goal, workout logs | `RL-0017`, `RL-0025` | `RL-0017` owns Week planning structure; `RL-0025` owns planned/session detail and Start Today handoff. |
+| Achievement Hub | XP, levels, share card privacy, consistency/recovery signals | `RL-0019`, `RL-0028`, `RL-0029` | `RL-0019` creates the Achievement hub foundation, `RL-0028` adds milestone/title depth, and `RL-0029` adds recent unlock/share moments without comparison. |
+| History | Existing workout logs and completion state | `RL-0026` | Makes completed-workout review read-only and distinct from planning and summary. |
+| Workout Detail / Session Detail | Existing workout detail fields and startable workout data | `RL-0025`, `RL-0027`, supports `RL-0015` | Planned/session detail can start a workout; completed History detail remains read-only and cannot act like Workout Summary. |
 
 Requirement conflicts, gaps, and clarifications:
 
@@ -597,8 +629,9 @@ Requirement conflicts, gaps, and clarifications:
 | Achievement streak language | Approved Achievement image includes active streak and "top 5% of users", while current docs reject comparison pressure and harsh missed-week punishment. | Keep streak wording supportive and non-punitive. Do not implement public ranking, percentile comparison, social comparison, or penalty mechanics. |
 | History vs Today nav label | Approved `07_history.png` highlights the Today nav icon while showing History content. | Treat the screen title and file name as authoritative: this is History. Bottom-nav active-state mismatch requires UX clarification during `RL-0017`, not backlog restructuring. |
 | Workout Detail start action | Approved `08_workout_detail.png` includes Start Workout, while `docs/USER_JOURNEY.md` says History detail is read-only. | Split responsibility: planned/session detail from Week may start a workout; completed History detail remains read-only and cannot act like Workout Summary. |
-| Rest timer global behavior | Existing docs mention globally available floating timer; approved PNG shows a modal overlay over Current Workout. | Implement Rest Timer as a workout-flow overlay first. Cross-screen floating/persistent behavior remains `RL-0018` scope only where it supports active workout continuity. |
-| Visual assets | Approved designs use exercise imagery and rich icons; current MVP mostly uses Material widgets. | `RL-0015`, `RL-0017`, and `RL-0020` must validate asset strategy without adding backend, sync, or broad content systems. |
+| Rest timer global behavior | Existing docs mention globally available floating timer; approved PNG shows a modal overlay over Current Workout. | `RL-0018` implements the overlay/modal only. Cross-screen floating/persistent behavior is split into `RL-0032` to avoid combining UI, countdown controls, navigation survival, and persistence in one cycle. |
+| Phase 2 design handoff order | The design handoff should ideally precede screen implementation, but `RL-0014` implementation work may already have started in the working tree. | Recommended handling: do not reset or discard `RL-0014` progress. Run `RL-0021` as the next backlog/design step and use its output to audit or adjust `RL-0014` before release closure and before starting `RL-0015`. |
+| Visual assets | Approved designs use exercise imagery and rich icons; current MVP mostly uses Material widgets. | `RL-0021`, `RL-0015`, `RL-0017`, and `RL-0030` must validate asset strategy without adding backend, sync, or broad content systems. |
 | New achievements/titles | Approved designs show medals, titles, categories, and milestone lists beyond the MVP's simple level/XP display. | `RL-0019` may refine the Achievement presentation, but any new reward taxonomy must remain local, simple, and non-comparative. |
 
 ---
@@ -617,20 +650,55 @@ Requirement conflicts, gaps, and clarifications:
 
 ## Phase 2 Recommended Implementation Order
 
+Ideal order if no implementation work has started:
+
 ```text
+RL-0021
+↓
 RL-0014
 ↓
 RL-0015
 ↓
-RL-0016
+RL-0022
 ↓
-RL-0017
+RL-0023
 ↓
 RL-0018
 ↓
+RL-0032
+↓
+RL-0016
+↓
+RL-0024
+↓
+RL-0017
+↓
+RL-0025
+↓
+RL-0026
+↓
+RL-0027
+↓
 RL-0019
 ↓
+RL-0028
+↓
+RL-0029
+↓
+RL-0030
+↓
+RL-0031
+↓
 RL-0020
+```
+
+Recommended handling when `RL-0014` implementation has already started:
+
+```text
+Do not reset RL-0014.
+Complete RL-0021 next as a design-handoff and design-QA checkpoint.
+Use RL-0021 output to audit or adjust RL-0014 before RL-0014 release closure.
+Then continue with RL-0015 and the remaining split stories.
 ```
 
 ---
@@ -640,12 +708,38 @@ RL-0020
 | Status | Story ID | Epic ID | Epic | MVP | Priority | Effort | Depends On | UX Required | User Approval Required | User Story | Acceptance Criteria |
 | ------ | -------- | ------- | ---- | --- | -------- | ------ | ---------- | ----------- | ---------------------- | ---------- | ------------------- |
 | Not Started | RL-0014 | EP-11 | Dashboard Redesign | Must Have | P0 | M | RL-0013 | Yes | Yes | As a beginner fitness user, I want the Home Dashboard to clearly tell me what I should do today, so that I can start or resume my workout without sorting through unrelated information. | - Uses `design/approved/01_home_screen.png` for approved layout and screen composition.<br>- Dashboard presents greeting/identity context, visible XP signal, Today's Focus, Weekly Progress, Next Achievement, and bottom navigation.<br>- Dashboard provides a clear Start or Resume Workout action from Today's Focus.<br>- Dashboard excludes History, Rest Timer, Share Cards, exercise editing, muscle maps, and detailed statistics as primary dashboard sections.<br>- Dashboard language emphasizes today's action and consistency.<br>- Existing offline data and completed MVP reward state remain intact. |
-| Not Started | RL-0015 | EP-12 | Guided Workout Flow | Must Have | P0 | L | RL-0014 | Yes | Yes | As a user in an active workout, I want Current Workout to tell me what to do next, so that I can move through my workout with minimal friction. | - Uses `design/approved/02_current_workout.png` for Current Workout layout and `design/approved/08_workout_detail.png` where planned/session detail starts a workout.<br>- Current Workout displays exercise progress, active timer/status, current exercise, instruction text, sets/reps, and primary Complete Set action.<br>- Users can pause, adjust, skip, complete a set, and progress through Exercise -> Rest -> Next Exercise without returning to Dashboard.<br>- Current Workout supports start, resume, and completion states.<br>- Workout execution is separated from planning and history review.<br>- Existing workout completion and local persistence behavior remain intact. |
-| Not Started | RL-0016 | EP-13 | Completion Celebration | Must Have | P0 | M | RL-0015 | Yes | Yes | As a user who completed a workout, I want an immediate celebration and reward summary, so that finishing feels recognized and motivates me to come back. | - Uses `design/approved/04_workkout_summary.png` for approved layout and screen composition.<br>- Workout Summary appears immediately after workout completion.<br>- Workout Summary leads with celebration and recognition before supporting details.<br>- XP, level, weekly goal, achievement, or recovery rewards are shown when relevant.<br>- Private session details such as duration, volume, calories, sets, or moment of the day may appear only in this completion context and must not weaken share-card privacy defaults.<br>- Optional share-card generation is available only as a user-initiated action.<br>- Workout Summary cannot be reopened from History as if it were a normal detail screen. |
-| Not Started | RL-0017 | EP-14 | Planning And Review Separation | Should Have | P1 | M | RL-0014 | Yes | Yes | As a user, I want Week and History to have clear separate purposes, so that planning future workouts and reviewing completed workouts do not feel mixed together. | - Uses `design/approved/05_weekly_plan.png`, `design/approved/07_history.png`, and `design/approved/08_workout_detail.png` for approved layout and screen composition.<br>- Week focuses on weekly workout planning, day navigation, today's plan, session preview, rescheduling, and Start Today.<br>- Week uses auto-save behavior for planning changes where practical.<br>- History focuses on read-only completed workout review grouped by recent periods.<br>- Workout Detail distinguishes planned/session detail that can start a workout from completed History detail that remains read-only.<br>- Workout Detail in History displays completed records without acting like Workout Summary.<br>- Planning and review flows return cleanly to Dashboard. |
-| Not Started | RL-0018 | EP-14 | Floating Rest Timer | Should Have | P1 | M | RL-0015 | Yes | Yes | As a user resting during a workout, I want the Rest Timer to stay available while I navigate, so that I can keep my workout flow without being trapped on one screen. | - Uses `design/approved/03_timer.png` for approved rest overlay layout and screen composition.<br>- Rest Timer belongs to Workout Flow and is not a Dashboard section.<br>- Rest Timer appears as an overlay/modal while resting during an active workout.<br>- Rest Timer supports skip rest, extend rest, dismiss/close, and return-to-workout behavior where appropriate.<br>- Users can resume Current Workout from the active timer state.<br>- Cross-screen floating behavior is included only where it supports active workout continuity.<br>- Existing timer presets and accessibility touch targets remain usable. |
-| Not Started | RL-0019 | EP-14 | Achievement Motivation Refinement | Should Have | P1 | M | RL-0016 | Yes | Yes | As a consistency-focused user, I want Achievement to recognize long-term growth without comparison, so that I feel rewarded for returning and showing up. | - Uses `design/approved/06_achievement.png` for approved layout and screen composition while honoring non-comparison product rules.<br>- Achievement displays level, XP/rep score, medals or achievements, milestones, current title/reward state, and recent unlock/share moments as long-term motivation.<br>- Achievement language prioritizes consistency, return, and recognition over performance.<br>- Dashboard shows only short-term achievement preview, not full achievement detail.<br>- Achievement does not introduce rankings, leaderboards, public percentile claims, social comparison, public profiles, penalties, or level loss.<br>- Existing XP, levels, share cards, and privacy controls remain intact. |
-| Not Started | RL-0020 | EP-15 | Phase 2 Journey QA | Should Have | P1 | S | RL-0014, RL-0015, RL-0016, RL-0017, RL-0018, RL-0019 | Yes | Yes | As a beginner fitness user, I want the redesigned RepLog journey to feel clear, accessible, and reliable, so that I can complete workouts consistently. | - Manual QA validates the full Guide -> Complete -> Celebrate -> Reward -> Come Back loop across approved screens in `design/approved/`.<br>- Dashboard answers "What should I do today?" without role overlap.<br>- Current Workout answers "What should I do next?" without role overlap.<br>- Week, Achievement, History, Workout Detail, Workout Summary, and Rest Timer preserve their approved responsibilities.<br>- Core screens work on common iPhone screen sizes.<br>- Accessibility checks cover readable text, touch targets, contrast, navigation predictability, and non-overlapping content.<br>- `flutter analyze` passes.<br>- `flutter test` passes or any skipped tests are explicitly documented as known limitations. |
+| Not Started | RL-0015 | EP-12 | Guided Workout Flow | Must Have | P0 | M | RL-0014, RL-0021 | Yes | Yes | As a user starting today's workout, I want a Current Workout screen foundation that clearly shows the active exercise and next action, so that workout execution has a focused home separate from Dashboard and planning. | - Uses `design/approved/02_current_workout.png` for approved Current Workout layout and screen composition.<br>- Current Workout displays workout title, active exercise, instruction text, sets/reps target, progress indicator, and one primary Complete Set action placeholder.<br>- Current Workout is reachable from Dashboard Start/Resume or an existing local workout entry without adding backend, login, cloud sync, or broad content systems.<br>- Workout execution is visually and functionally separated from Dashboard, Week planning, and History review.<br>- Existing workout log data and local persistence remain intact.<br>- Pause, adjust, skip, multi-set progression, rest handoff, resume state, and completion navigation are deferred to dependent stories. |
+| Not Started | RL-0016 | EP-13 | Completion Celebration | Must Have | P0 | M | RL-0022 | Yes | Yes | As a user who just completed a workout, I want an immediate celebration screen that recognizes completion and reward progress, so that finishing feels meaningful before I return to the app. | - Uses `design/approved/04_workkout_summary.png` for the approved Workout Summary celebration layout and screen composition.<br>- Workout Summary appears immediately after workout completion from Current Workout.<br>- Workout Summary leads with celebration and recognition before supporting details.<br>- XP, level, weekly goal, achievement, or recovery rewards are shown when existing local data makes them relevant.<br>- Workout Summary cannot be reopened from History as if it were a normal detail screen.<br>- Private stats, optional share-card generation, Plan Tomorrow, and detailed return actions are deferred to `RL-0024`. |
+| Not Started | RL-0017 | EP-14 | Week Planning | Should Have | P1 | M | RL-0014, RL-0021 | Yes | Yes | As a user planning my week, I want Week to show my local planned sessions by day, so that I can understand the week without mixing planning with Dashboard or History review. | - Uses `design/approved/05_weekly_plan.png` for approved Week layout and screen composition.<br>- Week owns screen structure, day navigation, planned session display, and existing local data presentation.<br>- Week may reuse existing workout creation behavior when necessary.<br>- Week does not own new inline editors, advanced planning tools, rescheduling systems, or new autosave experiences.<br>- Week does not display read-only history as its primary purpose.<br>- Week can show a session preview entry point, but detailed planned/session detail and Start Today behavior are deferred to `RL-0025`.<br>- History list and completed Workout Detail behavior are deferred to `RL-0026` and `RL-0027`. |
+| Not Started | RL-0018 | EP-14 | Rest Timer Overlay | Should Have | P1 | M | RL-0022 | Yes | Yes | As a user resting during a workout, I want a focused Rest Timer overlay, so that I can manage the current rest interval without leaving Current Workout. | - Uses `design/approved/03_timer.png` for approved rest overlay layout and screen composition.<br>- Rest Timer belongs to Workout Flow and is not a Dashboard section.<br>- Rest Timer appears as an overlay/modal while resting during an active workout.<br>- Overlay includes countdown UI, skip rest, extend rest, close/dismiss, and return-to-Current-Workout behavior.<br>- Existing timer presets and accessibility touch targets remain usable.<br>- Timer survival across navigation, global/floating timer state, return-to-workout entry from other screens, and active timer persistence are deferred to `RL-0032`. |
+| Not Started | RL-0019 | EP-14 | Achievement Hub Foundation | Should Have | P1 | M | RL-0016, RL-0021 | Yes | Yes | As a consistency-focused user, I want an Achievement hub that shows my level and long-term growth without comparison, so that progress feels motivating rather than judgmental. | - Uses `design/approved/06_achievement.png` for approved Achievement hub layout and screen composition.<br>- Achievement displays level, XP/rep score concept, current title/reward state, and high-level progress using existing local XP/level data where possible.<br>- Achievement language prioritizes consistency, return, and recognition over performance.<br>- Dashboard shows only short-term achievement preview, not full achievement detail.<br>- Achievement does not introduce rankings, leaderboards, public percentile claims, social comparison, public profiles, penalties, or level loss.<br>- Detailed medals, milestone lists, title collection, recent unlocks, and share moments are deferred to `RL-0028` and `RL-0029`. |
+| Not Started | RL-0020 | EP-15 | Phase 2 Final Journey QA | Should Have | P1 | S | RL-0031 | Yes | Yes | As a release reviewer, I want a final Phase 2 readiness review, so that already-completed screen and integration QA can be evaluated without repeating the entire QA pass. | - Reviews `RL-0030` screen QA and `RL-0031` integration/regression QA evidence instead of repeating all previous QA work.<br>- Confirms no unresolved blockers remain for the Guide -> Complete -> Celebrate -> Reward -> Come Back loop.<br>- Confirms final validation evidence includes `flutter analyze` and `flutter test`, or documented skipped-test limitations.<br>- Confirms privacy, local-first, no-backend, no-login, no-cloud-sync, and non-comparison boundaries remain intact.<br>- Release readiness notes identify accepted limitations and remaining Phase 2 UX risks without reopening completed MVP stories.<br>- RL-0020 does not add new feature implementation or broad manual screen retesting unless previous QA evidence is missing or blocked. |
+| Not Started | RL-0021 | EP-15 | Phase 2 Design Handoff | Must Have | P0 | S | RL-0013 | Yes | Yes | As an implementation team, I want approved Phase 2 designs translated into build-ready guidance, so that developers can implement the redesign consistently without redesigning it during coding. | - Reviews all files in `design/approved/` and records screen-specific implementation notes without changing approved UX direction.<br>- Defines reusable layout, color, icon, typography, spacing, and asset-handling guidance compatible with existing Material 3 constraints.<br>- Identifies which approved visual elements can use existing Material widgets and which require local assets or simplified placeholders.<br>- Adds design QA checkpoints for each approved screen, including mobile layout, touch targets, contrast, and non-overlap expectations.<br>- Does not introduce backend, login, cloud sync, external asset services, new product scope, or redesigned flows.<br>- If `RL-0014` implementation has already started, the handoff should audit or adjust that work before `RL-0014` release closure rather than resetting progress.<br>- Produces a handoff artifact usable by Code Writer, Code Reviewer, and QA agents. |
+| Not Started | RL-0022 | EP-12 | Current Workout Set Progression | Must Have | P0 | M | RL-0015 | Yes | Yes | As a user moving through a workout, I want Complete Set to advance me into a rest state or the next exercise, so that workout progress is clear without adding timer UI yet. | - Builds on the Current Workout screen foundation from `RL-0015`.<br>- Complete Set updates local workout progress for the active exercise without duplicating XP/reward behavior.<br>- Current Workout progresses through Exercise -> Rest state -> Next Exercise using existing local workout data.<br>- RL-0022 does not implement timer countdown UI, timer controls, overlay/modal UI, or cross-screen timer continuity.<br>- Rest state exposes the information required by `RL-0018`, such as active workout, completed set/exercise, next exercise, suggested rest duration, and return target.<br>- Completion state is reached when all planned sets/exercises are done and can hand off to `RL-0016`.<br>- Existing workout completion and local persistence behavior remain intact. |
+| Not Started | RL-0023 | EP-12 | Current Workout Control States | Must Have | P0 | M | RL-0022 | Yes | Yes | As a user whose active session needs small adjustments, I want pause, adjust, skip, and resume states in Current Workout, so that the flow remains flexible without becoming an editor. | - Current Workout supports pause and resume states with clear status text and primary action changes.<br>- Users can skip the active exercise or set without corrupting local workout progress.<br>- Adjust is limited to changing current session reps and current session weight only.<br>- Adjust must not modify weekly plans, edit workout templates, become a workout editor, or modify historical records.<br>- Control states do not turn Current Workout into the Week planner or History editor.<br>- Navigation away and back preserves enough local state to continue the active workout.<br>- QA covers pause, resume, skip, current-session reps/weight adjustment, and return-to-workout behavior. |
+| Not Started | RL-0024 | EP-13 | Workout Summary Private Details And Sharing | Must Have | P0 | M | RL-0016 | Yes | Yes | As a user reviewing a completed workout, I want private session details and optional sharing to be available only from the completion summary, so that I can celebrate without weakening privacy. | - Builds on the immediate Workout Summary from `RL-0016`.<br>- Private session details such as duration, volume, calories, sets, or moment of day appear only in the completion-summary context where locally available.<br>- Optional share-card generation is available only as a user-initiated action.<br>- Existing share-card privacy defaults remain intact and performance metrics remain hidden unless explicitly opted in by existing rules.<br>- Plan Tomorrow and Back to Dashboard actions return users to the correct journey without reopening History as Summary.<br>- History cannot reopen the celebration summary state. |
+| Not Started | RL-0025 | EP-14 | Planned Session Detail And Start Today | Should Have | P1 | M | RL-0017, RL-0015 | Yes | Yes | As a user viewing a planned session, I want a focused detail screen that can start today's workout, so that planning can hand off cleanly to Current Workout. | - Uses `design/approved/08_workout_detail.png` only for planned/session detail that can start a workout.<br>- Planned Session Detail displays session name, exercises, sets/reps, notes, and Start Workout or Start Today action where appropriate.<br>- Start Workout hands off to Current Workout without creating duplicate completed records.<br>- Planned/session detail remains separate from completed History detail.<br>- Local persistence preserves planned workout data and active workout handoff state.<br>- QA covers Week -> planned detail -> Start Today -> Current Workout navigation. |
+| Not Started | RL-0026 | EP-14 | Read-Only History | Should Have | P1 | M | RL-0016, RL-0017 | Yes | Yes | As a user reviewing completed sessions, I want History to show completed workouts without editing or celebration states, so that review feels clear and safe. | - Uses `design/approved/07_history.png` for approved History layout and screen composition.<br>- History displays completed workout records grouped by recent periods where practical.<br>- History is read-only and excludes planning edits, Start Workout, rest timer controls, and Workout Summary celebration behavior.<br>- History can navigate to completed Workout Detail, deferred to `RL-0027`.<br>- Dashboard and Week do not duplicate History as a primary section.<br>- QA verifies completed records are review-only and navigation returns cleanly. |
+| Not Started | RL-0027 | EP-14 | Completed Workout Detail | Should Have | P1 | M | RL-0026 | Yes | Yes | As a user opening a completed workout, I want Workout Detail to show what I did without acting like Summary or planning, so that history review remains read-only. | - Uses `design/approved/08_workout_detail.png` only for completed History detail in this story.<br>- Completed Workout Detail displays completed record fields such as exercises, sets, reps, weight, notes, and date where locally available.<br>- Completed Workout Detail excludes Start Workout, celebration animations, reward granting, and summary-only sharing prompts.<br>- Detail state cannot modify completed history records unless a later approved story explicitly adds editing.<br>- Navigation returns to History and then Dashboard predictably.<br>- QA verifies completed detail does not reopen Workout Summary. |
+| Not Started | RL-0028 | EP-14 | Achievement Milestones And Titles | Should Have | P1 | M | RL-0019 | Yes | Yes | As a user checking long-term growth, I want a small set of predefined milestones and titles to show what I can unlock next, so that Achievement feels meaningful without becoming a complex achievement engine. | - Builds on the Achievement hub foundation from `RL-0019`.<br>- Uses a small predefined local milestone catalog.<br>- Reuses existing XP and completion data where possible.<br>- Displays medals or achievements, milestone progress, and title/reward collection using simple local rules.<br>- Does not introduce generic rule engines, configurable achievements, dynamic achievement definitions, backend systems, public ranking, percentile claims, social comparison, public profiles, penalties, or level loss.<br>- Unlock requirements are clear, consistency-focused, and non-punitive.<br>- QA verifies milestone and title states for locked, in-progress, and unlocked examples. |
+| Not Started | RL-0029 | EP-14 | Achievement Unlock And Share Moments | Should Have | P1 | S | RL-0028, RL-0024 | Yes | Yes | As a user who earns recognition, I want recent unlock and share moments to be visible only when I choose, so that rewards feel celebratory and private. | - Achievement shows recent unlock moments without requiring social posting.<br>- Share actions are user-initiated and preserve existing share-card privacy defaults.<br>- Recent unlock language reinforces consistency and return, not performance comparison.<br>- Dashboard remains limited to short-term preview and does not become the full Achievement hub.<br>- Existing share-card generation tracking remains local.<br>- QA covers unlock visibility, share entry point, and privacy-default preservation. |
+| Not Started | RL-0030 | EP-15 | Phase 2 Screen QA | Should Have | P1 | M | RL-0032, RL-0024, RL-0027, RL-0029 | Yes | Yes | As a QA reviewer, I want each approved Phase 2 screen validated independently, so that screen-level layout and accessibility issues are caught before integration testing. | - Screen QA only: validates Home, Current Workout, Rest Timer, Workout Summary, Week, Achievement, History, and Workout Detail independently against `design/approved/` responsibilities.<br>- Checks common iPhone layouts for readable text, touch targets, contrast, navigation predictability, and non-overlapping content.<br>- Confirms each screen owns only its intended responsibility.<br>- Does not validate full cross-screen journeys, navigation survival, or end-to-end regression flows except where needed to enter the screen under test.<br>- Runs `flutter analyze`.<br>- Runs focused widget or service tests relevant to changed screens where available.<br>- Documents any skipped tests or manual-only checks without changing production behavior just for the harness. |
+| Not Started | RL-0031 | EP-15 | Phase 2 Journey Regression QA | Should Have | P1 | M | RL-0030 | Yes | Yes | As a QA reviewer, I want cross-screen integration and regression QA, so that the redesigned screens work together as one product experience. | - Cross-screen integration and regression QA only.<br>- Validates Dashboard -> Current Workout -> Rest -> Completion -> Summary -> Achievement/Reward -> Dashboard flow.<br>- Validates Week -> Planned Session Detail -> Start Today -> Current Workout handoff.<br>- Validates History -> Completed Workout Detail review without reopening Summary.<br>- Validates Rest Timer continuity behavior from `RL-0032` across allowed navigation paths.<br>- Validates Achievement rewards and share moments preserve privacy and non-comparison rules.<br>- Runs `flutter test` or documents skipped tests as known limitations.<br>- Produces final integration evidence for `RL-0020` release readiness. |
+| Not Started | RL-0032 | EP-14 | Cross-Screen Rest Timer Continuity | Should Have | P1 | M | RL-0018, RL-0023 | Yes | Yes | As a user resting during an active workout, I want the timer to survive navigation and give me a way back to the workout, so that rest remains connected to the workout flow across screens. | - Builds on the Rest Timer overlay from `RL-0018`.<br>- Timer survives allowed navigation during an active workout flow.<br>- Global/floating timer state remains visible or recoverable where it supports active workout continuity.<br>- Users have a clear return-to-workout entry point from active timer state.<br>- Active timer state persists during the workout flow without introducing backend, login, cloud sync, or cross-device behavior.<br>- Timer continuity remains scoped to active workout flow and is not a Dashboard feature, standalone timer mode, or background service outside the app.<br>- QA covers navigation survival, active timer state, return-to-workout entry, and cleanup when rest/workout ends. |
+
+---
+
+## Phase 2 Split Mapping
+
+| Original Story | Previous Scope | Revised Story Set | Rationale |
+| -------------- | -------------- | ----------------- | --------- |
+| `RL-0015` | Current Workout layout, set progression, rest handoff, pause, adjust, skip, start, resume, and completion. | `RL-0015` Current Workout foundation; `RL-0022` set progression and rest handoff; `RL-0023` pause, adjust, skip, and resume states. | The original story combined UI foundation, workout state machine, persistence, controls, and completion handoff. The split keeps each development cycle focused on one Current Workout responsibility. |
+| `RL-0016` | Celebration, reward display, private stats, sharing, Plan Tomorrow, Back to Dashboard, and History separation. | `RL-0016` immediate celebration/reward shell; `RL-0024` private details, optional sharing, Plan Tomorrow, and return actions. | The original story mixed completion routing, reward display, private metrics, share privacy, and navigation. The split protects summary correctness before adding optional detail and sharing. |
+| `RL-0017` | Week planning, History, planned/session detail, completed detail, Start Today, read-only review, and navigation. | `RL-0017` Week planning; `RL-0025` planned session detail and Start Today; `RL-0026` read-only History; `RL-0027` completed Workout Detail. | The original story covered three screens and two different detail modes. The split keeps planning, start handoff, history list, and completed detail independently testable. |
+| `RL-0018` | Rest overlay/modal UI, countdown controls, cross-screen timer survival, global/floating timer state, return-to-workout entry, and active timer persistence. | `RL-0018` Rest Timer overlay only; `RL-0032` Cross-Screen Rest Timer Continuity. | The original Rest Timer scope still combined UI controls, countdown, navigation survival, and persistence. The split lets overlay behavior ship before global continuity is added. |
+| `RL-0019` | Achievement hub, medals, milestones, titles, recent unlocks, share moments, Dashboard preview, and non-comparison rules. | `RL-0019` Achievement hub foundation; `RL-0028` milestones and titles; `RL-0029` unlock and share moments. | The original story combined screen foundation, reward taxonomy, unlock state, privacy, and sharing. The split preserves non-comparison boundaries while allowing incremental motivation depth. |
+| `RL-0020` | Full Phase 2 journey QA, screen QA, accessibility, layout, automation, skipped-test review, and release readiness. | `RL-0030` screen-level QA; `RL-0031` cross-screen integration and regression QA; `RL-0020` final release-readiness review only. | The original QA story was small in effort but large in validation surface. The split separates screen acceptance, integration/regression, and final release review so RL-0020 does not repeat all prior QA work. |
+| Missing design coverage | Approved PNGs were mapped to implementation stories, but there was no dedicated design handoff story. | `RL-0021` Phase 2 Design Handoff. | The backlog needed a non-redesign design step that converts approved visual references into implementation notes, asset decisions, and QA checkpoints before remaining screen work proceeds. |
 
 ---
 
@@ -662,3 +756,15 @@ Story-level Phase 2 task files:
 | `RL-0018` | `user_stories/RL-0018/RL-0018_TASKS.md` |
 | `RL-0019` | `user_stories/RL-0019/RL-0019_TASKS.md` |
 | `RL-0020` | `user_stories/RL-0020/RL-0020_TASKS.md` |
+| `RL-0021` | `user_stories/RL-0021/RL-0021_TASKS.md` |
+| `RL-0022` | `user_stories/RL-0022/RL-0022_TASKS.md` |
+| `RL-0023` | `user_stories/RL-0023/RL-0023_TASKS.md` |
+| `RL-0024` | `user_stories/RL-0024/RL-0024_TASKS.md` |
+| `RL-0025` | `user_stories/RL-0025/RL-0025_TASKS.md` |
+| `RL-0026` | `user_stories/RL-0026/RL-0026_TASKS.md` |
+| `RL-0027` | `user_stories/RL-0027/RL-0027_TASKS.md` |
+| `RL-0028` | `user_stories/RL-0028/RL-0028_TASKS.md` |
+| `RL-0029` | `user_stories/RL-0029/RL-0029_TASKS.md` |
+| `RL-0030` | `user_stories/RL-0030/RL-0030_TASKS.md` |
+| `RL-0031` | `user_stories/RL-0031/RL-0031_TASKS.md` |
+| `RL-0032` | `user_stories/RL-0032/RL-0032_TASKS.md` |

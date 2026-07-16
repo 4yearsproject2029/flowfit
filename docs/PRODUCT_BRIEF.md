@@ -128,6 +128,8 @@ Supporting metrics:
 * Workout completion rate after starting a workout.
 * Percentage of workouts completed through the Current Workout flow.
 * Celebration or reward moments viewed after completion.
+* Percentage of Phase 2 approved screens with completed design handoff notes before implementation.
+* Percentage of Phase 2 stories completed in independently testable S/M-sized slices.
 
 ## Phase 2 Scope
 
@@ -143,17 +145,22 @@ design/approved/
 
 The approved PNGs define visual layout and screen composition for Home Dashboard, Current Workout, Rest Timer overlay, Workout Summary, Week Planning, Achievement Hub, History, and Workout Detail. Existing product documents continue to define behavior, business rules, privacy boundaries, and offline-first constraints.
 
+Phase 2 implementation should proceed through small, independently testable stories. Approved designs should be translated into implementation handoff notes, asset decisions, and QA checkpoints before remaining screen work is implemented; this handoff must not redesign the approved UX.
+
 ### Must Have
 
+* Phase 2 design handoff that translates approved PNGs into build-ready notes without changing the approved UX.
 * Home Dashboard focused on "What should I do today?"
 * Current Workout flow focused on "What should I do next?"
 * Workout Summary shown immediately after completion.
 * Clear separation between Dashboard, Current Workout, Summary, Week, History, and Achievement responsibilities.
-* Rest Timer moved into the workout flow as a floating overlay, not a dashboard section.
+* Rest Timer moved into the workout flow as an overlay/modal first, not a dashboard section.
+* Cross-screen Rest Timer continuity handled as a separate story after the overlay exists.
 * Achievement, XP, levels, weekly goals, and share cards positioned as recognition systems that support consistency.
 * Beginner-friendly language that celebrates showing up and completion.
 * Offline-first local data behavior preserved.
 * Existing completed MVP behavior preserved unless it conflicts with the approved user journey.
+* Story slices that keep UI foundation, navigation, state progression, persistence, rewards, sharing, timer continuity, and QA concerns independently testable where practical.
 
 ### Should Have
 
