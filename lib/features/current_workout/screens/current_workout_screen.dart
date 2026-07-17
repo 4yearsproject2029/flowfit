@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/models/workout_log.dart';
+import '../../../data/services/storage_service.dart';
 
-class CurrentWorkoutScreen extends StatelessWidget {
-  const CurrentWorkoutScreen({
+class CurrentWorkoutScreen extends StatefulWidget {
+  CurrentWorkoutScreen({
     super.key,
     required this.workoutLogs,
     required this.selectedDateLabel,
-  });
+    StorageService? storageService,
+  }) : storageService = storageService ?? StorageService();
 
   final List<WorkoutLog> workoutLogs;
   final String selectedDateLabel;
+  final StorageService storageService;
 
   static const _background = Color(0xFF050606);
   static const _surface = Color(0xFF101214);
@@ -23,15 +26,50 @@ class CurrentWorkoutScreen extends StatelessWidget {
   static const _mutedText = Color(0xFF6F767E);
 
   @override
+  State<CurrentWorkoutScreen> createState() => _CurrentWorkoutScreenState();
+}
+
+class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
+  late int _currentExerciseIndex;
+  late final Map<String, int> _completedSetsByWorkoutLogId;
+  late final Set<String> _syncedCompletedWorkoutLogIds;
+  _RestState? _restState;
+  bool _isCompletionReady = false;
+
+  List<WorkoutLog> get _workoutLogs => widget.workoutLogs;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentExerciseIndex = _firstActiveExerciseIndex();
+    _completedSetsByWorkoutLogId = {
+      for (final workoutLog in _workoutLogs)
+        if (workoutLog.isCompleted) workoutLog.id: _targetSets(workoutLog),
+    };
+    _syncedCompletedWorkoutLogIds = {
+      for (final workoutLog in _workoutLogs)
+        if (workoutLog.isCompleted) workoutLog.id,
+    };
+    _isCompletionReady =
+        _workoutLogs.isNotEmpty &&
+        _workoutLogs.every(
+          (workoutLog) =>
+              _completedSetsFor(workoutLog) >= _targetSets(workoutLog),
+        );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final activeWorkout = _activeWorkoutLog();
-    final completedCount = workoutLogs.where((log) => log.isCompleted).length;
-    final totalCount = workoutLogs.length;
-    final progress = totalCount == 0 ? 0.0 : completedCount / totalCount;
+    final completedSetCount = _completedSetCount();
+    final totalSetCount = _totalSetCount();
+    final progress = totalSetCount == 0
+        ? 0.0
+        : completedSetCount / totalSetCount;
     final progressPercent = (progress * 100).round();
 
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: CurrentWorkoutScreen._background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -41,12 +79,12 @@ class CurrentWorkoutScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _CurrentWorkoutHeader(dateLabel: selectedDateLabel),
+                    _CurrentWorkoutHeader(dateLabel: widget.selectedDateLabel),
                     const SizedBox(height: 30),
                     Text(
                       'CURRENT WORKOUT',
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: _secondaryText,
+                        color: CurrentWorkoutScreen._secondaryText,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0,
                       ),
@@ -57,10 +95,10 @@ class CurrentWorkoutScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            _progressTitle(completedCount, totalCount),
+                            _progressTitle(),
                             style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
-                                  color: _primaryText,
+                                  color: CurrentWorkoutScreen._primaryText,
                                   fontWeight: FontWeight.w900,
                                   height: 1.04,
                                 ),
@@ -73,30 +111,29 @@ class CurrentWorkoutScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     _AccentProgressBar(value: progress),
                     const SizedBox(height: 24),
-                    if (activeWorkout == null)
+                    if (_isCompletionReady)
+                      const _CompletionReadyCard()
+                    else if (activeWorkout == null)
                       const _NoActiveWorkoutCard()
+                    else if (_restState != null)
+                      _RestStateCard(restState: _restState!)
                     else
-                      _ActiveExerciseCard(workoutLog: activeWorkout),
+                      _ActiveExerciseCard(
+                        workoutLog: activeWorkout,
+                        completedSets: _completedSetsFor(activeWorkout),
+                        targetSets: _targetSets(activeWorkout),
+                      ),
                     const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
                       child: FilledButton.icon(
-                        onPressed: activeWorkout == null
-                            ? null
-                            : () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Set progression arrives in a later story.',
-                                    ),
-                                  ),
-                                );
-                              },
+                        onPressed: _primaryAction(activeWorkout),
                         style: FilledButton.styleFrom(
-                          backgroundColor: _accent,
+                          backgroundColor: CurrentWorkoutScreen._accent,
                           foregroundColor: Colors.black,
-                          disabledBackgroundColor: _border,
-                          disabledForegroundColor: _mutedText,
+                          disabledBackgroundColor: CurrentWorkoutScreen._border,
+                          disabledForegroundColor:
+                              CurrentWorkoutScreen._mutedText,
                           minimumSize: const Size.fromHeight(58),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -106,8 +143,8 @@ class CurrentWorkoutScreen extends StatelessWidget {
                             fontSize: 17,
                           ),
                         ),
-                        icon: const Icon(Icons.check),
-                        label: const Text('Complete Set'),
+                        icon: Icon(_primaryActionIcon()),
+                        label: Text(_primaryActionLabel()),
                       ),
                     ),
                   ],
@@ -121,28 +158,165 @@ class CurrentWorkoutScreen extends StatelessWidget {
   }
 
   WorkoutLog? _activeWorkoutLog() {
-    if (workoutLogs.isEmpty) {
+    if (_workoutLogs.isEmpty || _isCompletionReady) {
       return null;
     }
 
-    final incompleteWorkouts = workoutLogs.where((log) => !log.isCompleted);
-    if (incompleteWorkouts.isNotEmpty) {
-      return incompleteWorkouts.first;
-    }
-
-    return workoutLogs.last;
+    return _workoutLogs[_currentExerciseIndex];
   }
 
-  String _progressTitle(int completedCount, int totalCount) {
-    if (totalCount == 0) {
+  int _firstActiveExerciseIndex() {
+    if (_workoutLogs.isEmpty) {
+      return 0;
+    }
+
+    final incompleteIndex = _workoutLogs.indexWhere(
+      (workoutLog) => !workoutLog.isCompleted,
+    );
+    return incompleteIndex == -1 ? _workoutLogs.length - 1 : incompleteIndex;
+  }
+
+  String _progressTitle() {
+    if (_workoutLogs.isEmpty) {
       return 'No workout ready';
     }
 
-    final currentExercise = completedCount == totalCount
-        ? totalCount
-        : completedCount + 1;
+    if (_isCompletionReady) {
+      return 'Workout complete';
+    }
 
-    return 'Exercise $currentExercise of $totalCount';
+    if (_restState != null) {
+      return 'Rest after set ${_restState!.completedSetNumber}';
+    }
+
+    return 'Exercise ${_currentExerciseIndex + 1} of ${_workoutLogs.length}';
+  }
+
+  VoidCallback? _primaryAction(WorkoutLog? activeWorkout) {
+    if (activeWorkout == null || _isCompletionReady) {
+      return null;
+    }
+
+    if (_restState != null) {
+      return _continueFromRest;
+    }
+
+    return () {
+      _completeActiveSet(activeWorkout);
+    };
+  }
+
+  IconData _primaryActionIcon() {
+    if (_isCompletionReady) {
+      return Icons.flag_outlined;
+    }
+    if (_restState != null) {
+      return Icons.arrow_forward;
+    }
+    return Icons.check;
+  }
+
+  String _primaryActionLabel() {
+    if (_isCompletionReady) {
+      return 'Summary comes next';
+    }
+    if (_restState != null) {
+      return 'Continue Workout';
+    }
+    return 'Complete Set';
+  }
+
+  Future<void> _completeActiveSet(WorkoutLog activeWorkout) async {
+    final targetSets = _targetSets(activeWorkout);
+    final completedSets = _completedSetsFor(activeWorkout);
+    final nextCompletedSet = (completedSets + 1).clamp(0, targetSets);
+    final exerciseComplete = nextCompletedSet >= targetSets;
+    final nextExerciseIndex = exerciseComplete
+        ? _nextExerciseIndexOrNull()
+        : _currentExerciseIndex;
+
+    setState(() {
+      _completedSetsByWorkoutLogId[activeWorkout.id] = nextCompletedSet;
+      if (nextExerciseIndex == null) {
+        _isCompletionReady = true;
+        _restState = null;
+      } else {
+        _restState = _RestState(
+          activeWorkoutName: activeWorkout.workoutName,
+          completedSetNumber: nextCompletedSet,
+          completedSetTotal: targetSets,
+          nextWorkoutName: _workoutLogs[nextExerciseIndex].workoutName,
+          nextExerciseIndex: nextExerciseIndex,
+          suggestedRestDuration: '90 sec',
+          returnTarget: 'Current Workout',
+        );
+      }
+    });
+
+    if (exerciseComplete) {
+      await _syncWorkoutCompletion(activeWorkout);
+    }
+  }
+
+  Future<void> _syncWorkoutCompletion(WorkoutLog workoutLog) async {
+    if (_syncedCompletedWorkoutLogIds.contains(workoutLog.id)) {
+      return;
+    }
+
+    _syncedCompletedWorkoutLogIds.add(workoutLog.id);
+    await widget.storageService.toggleWorkoutCompletion(workoutLog.id);
+  }
+
+  void _continueFromRest() {
+    final restState = _restState;
+    if (restState == null) {
+      return;
+    }
+
+    setState(() {
+      _currentExerciseIndex = restState.nextExerciseIndex;
+      _restState = null;
+    });
+  }
+
+  int? _nextExerciseIndexOrNull() {
+    final nextIndex = _currentExerciseIndex + 1;
+    return nextIndex >= _workoutLogs.length ? null : nextIndex;
+  }
+
+  int _totalSetCount() {
+    return _workoutLogs.fold<int>(
+      0,
+      (total, workoutLog) => total + _targetSets(workoutLog),
+    );
+  }
+
+  int _completedSetCount() {
+    return _workoutLogs.fold<int>(
+      0,
+      (total, workoutLog) => total + _completedSetsFor(workoutLog),
+    );
+  }
+
+  int _completedSetsFor(WorkoutLog workoutLog) {
+    final completedSets = _completedSetsByWorkoutLogId[workoutLog.id] ?? 0;
+    final targetSets = _targetSets(workoutLog);
+    if (completedSets < 0) {
+      return 0;
+    }
+    if (completedSets > targetSets) {
+      return targetSets;
+    }
+    return completedSets;
+  }
+
+  int _targetSets(WorkoutLog workoutLog) {
+    final sets = workoutLog.sets;
+    if (sets == null || sets < 1) {
+      return 1;
+    }
+
+    return sets;
   }
 }
 
@@ -222,9 +396,15 @@ class _ProgressPill extends StatelessWidget {
 }
 
 class _ActiveExerciseCard extends StatelessWidget {
-  const _ActiveExerciseCard({required this.workoutLog});
+  const _ActiveExerciseCard({
+    required this.workoutLog,
+    required this.completedSets,
+    required this.targetSets,
+  });
 
   final WorkoutLog workoutLog;
+  final int completedSets;
+  final int targetSets;
 
   @override
   Widget build(BuildContext context) {
@@ -290,7 +470,7 @@ class _ActiveExerciseCard extends StatelessWidget {
               Expanded(
                 child: _TargetTile(
                   label: 'Sets',
-                  value: workoutLog.sets?.toString() ?? 'Not set',
+                  value: workoutLog.sets?.toString() ?? '1',
                 ),
               ),
               const SizedBox(width: 12),
@@ -301,6 +481,11 @@ class _ActiveExerciseCard extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          _TargetTile(
+            label: 'Set progress',
+            value: '$completedSets / $targetSets',
           ),
         ],
       ),
@@ -353,6 +538,177 @@ class _TargetTile extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _RestState {
+  const _RestState({
+    required this.activeWorkoutName,
+    required this.completedSetNumber,
+    required this.completedSetTotal,
+    required this.nextWorkoutName,
+    required this.nextExerciseIndex,
+    required this.suggestedRestDuration,
+    required this.returnTarget,
+  });
+
+  final String activeWorkoutName;
+  final int completedSetNumber;
+  final int completedSetTotal;
+  final String nextWorkoutName;
+  final int nextExerciseIndex;
+  final String suggestedRestDuration;
+  final String returnTarget;
+}
+
+class _RestStateCard extends StatelessWidget {
+  const _RestStateCard({required this.restState});
+
+  final _RestState restState;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: CurrentWorkoutScreen._surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: CurrentWorkoutScreen._border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.airline_seat_recline_normal,
+                color: CurrentWorkoutScreen._accent,
+                size: 30,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'REST STATE',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: CurrentWorkoutScreen._secondaryText,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Text(
+            'Rest after ${restState.activeWorkoutName}',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: CurrentWorkoutScreen._primaryText,
+              fontWeight: FontWeight.w900,
+              height: 1.12,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Completed set ${restState.completedSetNumber} of ${restState.completedSetTotal}.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: CurrentWorkoutScreen._secondaryText,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          _HandoffRow(
+            icon: Icons.fitness_center,
+            label: 'Next',
+            value: restState.nextWorkoutName,
+          ),
+          const SizedBox(height: 10),
+          _HandoffRow(
+            icon: Icons.hourglass_empty,
+            label: 'Suggested rest',
+            value: restState.suggestedRestDuration,
+          ),
+          const SizedBox(height: 10),
+          _HandoffRow(
+            icon: Icons.keyboard_return,
+            label: 'Return target',
+            value: restState.returnTarget,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CompletionReadyCard extends StatelessWidget {
+  const _CompletionReadyCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: CurrentWorkoutScreen._surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: CurrentWorkoutScreen._border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.emoji_events_outlined,
+            color: CurrentWorkoutScreen._accent,
+            size: 36,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Workout ready for summary',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: CurrentWorkoutScreen._primaryText,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'All planned sets are complete. Workout Summary can take over next.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: CurrentWorkoutScreen._secondaryText,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HandoffRow extends StatelessWidget {
+  const _HandoffRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, color: CurrentWorkoutScreen._accent, size: 20),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            '$label: $value',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: CurrentWorkoutScreen._primaryText,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

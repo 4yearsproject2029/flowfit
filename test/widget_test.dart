@@ -98,16 +98,22 @@ void main() {
     // clearing boxes through tester.runAsync at the start of each test.
   });
 
-  testWidgets('shows onboarding on first launch', (WidgetTester tester) async {
+  testWidgets('skips weekly goal onboarding on first launch', (
+    WidgetTester tester,
+  ) async {
     await resetHiveBoxesForTest(tester);
     await pumpFlowFitApp(tester);
 
-    expect(find.text('Set your weekly goal'), findsOneWidget);
-    expect(find.text('Workouts per week'), findsOneWidget);
-    expect(find.text('1 workout per week'), findsOneWidget);
-    expect(find.text('5 workouts per week'), findsOneWidget);
-    expect(find.textContaining('Uninstalling RepLog'), findsOneWidget);
-    expect(find.text('This Week'), findsNothing);
+    expect(find.text('Set your weekly goal'), findsNothing);
+    expect(find.text('Workouts per week'), findsNothing);
+    expect(find.text("TODAY'S FOCUS"), findsOneWidget);
+    expect(find.text('No workout planned'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Plan Workout'), findsOneWidget);
+
+    await tester.runAsync(() async {
+      expect(StorageService().getWeeklyGoal(), 3);
+      expect(StorageService().hasCompletedOnboarding(), isTrue);
+    });
   });
 
   testWidgets('saves weekly goal during onboarding', (
@@ -217,7 +223,7 @@ void main() {
     );
   });
 
-  testWidgets('opens Current Workout foundation from dashboard start action', (
+  testWidgets('opens Current Workout and advances through rest handoff', (
     WidgetTester tester,
   ) async {
     await resetHiveBoxesForTest(tester);
@@ -225,16 +231,30 @@ void main() {
     await tester.runAsync(() async {
       await StorageService().addWorkoutLog(
         WorkoutLog(
-          id: 'current-workout-log',
+          id: 'current-workout-log-1',
           date: _dateKey(DateTime.now()),
-          workoutId: 'current-workout',
+          workoutId: 'current-workout-1',
           workoutName: 'Dumbbell Shoulder Press',
           category: 'Strength',
           isCompleted: false,
-          sets: 3,
+          sets: 1,
           reps: 10,
           memo: 'Press the dumbbells overhead until arms are fully extended.',
           createdAt: DateTime.now(),
+        ),
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'current-workout-log-2',
+          date: _dateKey(DateTime.now()),
+          workoutId: 'current-workout-2',
+          workoutName: 'Goblet Squat',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 1,
+          reps: 8,
+          memo: 'Keep your chest tall and drive through your heels.',
+          createdAt: DateTime.now().add(const Duration(minutes: 1)),
         ),
       );
     });
@@ -245,16 +265,18 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('CURRENT WORKOUT'), findsOneWidget);
-    expect(find.text('Exercise 1 of 1'), findsOneWidget);
+    expect(find.text('Exercise 1 of 2'), findsOneWidget);
     expect(find.text('Dumbbell Shoulder Press'), findsWidgets);
     expect(
       find.text('Press the dumbbells overhead until arms are fully extended.'),
       findsOneWidget,
     );
     expect(find.text('SETS'), findsOneWidget);
-    expect(find.text('3'), findsOneWidget);
+    expect(find.text('1'), findsWidgets);
     expect(find.text('REPS'), findsOneWidget);
     expect(find.text('10'), findsOneWidget);
+    expect(find.text('SET PROGRESS'), findsOneWidget);
+    expect(find.text('0 / 1'), findsOneWidget);
     expect(find.widgetWithText(FilledButton, 'Complete Set'), findsOneWidget);
 
     await tester.dragUntilVisible(
@@ -264,12 +286,49 @@ void main() {
     );
     await tester.pump();
     await tester.tap(find.widgetWithText(FilledButton, 'Complete Set'));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
+    expect(find.text('REST STATE'), findsOneWidget);
+    expect(find.text('Rest after Dumbbell Shoulder Press'), findsOneWidget);
+    expect(find.text('Completed set 1 of 1.'), findsOneWidget);
+    expect(find.text('Next: Goblet Squat'), findsOneWidget);
+    expect(find.text('Suggested rest: 90 sec'), findsOneWidget);
+    expect(find.text('Return target: Current Workout'), findsOneWidget);
     expect(
-      find.text('Set progression arrives in a later story.'),
+      find.widgetWithText(FilledButton, 'Continue Workout'),
       findsOneWidget,
     );
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(FilledButton, 'Continue Workout'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, 'Continue Workout'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Exercise 2 of 2'), findsOneWidget);
+    expect(find.text('Goblet Squat'), findsWidgets);
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(FilledButton, 'Complete Set'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, 'Complete Set'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Workout complete'), findsOneWidget);
+    expect(find.text('Workout ready for summary'), findsOneWidget);
+    expect(
+      find.widgetWithText(FilledButton, 'Summary comes next'),
+      findsOneWidget,
+    );
+    await tester.runAsync(() async {
+      expect(StorageService().getXpTotal(), 20);
+    });
   });
 
   // Skipped as a known widget-test harness limitation: tapping Generate starts

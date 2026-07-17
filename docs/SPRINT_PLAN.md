@@ -3,27 +3,27 @@
 ## Current Story
 
 Story ID:
-RL-0015
+RL-0022
 
 Status:
-Done
+On Hold
 
 Reason:
-RL-0015 is complete. RepLog now has a Current Workout screen foundation reachable from Dashboard Start Workout, with active local workout details, progress, sets/reps targets, and a Complete Set placeholder while preserving deferred progression and control behavior.
+RL-0022 was selected after RL-0015, but manual testing found missing screens that should be addressed before Current Workout set progression continues. Partial RL-0022 implementation work is preserved for later resume.
 
 ## Routing Decision Traceability
 
 Decision Point:
-Release Closeout
+Coordinator Story Selection
 
 Selected Story:
-RL-0015
+RL-0022
 
 Previous Story State:
 In Progress
 
 New Story State:
-Done
+On Hold
 
 Inputs Considered:
 
@@ -33,35 +33,26 @@ Inputs Considered:
 - docs/ARCHITECTURE.md
 - docs/USER_JOURNEY.md
 - docs/SCREEN_STRUCTURE.md
-- user_stories/RL-0015/RL-0015_TASKS.md
-- user_stories/RL-0015/RL-0015_SPRINT_PLAN.md
-- user_stories/RL-0015/RL-0015_UX_SPEC.md
-- user_stories/RL-0015/RL-0015_INTERPRETATION.md
-- user_stories/RL-0015/RL-0015_IMPLEMENTATION_NOTES.md
-- user_stories/RL-0015/RL-0015_CODE_REVIEW.md
-- user_stories/RL-0015/RL-0015_QA_REPORT.md
+- user_stories/RL-0022/RL-0022_TASKS.md
 - user_stories/RL-0015/RL-0015_RELEASE_NOTE.md
 - user_stories/RL-0021/RL-0021_UX_SPEC.md
 - design/approved/02_current_workout.png
+- design/approved/03_timer.png
 
 Dependency and Blocker Status:
 
-- RL-0015 depends on RL-0014 and RL-0021.
-- RL-0014 is Done.
-- RL-0021 is Done.
-- Code Review approved RL-0015.
-- QA passed RL-0015.
-- User approval was received by instruction to proceed through release.
-- No release blockers remain.
+- RL-0022 depends on RL-0015.
+- RL-0015 is Done.
+- Manual testing found missing screens before RL-0022 could continue to release.
 
-Selection Rationale:
-RL-0015 was completed before RL-0022 and RL-0023 because it establishes the Current Workout screen foundation required by those downstream stories. The story stayed scoped to foundation, navigation, local data display, and Complete Set placeholder behavior.
+Hold Rationale:
+RL-0022 should not continue until the missing-screen gap found during manual testing is resolved or explicitly waived. This avoids building deeper Current Workout progression on top of incomplete Phase 2 screen coverage.
 
 Next Agent:
 Coordinator
 
 Next Prompt:
-Select the next eligible Phase 2 story from `docs/EPIC_USER_STORY_TASKS.md`. RL-0015 is Done, so continue with RL-0022 before RL-0023.
+Review the missing screens found during manual testing, decide whether backlog/story sequencing needs adjustment, and do not continue RL-0022 until the missing-screen gap is resolved or explicitly waived.
 
 ## Dependency Validation
 
@@ -71,27 +62,31 @@ Select the next eligible Phase 2 story from `docs/EPIC_USER_STORY_TASKS.md`. RL-
 - EPIC_USER_STORY_TASKS.md: Present.
 - USER_JOURNEY.md: Present.
 - SCREEN_STRUCTURE.md: Present.
-- RL-0015 task file: Present and Done.
-- RL-0015 sprint plan: Present and Done.
+- RL-0022 task file: Present.
+- RL-0022 sprint plan: Present.
+- RL-0015 release note: Present.
 - RL-0021 design handoff: Present.
-- Approved Current Workout design reference: Present.
-- Story dependencies: RL-0014, RL-0021.
-- Dependency status: all dependencies are Done.
-- Current blocker status: No blockers identified.
+- Approved design references: Present.
+- Story dependencies: RL-0015.
+- Dependency status: direct dependency RL-0015 is Done.
+- Current blocker status: RL-0022 is On Hold due to missing screens found during manual testing.
 
 ## Execution Order
 
-1. Selected RL-0015 as the next eligible Phase 2 story after RL-0021 release.
-2. Created the RL-0015 sprint plan and moved RL-0015 to In Progress.
-3. Produced the Current Workout foundation UX specification.
-4. Interpreted acceptance criteria and deferrals.
-5. Implemented the Current Workout screen foundation.
-6. Added focused widget coverage for Dashboard to Current Workout navigation.
-7. Ran focused widget test, static analysis, and full test suite.
-8. Completed Code Review with final decision Approved.
-9. Completed QA with final decision Pass.
-10. Captured user approval from the instruction to proceed through release.
-11. Closed RL-0015 as Done and synchronized release artifacts.
+1. Confirm RL-0015 is Done and Current Workout foundation exists.
+2. Produce UX guidance for Complete Set progression, rest-state display, next exercise handoff, and completion-ready state.
+3. Interpret RL-0022 into story-scoped state, persistence, and deferral requirements.
+4. Implement progression using existing local workout data and the Current Workout foundation.
+5. Add or update focused tests for exercise progression, rest-state information, next exercise display, completion-ready state, and no XP duplication.
+6. Run static analysis and relevant tests.
+7. Complete Code Review and QA.
+8. Release RL-0022 after QA passes and user approval is satisfied.
+
+Hold checkpoint:
+
+- RL-0022 is paused before release.
+- Resume only after the missing-screen issue found during manual testing is resolved or explicitly waived.
+- Preserve partial implementation and test work for later continuation.
 
 ## Assigned Agents
 
@@ -105,7 +100,7 @@ Select the next eligible Phase 2 story from `docs/EPIC_USER_STORY_TASKS.md`. RL-
 
 ## Required Deliverables
 
-- RL-0015 sprint plan.
+- RL-0022 sprint plan.
 - UX specification.
 - Interpretation notes.
 - Implementation notes.
@@ -116,24 +111,23 @@ Select the next eligible Phase 2 story from `docs/EPIC_USER_STORY_TASKS.md`. RL-
 
 ## Risks Or Blockers
 
-- No release blockers remain.
-- Complete Set remains a placeholder until RL-0022.
-- Pause, adjust, skip, resume, rest handoff, and completion navigation remain deferred.
-- Full test suite has 5 documented skipped widget-harness limitations from prior stories.
+- RL-0022 is On Hold because manual testing found missing screens.
+- RL-0022 must not implement timer countdown UI, timer controls, overlay/modal UI, or cross-screen timer continuity.
+- RL-0022 must not implement RL-0023 pause, adjust, skip, or resume controls.
+- Completion behavior must preserve XP/reward idempotency.
 
 ## Expected Outcome
 
-- RL-0015 is closed as Done.
-- Current Workout foundation is released.
-- RL-0022 is the next eligible Phase 2 story.
-- No backend, login, cloud sync, external analytics SDK, social graph, public ranking, external asset service, or new product scope was introduced.
+- RL-0022 remains preserved as On Hold.
+- Coordinator reviews the missing-screen issue before selecting or resuming the next implementation step.
+- Current Workout set progression does not proceed to release until the gap is resolved or explicitly waived.
 
 ## Agent Handoff
 
 Current Agent:
 
 ```text
-Release Manager
+Coordinator
 ```
 
 Completed Output:
@@ -141,15 +135,7 @@ Completed Output:
 ```text
 docs/SPRINT_PLAN.md
 docs/EPIC_USER_STORY_TASKS.md
-DEVELOPMENT_LOG.md
-user_stories/RL-0015/RL-0015_TASKS.md
-user_stories/RL-0015/RL-0015_SPRINT_PLAN.md
-user_stories/RL-0015/RL-0015_UX_SPEC.md
-user_stories/RL-0015/RL-0015_INTERPRETATION.md
-user_stories/RL-0015/RL-0015_IMPLEMENTATION_NOTES.md
-user_stories/RL-0015/RL-0015_CODE_REVIEW.md
-user_stories/RL-0015/RL-0015_QA_REPORT.md
-user_stories/RL-0015/RL-0015_RELEASE_NOTE.md
+user_stories/RL-0022/RL-0022_SPRINT_PLAN.md
 ```
 
 Next Agent:
@@ -161,41 +147,44 @@ Coordinator
 Next Prompt:
 
 ```text
-Select the next eligible Phase 2 story from docs/EPIC_USER_STORY_TASKS.md. RL-0015 is Done; RL-0022 is the next eligible story in the current recommended order.
+Review the missing screens found during manual testing, decide whether backlog/story sequencing needs adjustment, and do not continue RL-0022 until the missing-screen gap is resolved or explicitly waived.
 ```
 
 Required Input Files:
 
 - `docs/EPIC_USER_STORY_TASKS.md`
-- `docs/SPRINT_PLAN.md`
 - `docs/PRODUCT_BRIEF.md`
 - `docs/PROJECT_CONTEXT.md`
 - `docs/ARCHITECTURE.md`
 - `docs/USER_JOURNEY.md`
 - `docs/SCREEN_STRUCTURE.md`
 - `user_stories/RL-0022/RL-0022_TASKS.md`
+- `user_stories/RL-0022/RL-0022_SPRINT_PLAN.md`
 - `user_stories/RL-0015/RL-0015_RELEASE_NOTE.md`
 - `user_stories/RL-0021/RL-0021_UX_SPEC.md`
+- `design/approved/02_current_workout.png`
+- `design/approved/03_timer.png`
 
 Optional Input Files:
 
 - `docs/LOW-FI-WIREFRAME.md`
-- Existing `user_stories/RL-0000` through `user_stories/RL-0015` artifacts for historical context only.
+- Existing completed story artifacts for historical context only.
 
 Expected Output:
 
-- `docs/SPRINT_PLAN.md` updated for RL-0022.
-- `user_stories/RL-0022/RL-0022_SPRINT_PLAN.md`
+- Missing-screen assessment or follow-up story selection.
+- Updated sprint plan for the selected next step.
+- RL-0022 remains On Hold until resume approval.
 
 Blocking Conditions:
 
-- None.
+- Stop if progression requires timer countdown UI, timer controls, overlay/modal UI, or cross-screen continuity.
+- Stop if progression cannot preserve XP/reward idempotency.
+- Stop if implementation would require backend, login, cloud sync, external asset services, or broad content systems.
+- Stop if the next step would continue RL-0022 without resolving or explicitly waiving the missing-screen issue.
 
 Instructions:
 
-- RL-0014 is Done.
-- RL-0021 is Done.
-- RL-0015 is Done.
-- Preserve Story IDs and completed story state.
-- Continue with RL-0022 before RL-0023.
-- Use the RL-0015 Current Workout foundation as the implementation base.
+- Preserve RL-0022 partial work for later resume.
+- Do not continue RL-0022 until the missing-screen issue is resolved or explicitly waived.
+- Keep any next selected work scoped to the missing-screen gap or an explicitly approved follow-up.

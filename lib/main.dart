@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'data/local/local_database.dart';
 import 'data/services/storage_service.dart';
 import 'features/home/screens/home_screen.dart';
-import 'features/onboarding/screens/onboarding_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,27 +36,31 @@ class AppEntry extends StatefulWidget {
 }
 
 class _AppEntryState extends State<AppEntry> {
+  static const int _defaultWeeklyGoal = 3;
+
   final StorageService storageService = StorageService();
-  late bool hasCompletedOnboarding;
 
   @override
   void initState() {
     super.initState();
-    hasCompletedOnboarding = storageService.hasCompletedOnboarding();
+    _saveDefaultWeeklyGoalIfNeeded();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (hasCompletedOnboarding) {
-      return const HomeScreen();
+    return const HomeScreen();
+  }
+
+  Future<void> _saveDefaultWeeklyGoalIfNeeded() async {
+    if (storageService.getWeeklyGoal() != null) {
+      return;
     }
 
-    return OnboardingScreen(
-      onCompleted: () {
-        setState(() {
-          hasCompletedOnboarding = true;
-        });
-      },
-    );
+    await storageService.saveWeeklyGoal(_defaultWeeklyGoal);
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {});
   }
 }
