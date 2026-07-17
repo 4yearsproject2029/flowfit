@@ -7,6 +7,7 @@ import '../../../data/services/consistency_recovery_service.dart';
 import '../../../data/services/level_service.dart';
 import '../../../data/services/storage_service.dart';
 import '../../../data/services/weekly_goal_service.dart';
+import '../../current_workout/screens/current_workout_screen.dart';
 
 class _DashboardColors {
   static const background = Color(0xFF050606);
@@ -68,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           isPlannedRest: isPlannedRest,
                           onPrimaryAction: workoutLogs.isEmpty || isPlannedRest
                               ? null
-                              : () => _toggleNextWorkout(workoutLogs),
+                              : () => _openCurrentWorkout(workoutLogs),
                           onPlanWorkout: _showAddWorkoutSheet,
                           onMarkPlannedRest: () {
                             _markSelectedDateAsPlannedRest(selectedDateKey);
@@ -147,13 +148,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> _toggleNextWorkout(List<WorkoutLog> workoutLogs) async {
-    final nextWorkout = workoutLogs.firstWhere(
-      (log) => !log.isCompleted,
-      orElse: () => workoutLogs.last,
+  void _openCurrentWorkout(List<WorkoutLog> workoutLogs) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return CurrentWorkoutScreen(
+            workoutLogs: workoutLogs,
+            selectedDateLabel: _selectedDateLabel(selectedDate),
+          );
+        },
+      ),
     );
-
-    await storageService.toggleWorkoutCompletion(nextWorkout.id);
   }
 
   Future<void> _markSelectedDateAsPlannedRest(String selectedDateKey) async {

@@ -217,6 +217,61 @@ void main() {
     );
   });
 
+  testWidgets('opens Current Workout foundation from dashboard start action', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'current-workout-log',
+          date: _dateKey(DateTime.now()),
+          workoutId: 'current-workout',
+          workoutName: 'Dumbbell Shoulder Press',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 3,
+          reps: 10,
+          memo: 'Press the dumbbells overhead until arms are fully extended.',
+          createdAt: DateTime.now(),
+        ),
+      );
+    });
+    await pumpFlowFitApp(tester);
+
+    expect(find.widgetWithText(FilledButton, 'Start Workout'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Start Workout'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('CURRENT WORKOUT'), findsOneWidget);
+    expect(find.text('Exercise 1 of 1'), findsOneWidget);
+    expect(find.text('Dumbbell Shoulder Press'), findsWidgets);
+    expect(
+      find.text('Press the dumbbells overhead until arms are fully extended.'),
+      findsOneWidget,
+    );
+    expect(find.text('SETS'), findsOneWidget);
+    expect(find.text('3'), findsOneWidget);
+    expect(find.text('REPS'), findsOneWidget);
+    expect(find.text('10'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Complete Set'), findsOneWidget);
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(FilledButton, 'Complete Set'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, 'Complete Set'));
+    await tester.pump();
+
+    expect(
+      find.text('Set progression arrives in a later story.'),
+      findsOneWidget,
+    );
+  });
+
   // Skipped as a known widget-test harness limitation: tapping Generate starts
   // an async Hive write inside the share-card modal callback. The behavior is
   // covered by service/storage tests, and the widget case passes alone but can

@@ -3,13 +3,13 @@
 ## Current Story
 
 Story ID:
-RL-0021
+RL-0015
 
 Status:
 Done
 
 Reason:
-RL-0021 is complete. The Phase 2 design handoff now translates all approved `design/approved/*` PNGs into build-ready guidance, maps each approved screen to owner stories, documents shared visual and asset-handling guidance, adds screen-specific QA checkpoints, and preserves completed MVP/RL-0014 behavior without app-code changes.
+RL-0015 is complete. RepLog now has a Current Workout screen foundation reachable from Dashboard Start Workout, with active local workout details, progress, sets/reps targets, and a Complete Set placeholder while preserving deferred progression and control behavior.
 
 ## Routing Decision Traceability
 
@@ -17,7 +17,7 @@ Decision Point:
 Release Closeout
 
 Selected Story:
-RL-0021
+RL-0015
 
 Previous Story State:
 In Progress
@@ -33,42 +33,35 @@ Inputs Considered:
 - docs/ARCHITECTURE.md
 - docs/USER_JOURNEY.md
 - docs/SCREEN_STRUCTURE.md
-- docs/SPRINT_PLAN.md
-- user_stories/RL-0021/RL-0021_TASKS.md
-- user_stories/RL-0021/RL-0021_SPRINT_PLAN.md
+- user_stories/RL-0015/RL-0015_TASKS.md
+- user_stories/RL-0015/RL-0015_SPRINT_PLAN.md
+- user_stories/RL-0015/RL-0015_UX_SPEC.md
+- user_stories/RL-0015/RL-0015_INTERPRETATION.md
+- user_stories/RL-0015/RL-0015_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0015/RL-0015_CODE_REVIEW.md
+- user_stories/RL-0015/RL-0015_QA_REPORT.md
+- user_stories/RL-0015/RL-0015_RELEASE_NOTE.md
 - user_stories/RL-0021/RL-0021_UX_SPEC.md
-- user_stories/RL-0021/RL-0021_INTERPRETATION.md
-- user_stories/RL-0021/RL-0021_IMPLEMENTATION_NOTES.md
-- user_stories/RL-0021/RL-0021_CODE_REVIEW.md
-- user_stories/RL-0021/RL-0021_QA_REPORT.md
-- user_stories/RL-0021/RL-0021_RELEASE_NOTE.md
-- design/approved/01_home_screen.png
 - design/approved/02_current_workout.png
-- design/approved/03_timer.png
-- design/approved/04_workkout_summary.png
-- design/approved/05_weekly_plan.png
-- design/approved/06_achievement.png
-- design/approved/07_history.png
-- design/approved/08_workout_detail.png
 
 Dependency and Blocker Status:
 
-- RL-0021 depends on RL-0013.
-- RL-0013 is Done.
-- RL-0014 is Done and was not reopened.
-- Code Review approved RL-0021.
-- QA passed RL-0021.
+- RL-0015 depends on RL-0014 and RL-0021.
+- RL-0014 is Done.
+- RL-0021 is Done.
+- Code Review approved RL-0015.
+- QA passed RL-0015.
 - User approval was received by instruction to proceed through release.
 - No release blockers remain.
 
 Selection Rationale:
-RL-0021 was completed before RL-0015 because RL-0015 depends on RL-0021 and the backlog recommends the design-handoff checkpoint before remaining Phase 2 implementation. Completing RL-0021 reduces downstream ambiguity around visual system, assets, screen ownership, and QA checkpoints.
+RL-0015 was completed before RL-0022 and RL-0023 because it establishes the Current Workout screen foundation required by those downstream stories. The story stayed scoped to foundation, navigation, local data display, and Complete Set placeholder behavior.
 
 Next Agent:
 Coordinator
 
 Next Prompt:
-Select the next eligible Phase 2 story from `docs/EPIC_USER_STORY_TASKS.md`. RL-0021 is Done, so continue with RL-0015 before downstream Current Workout split stories.
+Select the next eligible Phase 2 story from `docs/EPIC_USER_STORY_TASKS.md`. RL-0015 is Done, so continue with RL-0022 before RL-0023.
 
 ## Dependency Validation
 
@@ -78,26 +71,27 @@ Select the next eligible Phase 2 story from `docs/EPIC_USER_STORY_TASKS.md`. RL-
 - EPIC_USER_STORY_TASKS.md: Present.
 - USER_JOURNEY.md: Present.
 - SCREEN_STRUCTURE.md: Present.
-- RL-0021 task file: Present and Done.
-- RL-0021 sprint plan: Present and Done.
-- Approved Phase 2 design references: Present and reviewed.
-- Story dependencies: RL-0013.
+- RL-0015 task file: Present and Done.
+- RL-0015 sprint plan: Present and Done.
+- RL-0021 design handoff: Present.
+- Approved Current Workout design reference: Present.
+- Story dependencies: RL-0014, RL-0021.
 - Dependency status: all dependencies are Done.
-- Phase 2 scope: EP-15 Phase 2 UX Quality.
 - Current blocker status: No blockers identified.
 
 ## Execution Order
 
-1. Selected RL-0021 as the next eligible Phase 2 story after RL-0014 release.
-2. Created the RL-0021 sprint plan and moved RL-0021 to In Progress.
-3. Reviewed all approved Phase 2 PNG references.
-4. Produced implementation-ready UX/design handoff guidance.
-5. Interpreted acceptance criteria and mapped validation methods.
-6. Documented implementation notes for the generated handoff artifacts.
-7. Completed Code Review with final decision Approved.
-8. Completed QA with final decision Pass.
-9. Captured user approval from the instruction to proceed through release.
-10. Closed RL-0021 as Done and synchronized release artifacts.
+1. Selected RL-0015 as the next eligible Phase 2 story after RL-0021 release.
+2. Created the RL-0015 sprint plan and moved RL-0015 to In Progress.
+3. Produced the Current Workout foundation UX specification.
+4. Interpreted acceptance criteria and deferrals.
+5. Implemented the Current Workout screen foundation.
+6. Added focused widget coverage for Dashboard to Current Workout navigation.
+7. Ran focused widget test, static analysis, and full test suite.
+8. Completed Code Review with final decision Approved.
+9. Completed QA with final decision Pass.
+10. Captured user approval from the instruction to proceed through release.
+11. Closed RL-0015 as Done and synchronized release artifacts.
 
 ## Assigned Agents
 
@@ -111,8 +105,8 @@ Select the next eligible Phase 2 story from `docs/EPIC_USER_STORY_TASKS.md`. RL-
 
 ## Required Deliverables
 
-- RL-0021 sprint plan.
-- UX/design handoff artifact for approved Phase 2 screens.
+- RL-0015 sprint plan.
+- UX specification.
 - Interpretation notes.
 - Implementation notes.
 - Code review report.
@@ -123,14 +117,15 @@ Select the next eligible Phase 2 story from `docs/EPIC_USER_STORY_TASKS.md`. RL-
 ## Risks Or Blockers
 
 - No release blockers remain.
-- Future implementation stories must still validate actual Flutter screens against the RL-0021 handoff.
-- No Flutter analyze or Flutter test run was required because RL-0021 changed documentation only and introduced no production code.
+- Complete Set remains a placeholder until RL-0022.
+- Pause, adjust, skip, resume, rest handoff, and completion navigation remain deferred.
+- Full test suite has 5 documented skipped widget-harness limitations from prior stories.
 
 ## Expected Outcome
 
-- RL-0021 is closed as Done.
-- Phase 2 design handoff is available to Code Writer, Code Reviewer, and QA agents.
-- RL-0015 is the next eligible Phase 2 story.
+- RL-0015 is closed as Done.
+- Current Workout foundation is released.
+- RL-0022 is the next eligible Phase 2 story.
 - No backend, login, cloud sync, external analytics SDK, social graph, public ranking, external asset service, or new product scope was introduced.
 
 ## Agent Handoff
@@ -147,14 +142,14 @@ Completed Output:
 docs/SPRINT_PLAN.md
 docs/EPIC_USER_STORY_TASKS.md
 DEVELOPMENT_LOG.md
-user_stories/RL-0021/RL-0021_TASKS.md
-user_stories/RL-0021/RL-0021_SPRINT_PLAN.md
-user_stories/RL-0021/RL-0021_UX_SPEC.md
-user_stories/RL-0021/RL-0021_INTERPRETATION.md
-user_stories/RL-0021/RL-0021_IMPLEMENTATION_NOTES.md
-user_stories/RL-0021/RL-0021_CODE_REVIEW.md
-user_stories/RL-0021/RL-0021_QA_REPORT.md
-user_stories/RL-0021/RL-0021_RELEASE_NOTE.md
+user_stories/RL-0015/RL-0015_TASKS.md
+user_stories/RL-0015/RL-0015_SPRINT_PLAN.md
+user_stories/RL-0015/RL-0015_UX_SPEC.md
+user_stories/RL-0015/RL-0015_INTERPRETATION.md
+user_stories/RL-0015/RL-0015_IMPLEMENTATION_NOTES.md
+user_stories/RL-0015/RL-0015_CODE_REVIEW.md
+user_stories/RL-0015/RL-0015_QA_REPORT.md
+user_stories/RL-0015/RL-0015_RELEASE_NOTE.md
 ```
 
 Next Agent:
@@ -166,7 +161,7 @@ Coordinator
 Next Prompt:
 
 ```text
-Select the next eligible Phase 2 story from docs/EPIC_USER_STORY_TASKS.md. RL-0021 is Done; RL-0015 is the next eligible story in the current recommended order.
+Select the next eligible Phase 2 story from docs/EPIC_USER_STORY_TASKS.md. RL-0015 is Done; RL-0022 is the next eligible story in the current recommended order.
 ```
 
 Required Input Files:
@@ -178,19 +173,19 @@ Required Input Files:
 - `docs/ARCHITECTURE.md`
 - `docs/USER_JOURNEY.md`
 - `docs/SCREEN_STRUCTURE.md`
-- `user_stories/RL-0015/RL-0015_TASKS.md`
+- `user_stories/RL-0022/RL-0022_TASKS.md`
+- `user_stories/RL-0015/RL-0015_RELEASE_NOTE.md`
 - `user_stories/RL-0021/RL-0021_UX_SPEC.md`
 
 Optional Input Files:
 
 - `docs/LOW-FI-WIREFRAME.md`
-- `docs/IMPROVEMENT_BACKLOG.md`
-- Existing `user_stories/RL-0000` through `user_stories/RL-0021` artifacts for historical context only.
+- Existing `user_stories/RL-0000` through `user_stories/RL-0015` artifacts for historical context only.
 
 Expected Output:
 
-- `docs/SPRINT_PLAN.md` updated for RL-0015.
-- `user_stories/RL-0015/RL-0015_SPRINT_PLAN.md`
+- `docs/SPRINT_PLAN.md` updated for RL-0022.
+- `user_stories/RL-0022/RL-0022_SPRINT_PLAN.md`
 
 Blocking Conditions:
 
@@ -198,9 +193,9 @@ Blocking Conditions:
 
 Instructions:
 
-- RL-0013 is Done.
 - RL-0014 is Done.
 - RL-0021 is Done.
+- RL-0015 is Done.
 - Preserve Story IDs and completed story state.
-- Use `user_stories/RL-0021/RL-0021_UX_SPEC.md` as the Phase 2 design handoff.
-- Continue with RL-0015 before RL-0022, RL-0023, RL-0018, RL-0032, and later Phase 2 stories.
+- Continue with RL-0022 before RL-0023.
+- Use the RL-0015 Current Workout foundation as the implementation base.

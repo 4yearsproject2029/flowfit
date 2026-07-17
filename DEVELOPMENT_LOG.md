@@ -1483,3 +1483,71 @@ Approved by user instruction to proceed and not stop until release of the epic/s
 Next Recommended Story:
 
 RL-0015
+
+---
+
+### RL-0015
+
+Epic:
+
+EP-12 Guided Workout Flow
+
+Status:
+
+Done
+
+Summary:
+
+- Released the Current Workout screen foundation.
+- Added a dedicated Current Workout screen under `lib/features/current_workout/screens/`.
+- Updated Dashboard Start Workout to open Current Workout instead of toggling completion directly.
+- Displayed active local workout details, instruction text, sets/reps targets, progress, and Complete Set placeholder.
+- Preserved local persistence and deferred pause, adjust, skip, multi-set progression, rest handoff, resume state, and completion navigation.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `lib/features/current_workout/screens/current_workout_screen.dart`
+- `user_stories/RL-0015/RL-0015_SPRINT_PLAN.md`
+- `user_stories/RL-0015/RL-0015_UX_SPEC.md`
+- `user_stories/RL-0015/RL-0015_INTERPRETATION.md`
+- `user_stories/RL-0015/RL-0015_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0015/RL-0015_CODE_REVIEW.md`
+- `user_stories/RL-0015/RL-0015_QA_REPORT.md`
+- `user_stories/RL-0015/RL-0015_RELEASE_NOTE.md`
+
+Files Modified:
+
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `DEVELOPMENT_LOG.md`
+- `lib/features/home/screens/home_screen.dart`
+- `test/widget_test.dart`
+- `user_stories/RL-0015/RL-0015_TASKS.md`
+
+Verification:
+
+- `flutter test test/widget_test.dart --plain-name "opens Current Workout foundation from dashboard start action" -r expanded` passed.
+- `flutter analyze` passed with no issues.
+- `flutter test -r expanded` passed with 38 passing tests and 5 documented skipped tests.
+
+Known Limitations:
+
+- Complete Set is a placeholder until RL-0022.
+- Pause, adjust, skip, multi-set progression, rest handoff, resume state, and completion navigation remain deferred.
+- Current Workout uses a local icon placeholder instead of exercise imagery.
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by user instruction to proceed and not stop until release.
+
+Next Recommended Story:
+
+RL-0022
