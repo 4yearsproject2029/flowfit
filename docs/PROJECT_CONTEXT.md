@@ -23,7 +23,7 @@ Created Date:
 Last Updated:
 
 ```text
-2026-07-16
+2026-07-17
 ```
 
 Owner:
@@ -158,6 +158,8 @@ Target user-facing responsibilities:
 | Area | Responsibility |
 | ---- | -------------- |
 | Home Dashboard | Answer "What should I do today?" |
+| Workout Plan Builder | Compose one daily workout session containing ordered exercises before execution. |
+| Add Exercise Bottom Sheet | Add or edit one planned exercise inside the daily session. |
 | Current Workout | Answer "What should I do next?" |
 | Workout Summary | Celebrate completion immediately after a workout. |
 | Week | Plan upcoming workouts. |
@@ -173,6 +175,14 @@ Completed Phase 2 screen foundations:
 | Story ID | Area | Status |
 | -------- | ---- | ------ |
 | RL-0014 | Home Dashboard | Done |
+| RL-0015 | Current Workout Foundation | Done |
+| RL-0021 | Phase 2 Design Handoff | Done |
+
+Current Phase 2 sequencing issue:
+
+* `RL-0022` is On Hold because validation found a missing prerequisite planning flow.
+* Approved designs `design/approved/09_workout_plan_builder.png` and `design/approved/10_add_exercise.png` define the missing Workout Plan Builder and Add Exercise bottom sheet.
+* `RL-0033` must create one locally persisted daily workout session with multiple ordered exercises before `RL-0022`, `RL-0023`, and downstream Current Workout handoffs continue.
 
 ---
 
@@ -184,6 +194,8 @@ Project-specific goals:
 * Preserve local data ownership and no-account usage.
 * Preserve completed MVP systems unless they conflict with the approved UX source of truth.
 * Make Home Dashboard a focused daily overview, not a catch-all surface.
+* Add the Workout Plan Builder as the lightweight daily session composition flow required before Current Workout can execute multiple exercises.
+* Keep Add Exercise scoped to a single planned exercise inside one daily session.
 * Make Current Workout the guided workout execution surface.
 * Keep Workout Summary separate from History and show it only immediately after completion.
 * Keep Week focused on lightweight planning.
@@ -335,6 +347,7 @@ RepLog remains local-first.
 Local data may include:
 
 * Workout plans.
+* Daily workout sessions and their ordered planned exercises.
 * Workout records.
 * Completion state.
 * Weekly goal settings.

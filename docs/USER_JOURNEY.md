@@ -1,6 +1,6 @@
 # RepLog User Journeys
 
-Version: 2.1
+Version: 2.2
 
 Status: Approved (Phase 2 UX Source of Truth)
 
@@ -121,33 +121,140 @@ Help users prepare their weekly workout schedule without unnecessary complexity.
 ```text
 🏠 Home Dashboard
       ↓
+Today's Workout Card
+      ↓
+No saved daily session
+      ↓
+🧱 Workout Plan Builder
+      ↓
+Add Exercise Bottom Sheet
+      ↓
+Save Workout
+      ↓
+🏠 Home Dashboard
+      ↓
+Start / Resume Workout
+      ↓
+💪 Current Workout
+```
+
+When a daily session already exists:
+
+```text
+🏠 Home Dashboard
+      ↓
 📅 Week
       ↓
-Weekly Workout Plan
+Daily Workout Preview
       ↓
-
-• Add Exercise
-• Edit Exercise
-• Delete Exercise
-• Reorder Exercise
-• Change Day
-
+🧱 Workout Plan Builder
       ↓
-Auto Save
+Edit / Add / Delete Exercise
+      ↓
+Save Workout
       ↓
 🏠 Home Dashboard
 ```
+
+## Workout Plan Builder
+
+The Workout Plan Builder creates or edits one daily workout session.
+
+It is part of Workout Planning, not Workout Flow execution.
+
+Responsibilities:
+
+* Create a session title for the selected day.
+* Show a summary of exercise count, estimated duration, and intensity where locally available.
+* Display the ordered exercise list.
+* Add exercises through the Add Exercise bottom sheet.
+* Open an existing exercise for editing.
+* Delete exercises from the planned session.
+* Preserve exercise order by insertion order.
+* Save the daily session locally.
+* Hand the saved session back to Dashboard and Current Workout.
+
+The Workout Plan Builder does not:
+
+* Execute sets.
+* Start or manage rest timers.
+* Award XP.
+* Create templates.
+* Support multiple sessions for the same day.
+* Edit completed History records.
+
+## Add Exercise Bottom Sheet
+
+The Add Exercise bottom sheet is the focused editor for a single planned exercise.
+
+Responsibilities:
+
+* Capture exercise name.
+* Select category.
+* Set sets and reps.
+* Optionally capture weight.
+* Optionally set rest time.
+* Optionally capture a short memo.
+* Add the exercise to the end of the current session when creating.
+* Save changes in place when editing an existing exercise.
+
+The bottom sheet should close only after a valid add, save, cancel, or dismiss action.
+
+## Empty States
+
+If no daily session exists:
+
+* Dashboard should show that today's workout still needs a plan.
+* The primary planning action should open Workout Plan Builder.
+* Current Workout should not start an empty workout.
+
+If the Workout Plan Builder has no exercises:
+
+* Show the session shell.
+* Provide a clear Add Exercise action.
+* Disable or block Save Workout until at least one valid exercise exists.
+
+## Editing Flow
+
+Users can edit a daily session before starting the workout.
+
+Editing includes:
+
+* Session title.
+* Existing exercise fields.
+* Exercise deletion.
+* Adding more exercises.
+
+After a workout has started, exercise changes belong only to Current Workout control states and must remain current-session-only. Planning edits must not mutate completed History records.
+
+## Exercise Ordering
+
+Exercise order is insertion order.
+
+Rules:
+
+* The first added exercise appears as item 1.
+* New exercises are appended to the end.
+* Deleting an exercise closes the numbering gap.
+* Editing an exercise does not change its order.
+* Drag-and-drop sorting is out of scope.
+* The visible Reorder affordance may be present in approved design, but full manual sorting requires a later approved story.
 
 ## Success Criteria
 
 * Planning should take only a few minutes.
 * Planning should feel lightweight rather than administrative.
+* A user can create one daily session with multiple ordered exercises.
+* Dashboard and Current Workout can use the saved daily session without asking the user to rebuild it.
 
 ## UX Principles
 
 * Week focuses on planning.
-* Auto Save only.
+* Workout Plan Builder composes one daily workout session.
+* Add Exercise bottom sheet edits one exercise at a time.
+* Save Workout commits the planned session locally.
 * Day-based layout.
+* Dashboard can prompt planning when today has no saved session.
 * Workout execution belongs to Current Workout.
 
 ---
@@ -262,6 +369,7 @@ Displays:
 * Today's Workout Progress
 * Today's Plan Preview
 * Start / Resume Workout
+* Plan Workout when today's session is missing
 
 ↓
 
@@ -343,6 +451,8 @@ The Rest Timer behaves as a global floating overlay.
 | Current Workout | Workout execution                 |
 | Workout Summary | Celebrate workout completion      |
 | Week            | Weekly workout planning           |
+| Workout Plan Builder | Compose one daily workout session |
+| Add Exercise Bottom Sheet | Add or edit one planned exercise |
 | History         | Workout history review            |
 | Achievement     | Long-term progression and rewards |
 
