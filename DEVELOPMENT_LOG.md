@@ -1551,3 +1551,80 @@ Approved by user instruction to proceed and not stop until release.
 Next Recommended Story:
 
 RL-0022
+
+---
+
+### RL-0033
+
+Epic:
+
+EP-12 Workout Session Composition
+
+Status:
+
+Done
+
+Summary:
+
+- Released the Workout Session Composition prerequisite for Phase 2 guided workout flow.
+- Added a dedicated Workout Plan Builder screen for one selected daily session.
+- Added an Add/Edit Exercise bottom sheet for composing the session exercise list.
+- Added local session-title persistence using a primitive Hive string box.
+- Reused existing `WorkoutLog` records for planned exercises to avoid a Hive adapter migration.
+- Updated Dashboard to route Plan Workout into the builder and show the saved session title.
+- Preserved Current Workout handoff by passing saved local exercise records without creating duplicate completed records.
+- Kept RL-0022 set progression, timer flow, templates, sorting, multiple sessions, achievements, backend, login, and cloud sync out of scope.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- `lib/features/workout_plan/screens/workout_plan_builder_screen.dart`
+- `user_stories/RL-0033/RL-0033_SPRINT_PLAN.md`
+- `user_stories/RL-0033/RL-0033_UX_SPEC.md`
+- `user_stories/RL-0033/RL-0033_INTERPRETATION.md`
+- `user_stories/RL-0033/RL-0033_IMPLEMENTATION_NOTES.md`
+- `user_stories/RL-0033/RL-0033_CODE_REVIEW.md`
+- `user_stories/RL-0033/RL-0033_QA_REPORT.md`
+- `user_stories/RL-0033/RL-0033_RELEASE_NOTE.md`
+
+Files Modified:
+
+- `docs/EPIC_USER_STORY_TASKS.md`
+- `docs/SPRINT_PLAN.md`
+- `DEVELOPMENT_LOG.md`
+- `lib/data/local/local_database.dart`
+- `lib/data/services/storage_service.dart`
+- `lib/features/home/screens/home_screen.dart`
+- `test/storage_service_test.dart`
+- `test/widget_test.dart`
+- `user_stories/RL-0033/RL-0033_TASKS.md`
+
+Verification:
+
+- `flutter test test/storage_service_test.dart -r expanded` passed with 14 tests.
+- `flutter test test/widget_test.dart --plain-name "shows saved daily session title and starts Current Workout" -r expanded` passed with 1 focused widget test.
+- `flutter analyze` passed with no issues.
+- `git diff --check` passed.
+- `flutter test -r expanded` did not complete because the existing Hive-backed widget harness hung in `test/widget_test.dart`; QA documented this as a known non-RL-0033 limitation.
+
+Known Limitations:
+
+- RL-0033 uses existing `WorkoutLog` records as planned exercises instead of introducing a dedicated session aggregate.
+- Exercise order is insertion order only.
+- RL-0022 remains On Hold until Coordinator resumes it.
+- Full widget-suite harness stability remains a follow-up concern and was not solved by changing production behavior.
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by user instruction to start RL-0033 and not stop until release.
+
+Next Recommended Story:
+
+RL-0022

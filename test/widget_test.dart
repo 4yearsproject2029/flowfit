@@ -52,6 +52,7 @@ void main() {
       await Hive.box<bool>(LocalDatabase.plannedRestBoxName).clear();
       await Hive.box<String>(LocalDatabase.recoveryMetricBoxName).clear();
       await Hive.box<int>(LocalDatabase.shareCardGenerationBoxName).clear();
+      await Hive.box<String>(LocalDatabase.workoutSessionTitleBoxName).clear();
     });
   }
 
@@ -329,6 +330,43 @@ void main() {
     await tester.runAsync(() async {
       expect(StorageService().getXpTotal(), 20);
     });
+  });
+
+  testWidgets('shows saved daily session title and starts Current Workout', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      await StorageService().saveWorkoutSessionTitle(
+        date: _dateKey(DateTime.now()),
+        title: 'Upper Body Flow',
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'planned-workout-log-1',
+          date: _dateKey(DateTime.now()),
+          workoutId: 'planned-workout-1',
+          workoutName: 'Bench Press',
+          category: 'chest',
+          isCompleted: false,
+          sets: 3,
+          reps: 8,
+          createdAt: DateTime.now(),
+        ),
+      );
+    });
+    await pumpFlowFitApp(tester);
+
+    expect(find.text('Upper Body Flow'), findsOneWidget);
+    expect(find.text('0 / 1 exercises completed'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Start Workout'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('CURRENT WORKOUT'), findsOneWidget);
+    expect(find.text('Bench Press'), findsWidgets);
+    expect(find.text('Exercise 1 of 1'), findsOneWidget);
   });
 
   // Skipped as a known widget-test harness limitation: tapping Generate starts

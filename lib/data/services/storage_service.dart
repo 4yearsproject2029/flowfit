@@ -17,6 +17,7 @@ class StorageService {
   static const String _lastReturnWeekStartKey = 'lastReturnWeekStart';
   static const String _showShareCardWorkoutMetricsKey =
       'showShareCardWorkoutMetrics';
+  static const String _defaultSessionTitle = 'Today Workout';
 
   Box<Workout> get _workoutBox {
     return Hive.box<Workout>(LocalDatabase.workoutBoxName);
@@ -56,6 +57,10 @@ class StorageService {
 
   Box<int> get _shareCardGenerationBox {
     return Hive.box<int>(LocalDatabase.shareCardGenerationBoxName);
+  }
+
+  Box<String> get _workoutSessionTitleBox {
+    return Hive.box<String>(LocalDatabase.workoutSessionTitleBoxName);
   }
 
   ValueListenable<Box<WorkoutLog>> get workoutLogsListenable {
@@ -113,6 +118,28 @@ class StorageService {
 
   Future<void> addWorkoutLog(WorkoutLog workoutLog) async {
     await _workoutLogBox.put(workoutLog.id, workoutLog);
+  }
+
+  Future<void> updateWorkoutLog(WorkoutLog workoutLog) async {
+    await _workoutLogBox.put(workoutLog.id, workoutLog);
+    await refreshConsistencyRecoveryMetrics();
+  }
+
+  Future<void> saveWorkoutSessionTitle({
+    required String date,
+    required String title,
+  }) async {
+    final trimmedTitle = title.trim();
+    if (trimmedTitle.isEmpty) {
+      await _workoutSessionTitleBox.delete(date);
+      return;
+    }
+
+    await _workoutSessionTitleBox.put(date, trimmedTitle);
+  }
+
+  String getWorkoutSessionTitle(String date) {
+    return _workoutSessionTitleBox.get(date) ?? _defaultSessionTitle;
   }
 
   List<WorkoutLog> getWorkoutLogsByDate(String date) {

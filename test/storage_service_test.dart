@@ -128,6 +128,122 @@ void main() {
     });
   });
 
+  test('persists one daily session title and ordered exercises', () async {
+    await storageService.saveWorkoutSessionTitle(
+      date: '2026-07-18',
+      title: 'Upper Body Flow',
+    );
+    await storageService.addWorkoutLog(
+      WorkoutLog(
+        id: 'log-1',
+        date: '2026-07-18',
+        workoutId: 'workout-1',
+        workoutName: 'Bench Press',
+        category: 'chest',
+        isCompleted: false,
+        sets: 3,
+        reps: 8,
+        createdAt: DateTime(2026, 7, 18, 9),
+      ),
+    );
+    await storageService.addWorkoutLog(
+      WorkoutLog(
+        id: 'log-2',
+        date: '2026-07-18',
+        workoutId: 'workout-2',
+        workoutName: 'Lat Pulldown',
+        category: 'back',
+        isCompleted: false,
+        sets: 3,
+        reps: 10,
+        createdAt: DateTime(2026, 7, 18, 9, 5),
+      ),
+    );
+
+    expect(
+      storageService.getWorkoutSessionTitle('2026-07-18'),
+      'Upper Body Flow',
+    );
+    expect(
+      storageService
+          .getWorkoutLogsByDate('2026-07-18')
+          .map((log) => log.workoutName),
+      ['Bench Press', 'Lat Pulldown'],
+    );
+
+    await Hive.close();
+    await LocalDatabase.init(testPath: testHiveDirectory.path);
+    storageService = StorageService();
+
+    expect(
+      storageService.getWorkoutSessionTitle('2026-07-18'),
+      'Upper Body Flow',
+    );
+    expect(
+      storageService
+          .getWorkoutLogsByDate('2026-07-18')
+          .map((log) => log.workoutName),
+      ['Bench Press', 'Lat Pulldown'],
+    );
+  });
+
+  test(
+    'edits and deletes planned exercises without changing remaining order',
+    () async {
+      final firstExercise = WorkoutLog(
+        id: 'log-1',
+        date: '2026-07-18',
+        workoutId: 'workout-1',
+        workoutName: 'Bench Press',
+        category: 'chest',
+        isCompleted: false,
+        sets: 3,
+        reps: 8,
+        createdAt: DateTime(2026, 7, 18, 9),
+      );
+      final secondExercise = WorkoutLog(
+        id: 'log-2',
+        date: '2026-07-18',
+        workoutId: 'workout-2',
+        workoutName: 'Lat Pulldown',
+        category: 'back',
+        isCompleted: false,
+        sets: 3,
+        reps: 10,
+        createdAt: DateTime(2026, 7, 18, 9, 5),
+      );
+      final thirdExercise = WorkoutLog(
+        id: 'log-3',
+        date: '2026-07-18',
+        workoutId: 'workout-3',
+        workoutName: 'Shoulder Press',
+        category: 'shoulders',
+        isCompleted: false,
+        sets: 2,
+        reps: 12,
+        createdAt: DateTime(2026, 7, 18, 9, 10),
+      );
+
+      await storageService.addWorkoutLog(firstExercise);
+      await storageService.addWorkoutLog(secondExercise);
+      await storageService.addWorkoutLog(thirdExercise);
+      await storageService.updateWorkoutLog(
+        secondExercise.copyWith(workoutName: 'Cable Row', reps: 12),
+      );
+      await storageService.deleteWorkoutLog('log-1');
+
+      final remainingExercises = storageService.getWorkoutLogsByDate(
+        '2026-07-18',
+      );
+
+      expect(remainingExercises.map((log) => log.workoutName), [
+        'Cable Row',
+        'Shoulder Press',
+      ]);
+      expect(remainingExercises.first.reps, 12);
+    },
+  );
+
   test('awards completion XP once and persists the total', () async {
     final workoutLog = WorkoutLog(
       id: 'log-1',

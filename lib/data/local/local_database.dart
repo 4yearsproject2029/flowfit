@@ -14,6 +14,7 @@ class LocalDatabase {
   static const String plannedRestBoxName = 'plannedRestBox';
   static const String recoveryMetricBoxName = 'recoveryMetricBox';
   static const String shareCardGenerationBoxName = 'shareCardGenerationBox';
+  static const String workoutSessionTitleBoxName = 'workoutSessionTitleBox';
 
   static Future<void> init({String? testPath}) async {
     if (testPath == null) {
@@ -40,5 +41,6 @@ class LocalDatabase {
     await Hive.openBox<bool>(plannedRestBoxName);
     await Hive.openBox<String>(recoveryMetricBoxName);
     await Hive.openBox<int>(shareCardGenerationBoxName);
+    await Hive.openBox<String>(workoutSessionTitleBoxName);
   }
 }
