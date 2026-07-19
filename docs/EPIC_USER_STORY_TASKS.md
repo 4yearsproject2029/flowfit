@@ -356,6 +356,8 @@ Dependency validation:
 | 2026-07-19 | RL-0018 | Not Started | In Progress | Coordinator | Next eligible Rest Timer Overlay story selected after RL-0023 release according to the Phase 2 recommended order. |
 | 2026-07-19 | RL-0023 | In Progress | Done | Release Manager | Current Workout pause, resume, skip, adjust, return-state recovery, focused QA pass, user approval by workflow instruction, and release closeout completed. |
 | 2026-07-19 | RL-0018 | In Progress | Done | Release Manager | Rest Timer overlay implementation, Code Review approval, focused QA pass, user approval by workflow instruction, and release closeout completed. |
+| 2026-07-19 | RL-0016 | Not Started | In Progress | Coordinator | Next eligible P0 Completion Celebration story selected after RL-0018 release; RL-0022 dependency is Done. |
+| 2026-07-19 | RL-0016 | In Progress | Done | Release Manager | Workout Summary celebration shell implemented, Code Review approved, focused QA pass, user approval by workflow instruction, and release closeout completed. |
 
 ---
 
@@ -652,7 +654,8 @@ Instructions:
 * RL-0022 is Done.
 * RL-0023 is Done.
 * RL-0018 is Done.
-* All current MVP backlog stories are Done.
+* RL-0016 is Done.
+* The next eligible P0 story is RL-0024.
 * Preserve Story IDs and completed story state.
 * Do not modify Done stories unless a later approved story explicitly requires it.
 * Use `user_stories/RL-0021/RL-0021_UX_SPEC.md` as implementation-ready Phase 2 design handoff guidance.
@@ -791,11 +794,11 @@ RL-0023
 ↓
 RL-0018
 ↓
-RL-0032
-↓
 RL-0016
 ↓
 RL-0024
+↓
+RL-0032
 ↓
 RL-0017
 ↓
@@ -840,11 +843,11 @@ RL-0023
 ↓
 RL-0018
 ↓
-RL-0032
-↓
 RL-0016
 ↓
 RL-0024
+↓
+RL-0032
 ↓
 RL-0017
 ↓
@@ -875,7 +878,7 @@ RL-0020
 | ------ | -------- | ------- | ---- | --- | -------- | ------ | ---------- | ----------- | ---------------------- | ---------- | ------------------- |
 | Done | RL-0014 | EP-11 | Dashboard Redesign | Must Have | P0 | M | RL-0013 | Yes | Yes | As a beginner fitness user, I want the Home Dashboard to clearly tell me what I should do today, so that I can start or resume my workout without sorting through unrelated information. | - Uses `design/approved/01_home_screen.png` for approved layout and screen composition.<br>- Dashboard presents greeting/identity context, visible XP signal, Today's Focus, Weekly Progress, Next Achievement, and bottom navigation.<br>- Dashboard provides a clear Start or Resume Workout action from Today's Focus.<br>- Dashboard excludes History, Rest Timer, Share Cards, exercise editing, muscle maps, and detailed statistics as primary dashboard sections.<br>- Dashboard language emphasizes today's action and consistency.<br>- Existing offline data and completed MVP reward state remain intact. |
 | Done | RL-0015 | EP-12 | Guided Workout Flow | Must Have | P0 | M | RL-0014, RL-0021 | Yes | Yes | As a user starting today's workout, I want a Current Workout screen foundation that clearly shows the active exercise and next action, so that workout execution has a focused home separate from Dashboard and planning. | - Uses `design/approved/02_current_workout.png` for approved Current Workout layout and screen composition.<br>- Current Workout displays workout title, active exercise, instruction text, sets/reps target, progress indicator, and one primary Complete Set action placeholder.<br>- Current Workout is reachable from Dashboard Start/Resume or an existing local workout entry without adding backend, login, cloud sync, or broad content systems.<br>- Workout execution is visually and functionally separated from Dashboard, Week planning, and History review.<br>- Existing workout log data and local persistence remain intact.<br>- Pause, adjust, skip, multi-set progression, rest handoff, resume state, and completion navigation are deferred to dependent stories. |
-| Not Started | RL-0016 | EP-13 | Completion Celebration | Must Have | P0 | M | RL-0022 | Yes | Yes | As a user who just completed a workout, I want an immediate celebration screen that recognizes completion and reward progress, so that finishing feels meaningful before I return to the app. | - Uses `design/approved/04_workkout_summary.png` for the approved Workout Summary celebration layout and screen composition.<br>- Workout Summary appears immediately after workout completion from Current Workout.<br>- Workout Summary leads with celebration and recognition before supporting details.<br>- XP, level, weekly goal, achievement, or recovery rewards are shown when existing local data makes them relevant.<br>- Workout Summary cannot be reopened from History as if it were a normal detail screen.<br>- Private stats, optional share-card generation, Plan Tomorrow, and detailed return actions are deferred to `RL-0024`. |
+| Done | RL-0016 | EP-13 | Completion Celebration | Must Have | P0 | M | RL-0022 | Yes | Yes | As a user who just completed a workout, I want an immediate celebration screen that recognizes completion and reward progress, so that finishing feels meaningful before I return to the app. | - Uses `design/approved/04_workkout_summary.png` for the approved Workout Summary celebration layout and screen composition.<br>- Workout Summary appears immediately after workout completion from Current Workout.<br>- Workout Summary leads with celebration and recognition before supporting details.<br>- XP, level, weekly goal, achievement, or recovery rewards are shown when existing local data makes them relevant.<br>- Workout Summary cannot be reopened from History as if it were a normal detail screen.<br>- Private stats, optional share-card generation, Plan Tomorrow, and detailed return actions are deferred to `RL-0024`. |
 | Not Started | RL-0017 | EP-14 | Week Planning | Should Have | P1 | M | RL-0014, RL-0021 | Yes | Yes | As a user planning my week, I want Week to show my local planned sessions by day, so that I can understand the week without mixing planning with Dashboard or History review. | - Uses `design/approved/05_weekly_plan.png` for approved Week layout and screen composition.<br>- Week owns screen structure, day navigation, planned session display, and existing local data presentation.<br>- Week may reuse existing workout creation behavior when necessary.<br>- Week does not own new inline editors, advanced planning tools, rescheduling systems, or new autosave experiences.<br>- Week does not display read-only history as its primary purpose.<br>- Week can show a session preview entry point, but detailed planned/session detail and Start Today behavior are deferred to `RL-0025`.<br>- History list and completed Workout Detail behavior are deferred to `RL-0026` and `RL-0027`. |
 | Done | RL-0018 | EP-14 | Rest Timer Overlay | Should Have | P1 | M | RL-0022 | Yes | Yes | As a user resting during a workout, I want a focused Rest Timer overlay, so that I can manage the current rest interval without leaving Current Workout. | - Uses `design/approved/03_timer.png` for approved rest overlay layout and screen composition.<br>- Rest Timer belongs to Workout Flow and is not a Dashboard section.<br>- Rest Timer appears as an overlay/modal while resting during an active workout.<br>- Overlay includes countdown UI, skip rest, extend rest, close/dismiss, and return-to-Current-Workout behavior.<br>- Existing timer presets and accessibility touch targets remain usable.<br>- Timer survival across navigation, global/floating timer state, return-to-workout entry from other screens, and active timer persistence are deferred to `RL-0032`. |
 | Not Started | RL-0019 | EP-14 | Achievement Hub Foundation | Should Have | P1 | M | RL-0016, RL-0021 | Yes | Yes | As a consistency-focused user, I want an Achievement hub that shows my level and long-term growth without comparison, so that progress feels motivating rather than judgmental. | - Uses `design/approved/06_achievement.png` for approved Achievement hub layout and screen composition.<br>- Achievement displays level, XP/rep score concept, current title/reward state, and high-level progress using existing local XP/level data where possible.<br>- Achievement language prioritizes consistency, return, and recognition over performance.<br>- Dashboard shows only short-term achievement preview, not full achievement detail.<br>- Achievement does not introduce rankings, leaderboards, public percentile claims, social comparison, public profiles, penalties, or level loss.<br>- Detailed medals, milestone lists, title collection, recent unlocks, and share moments are deferred to `RL-0028` and `RL-0029`. |

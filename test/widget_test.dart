@@ -321,15 +321,16 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'Complete Set'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Workout complete'), findsOneWidget);
-    expect(find.text('Workout ready for summary'), findsOneWidget);
+    expect(find.text('Incredible work today.'), findsOneWidget);
+    expect(find.text('Reward progress'), findsOneWidget);
+    expect(find.textContaining('XP'), findsWidgets);
+    expect(find.text('SESSION SNAPSHOT'), findsOneWidget);
+    expect(find.text('EXERCISES'), findsOneWidget);
+    expect(find.text('SETS DONE'), findsOneWidget);
     expect(
-      find.widgetWithText(FilledButton, 'Summary comes next'),
+      find.widgetWithText(FilledButton, 'Back to Dashboard'),
       findsOneWidget,
     );
-    // XP persistence is covered by storage_service_test. Hive-backed writes
-    // triggered from widget button callbacks do not reliably resume in this
-    // widget-test harness.
   });
 
   testWidgets('uses Current Workout pause adjust skip and return states', (
@@ -375,7 +376,10 @@ void main() {
     expect(find.widgetWithText(OutlinedButton, 'Pause'), findsOneWidget);
     expect(find.widgetWithText(OutlinedButton, 'Adjust'), findsOneWidget);
     expect(find.widgetWithText(OutlinedButton, 'Skip Set'), findsOneWidget);
-    expect(find.widgetWithText(OutlinedButton, 'Skip Exercise'), findsOneWidget);
+    expect(
+      find.widgetWithText(OutlinedButton, 'Skip Exercise'),
+      findsOneWidget,
+    );
 
     await tester.dragUntilVisible(
       find.widgetWithText(OutlinedButton, 'Pause'),
@@ -403,7 +407,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Adjust session'), findsOneWidget);
 
-    await tester.enterText(find.widgetWithText(TextField, 'Current reps'), '12');
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Current reps'),
+      '12',
+    );
     await tester.enterText(
       find.widgetWithText(TextField, 'Current weight'),
       '55.5',
@@ -517,7 +524,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('REST STATE'), findsOneWidget);
-    expect(find.widgetWithText(FilledButton, 'Open Rest Timer'), findsOneWidget);
+    expect(
+      find.widgetWithText(FilledButton, 'Open Rest Timer'),
+      findsOneWidget,
+    );
 
     await tester.tap(find.widgetWithText(FilledButton, 'Open Rest Timer'));
     await tester.pumpAndSettle();

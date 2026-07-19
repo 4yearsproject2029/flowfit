@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
+import '../../workout_summary/screens/workout_summary_screen.dart';
 
 class CurrentWorkoutScreen extends StatefulWidget {
   CurrentWorkoutScreen({
@@ -42,12 +43,13 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
   _RestState? _restState;
   bool _isPaused = false;
   bool _isCompletionReady = false;
+  bool _hasOpenedWorkoutSummary = false;
 
   List<WorkoutLog> get _workoutLogs => widget.workoutLogs;
   String get _snapshotKey {
-    final workoutLogIds = _workoutLogs.map((workoutLog) => workoutLog.id).join(
-      '|',
-    );
+    final workoutLogIds = _workoutLogs
+        .map((workoutLog) => workoutLog.id)
+        .join('|');
     return '${widget.selectedDateLabel}|$workoutLogIds';
   }
 
@@ -76,13 +78,14 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
     };
     _restState = snapshot?.restState;
     _isPaused = snapshot?.isPaused ?? false;
+    _hasOpenedWorkoutSummary = snapshot?.hasOpenedWorkoutSummary ?? false;
     _isCompletionReady =
         snapshot?.isCompletionReady ??
         _workoutLogs.isNotEmpty &&
-        _workoutLogs.every(
-          (workoutLog) =>
-              _completedSetsFor(workoutLog) >= _targetSets(workoutLog),
-        );
+            _workoutLogs.every(
+              (workoutLog) =>
+                  _completedSetsFor(workoutLog) >= _targetSets(workoutLog),
+            );
   }
 
   @override
@@ -247,7 +250,13 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
   }
 
   VoidCallback? _primaryAction(WorkoutLog? activeWorkout) {
-    if (activeWorkout == null || _isCompletionReady) {
+    if (_isCompletionReady && _workoutLogs.isNotEmpty) {
+      return () {
+        _openWorkoutSummary(force: true);
+      };
+    }
+
+    if (activeWorkout == null) {
       return null;
     }
 
@@ -279,7 +288,7 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
 
   String _primaryActionLabel() {
     if (_isCompletionReady) {
-      return 'Summary comes next';
+      return 'View Summary';
     }
     if (_isPaused) {
       return 'Resume Workout';
@@ -319,6 +328,12 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
     });
 
     if (exerciseComplete) {
+      if (nextExerciseIndex == null && mounted) {
+        unawaited(_syncWorkoutCompletion(activeWorkout));
+        _openWorkoutSummary();
+        return;
+      }
+
       await _syncWorkoutCompletion(activeWorkout);
     }
   }
@@ -517,6 +532,32 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
       restState: _restState,
       isPaused: _isPaused,
       isCompletionReady: _isCompletionReady,
+      hasOpenedWorkoutSummary: _hasOpenedWorkoutSummary,
+    );
+  }
+
+  void _openWorkoutSummary({bool force = false}) {
+    if ((!force && _hasOpenedWorkoutSummary) || _workoutLogs.isEmpty) {
+      return;
+    }
+
+    if (!_hasOpenedWorkoutSummary) {
+      setState(() {
+        _hasOpenedWorkoutSummary = true;
+        _saveControlSnapshot();
+      });
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return WorkoutSummaryScreen(
+            workoutLogs: _workoutLogs,
+            selectedDateLabel: widget.selectedDateLabel,
+            storageService: widget.storageService,
+          );
+        },
+      ),
     );
   }
 }
@@ -530,6 +571,7 @@ class _WorkoutControlSnapshot {
     required this.restState,
     required this.isPaused,
     required this.isCompletionReady,
+    required this.hasOpenedWorkoutSummary,
   });
 
   final int currentExerciseIndex;
@@ -539,6 +581,7 @@ class _WorkoutControlSnapshot {
   final _RestState? restState;
   final bool isPaused;
   final bool isCompletionReady;
+  final bool hasOpenedWorkoutSummary;
 }
 
 class _CurrentWorkoutHeader extends StatelessWidget {
@@ -864,10 +907,7 @@ class _RestState {
 }
 
 class _RestStateCard extends StatelessWidget {
-  const _RestStateCard({
-    required this.restState,
-    required this.onOpenTimer,
-  });
+  const _RestStateCard({required this.restState, required this.onOpenTimer});
 
   final _RestState restState;
   final VoidCallback onOpenTimer;
@@ -1072,12 +1112,11 @@ class _RestTimerOverlayState extends State<_RestTimerOverlay> {
                     ),
                     Text(
                       _formatTime(_remainingSeconds),
-                      style: Theme.of(context).textTheme.displaySmall
-                          ?.copyWith(
-                            color: CurrentWorkoutScreen._primaryText,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 0,
-                          ),
+                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        color: CurrentWorkoutScreen._primaryText,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
