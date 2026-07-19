@@ -2,6 +2,36 @@
 
 ---
 
+# 2026-07-19 - RL-0018 Rest Timer Overlay Release
+
+## Completed
+- Selected RL-0018 as the next eligible Phase 2 story after RL-0023 release.
+- Produced the RL-0018 sprint plan, UX spec, and interpretation before implementation work.
+- Released a focused Current Workout Rest Timer overlay during rest state.
+- Added countdown, Extend Rest, Skip Rest, close/dismiss, and Return behavior without adding cross-screen/global continuity.
+- Preserved existing rest timer preset behavior and accessibility touch-target regression coverage.
+- Synced `docs/SPRINT_PLAN.md`, `docs/EPIC_USER_STORY_TASKS.md`, `user_stories/RL-0018/RL-0018_TASKS.md`, and RL-0018 release artifacts.
+
+## Verified
+- `flutter analyze` passed with no issues.
+- `flutter test test/widget_test.dart --plain-name "opens Rest Timer overlay during Current Workout rest" -r expanded` passed.
+- `flutter test test/widget_test.dart --plain-name "selects a rest timer preset" -r expanded` passed.
+- `flutter test test/widget_test.dart --plain-name "uses large touch targets for rest timer controls" -r expanded` passed.
+- `flutter test test/widget_test.dart --plain-name "opens Current Workout and advances through rest handoff" -r expanded` passed.
+- `flutter test test/storage_service_test.dart -r expanded` passed with 14 tests.
+- `flutter test -r expanded` was attempted and again stalled in the existing Hive-backed widget-test harness after 33 passed and 1 skipped; focused release evidence passed.
+
+## Current App State
+- Resting inside Current Workout exposes an `Open Rest Timer` action.
+- The Rest Timer overlay runs a visible countdown and supports extending or skipping the current rest.
+- Closing or returning from the overlay leaves the user in Current Workout rest state.
+- Cross-screen timer continuity remains deferred to `RL-0032`.
+
+## Next Steps
+- Coordinator should select the next eligible story from `docs/EPIC_USER_STORY_TASKS.md`.
+
+---
+
 # 2026-07-19 - RL-0023 Current Workout Control States Release
 
 ## Completed

@@ -353,7 +353,9 @@ Dependency validation:
 | 2026-07-19 | RL-0022 | On Hold | In Progress | Coordinator | RL-0033 resolved the missing Workout Session Composition prerequisite, so RL-0022 resumed. |
 | 2026-07-19 | RL-0022 | In Progress | Done | Release Manager | Current Workout set progression, rest handoff, focused QA pass, user approval by workflow instruction, and release closeout completed. |
 | 2026-07-19 | RL-0023 | Not Started | In Progress | Coordinator | Next eligible P0 Current Workout control states story selected after RL-0022 release. |
+| 2026-07-19 | RL-0018 | Not Started | In Progress | Coordinator | Next eligible Rest Timer Overlay story selected after RL-0023 release according to the Phase 2 recommended order. |
 | 2026-07-19 | RL-0023 | In Progress | Done | Release Manager | Current Workout pause, resume, skip, adjust, return-state recovery, focused QA pass, user approval by workflow instruction, and release closeout completed. |
+| 2026-07-19 | RL-0018 | In Progress | Done | Release Manager | Rest Timer overlay implementation, Code Review approval, focused QA pass, user approval by workflow instruction, and release closeout completed. |
 
 ---
 
@@ -362,17 +364,17 @@ Dependency validation:
 | Metric | Value |
 | ------ | ----- |
 | Total Stories | 34 |
-| Not Started | 14 |
+| Not Started | 13 |
 | In Progress | 0 |
 | Blocked | 0 |
 | On Hold | 0 |
-| Done | 20 |
+| Done | 21 |
 | Canceled | 0 |
 
 Completion Rate:
 
 ```text
-20 / (34 - 0) = 58.8%
+21 / (34 - 0) = 61.8%
 ```
 
 MVP Completion Rate:
@@ -454,6 +456,7 @@ Stories updated:
 * `RL-0022`: Status updated to Done after RL-0033 resolved the missing-screen prerequisite and Current Workout set progression passed focused QA.
 * `RL-0023`: Dependency remains downstream of `RL-0022`, and therefore also requires `RL-0033` indirectly.
 * `RL-0023`: Status updated to Done after Current Workout pause, resume, skip, adjust, return-state recovery, focused QA pass, user approval, and release closeout.
+* `RL-0018`: Status updated to Done after Rest Timer overlay implementation, existing timer regression coverage, focused QA pass, user approval, and release closeout.
 * `RL-0025`: Dependency updated to include `RL-0033` because planned session detail and Start Today handoff require a saved composed session.
 * `RL-0030` and `RL-0031`: QA scope updated to include Workout Plan Builder and Add Exercise bottom sheet validation.
 
@@ -527,6 +530,7 @@ Reasoning:
 | v1.33 | 2026-07-18 | Release Manager Agent | Closed RL-0033 as Done after Workout Session Composition implementation, QA pass, and release closeout. |
 | v1.34 | 2026-07-19 | Release Manager Agent | Closed RL-0022 as Done after Current Workout set progression implementation, focused QA pass, and release closeout. |
 | v1.35 | 2026-07-19 | Release Manager Agent | Closed RL-0023 as Done after Current Workout control states implementation, focused QA pass, and release closeout. |
+| v1.36 | 2026-07-19 | Release Manager Agent | Closed RL-0018 as Done after Rest Timer overlay implementation, focused QA pass, and release closeout. |
 
 ---
 
@@ -563,6 +567,13 @@ user_stories/RL-0015/RL-0015_RELEASE_NOTE.md
 user_stories/RL-0016/RL-0016_TASKS.md
 user_stories/RL-0017/RL-0017_TASKS.md
 user_stories/RL-0018/RL-0018_TASKS.md
+user_stories/RL-0018/RL-0018_SPRINT_PLAN.md
+user_stories/RL-0018/RL-0018_UX_SPEC.md
+user_stories/RL-0018/RL-0018_INTERPRETATION.md
+user_stories/RL-0018/RL-0018_IMPLEMENTATION_NOTES.md
+user_stories/RL-0018/RL-0018_CODE_REVIEW.md
+user_stories/RL-0018/RL-0018_QA_REPORT.md
+user_stories/RL-0018/RL-0018_RELEASE_NOTE.md
 user_stories/RL-0019/RL-0019_TASKS.md
 user_stories/RL-0020/RL-0020_TASKS.md
 user_stories/RL-0021/RL-0021_TASKS.md
@@ -603,7 +614,7 @@ Coordinator
 Next Prompt:
 
 ```text
-RL-0022 is Done. Select the next eligible story from docs/EPIC_USER_STORY_TASKS.md.
+RL-0018 is Done. Select the next eligible story from docs/EPIC_USER_STORY_TASKS.md.
 ```
 
 Required Input Files:
@@ -638,6 +649,9 @@ Instructions:
 * RL-0021 is Done.
 * RL-0015 is Done.
 * RL-0033 is Done.
+* RL-0022 is Done.
+* RL-0023 is Done.
+* RL-0018 is Done.
 * All current MVP backlog stories are Done.
 * Preserve Story IDs and completed story state.
 * Do not modify Done stories unless a later approved story explicitly requires it.
@@ -863,7 +877,7 @@ RL-0020
 | Done | RL-0015 | EP-12 | Guided Workout Flow | Must Have | P0 | M | RL-0014, RL-0021 | Yes | Yes | As a user starting today's workout, I want a Current Workout screen foundation that clearly shows the active exercise and next action, so that workout execution has a focused home separate from Dashboard and planning. | - Uses `design/approved/02_current_workout.png` for approved Current Workout layout and screen composition.<br>- Current Workout displays workout title, active exercise, instruction text, sets/reps target, progress indicator, and one primary Complete Set action placeholder.<br>- Current Workout is reachable from Dashboard Start/Resume or an existing local workout entry without adding backend, login, cloud sync, or broad content systems.<br>- Workout execution is visually and functionally separated from Dashboard, Week planning, and History review.<br>- Existing workout log data and local persistence remain intact.<br>- Pause, adjust, skip, multi-set progression, rest handoff, resume state, and completion navigation are deferred to dependent stories. |
 | Not Started | RL-0016 | EP-13 | Completion Celebration | Must Have | P0 | M | RL-0022 | Yes | Yes | As a user who just completed a workout, I want an immediate celebration screen that recognizes completion and reward progress, so that finishing feels meaningful before I return to the app. | - Uses `design/approved/04_workkout_summary.png` for the approved Workout Summary celebration layout and screen composition.<br>- Workout Summary appears immediately after workout completion from Current Workout.<br>- Workout Summary leads with celebration and recognition before supporting details.<br>- XP, level, weekly goal, achievement, or recovery rewards are shown when existing local data makes them relevant.<br>- Workout Summary cannot be reopened from History as if it were a normal detail screen.<br>- Private stats, optional share-card generation, Plan Tomorrow, and detailed return actions are deferred to `RL-0024`. |
 | Not Started | RL-0017 | EP-14 | Week Planning | Should Have | P1 | M | RL-0014, RL-0021 | Yes | Yes | As a user planning my week, I want Week to show my local planned sessions by day, so that I can understand the week without mixing planning with Dashboard or History review. | - Uses `design/approved/05_weekly_plan.png` for approved Week layout and screen composition.<br>- Week owns screen structure, day navigation, planned session display, and existing local data presentation.<br>- Week may reuse existing workout creation behavior when necessary.<br>- Week does not own new inline editors, advanced planning tools, rescheduling systems, or new autosave experiences.<br>- Week does not display read-only history as its primary purpose.<br>- Week can show a session preview entry point, but detailed planned/session detail and Start Today behavior are deferred to `RL-0025`.<br>- History list and completed Workout Detail behavior are deferred to `RL-0026` and `RL-0027`. |
-| Not Started | RL-0018 | EP-14 | Rest Timer Overlay | Should Have | P1 | M | RL-0022 | Yes | Yes | As a user resting during a workout, I want a focused Rest Timer overlay, so that I can manage the current rest interval without leaving Current Workout. | - Uses `design/approved/03_timer.png` for approved rest overlay layout and screen composition.<br>- Rest Timer belongs to Workout Flow and is not a Dashboard section.<br>- Rest Timer appears as an overlay/modal while resting during an active workout.<br>- Overlay includes countdown UI, skip rest, extend rest, close/dismiss, and return-to-Current-Workout behavior.<br>- Existing timer presets and accessibility touch targets remain usable.<br>- Timer survival across navigation, global/floating timer state, return-to-workout entry from other screens, and active timer persistence are deferred to `RL-0032`. |
+| Done | RL-0018 | EP-14 | Rest Timer Overlay | Should Have | P1 | M | RL-0022 | Yes | Yes | As a user resting during a workout, I want a focused Rest Timer overlay, so that I can manage the current rest interval without leaving Current Workout. | - Uses `design/approved/03_timer.png` for approved rest overlay layout and screen composition.<br>- Rest Timer belongs to Workout Flow and is not a Dashboard section.<br>- Rest Timer appears as an overlay/modal while resting during an active workout.<br>- Overlay includes countdown UI, skip rest, extend rest, close/dismiss, and return-to-Current-Workout behavior.<br>- Existing timer presets and accessibility touch targets remain usable.<br>- Timer survival across navigation, global/floating timer state, return-to-workout entry from other screens, and active timer persistence are deferred to `RL-0032`. |
 | Not Started | RL-0019 | EP-14 | Achievement Hub Foundation | Should Have | P1 | M | RL-0016, RL-0021 | Yes | Yes | As a consistency-focused user, I want an Achievement hub that shows my level and long-term growth without comparison, so that progress feels motivating rather than judgmental. | - Uses `design/approved/06_achievement.png` for approved Achievement hub layout and screen composition.<br>- Achievement displays level, XP/rep score concept, current title/reward state, and high-level progress using existing local XP/level data where possible.<br>- Achievement language prioritizes consistency, return, and recognition over performance.<br>- Dashboard shows only short-term achievement preview, not full achievement detail.<br>- Achievement does not introduce rankings, leaderboards, public percentile claims, social comparison, public profiles, penalties, or level loss.<br>- Detailed medals, milestone lists, title collection, recent unlocks, and share moments are deferred to `RL-0028` and `RL-0029`. |
 | Not Started | RL-0020 | EP-15 | Phase 2 Final Journey QA | Should Have | P1 | S | RL-0031 | Yes | Yes | As a release reviewer, I want a final Phase 2 readiness review, so that already-completed screen and integration QA can be evaluated without repeating the entire QA pass. | - Reviews `RL-0030` screen QA and `RL-0031` integration/regression QA evidence instead of repeating all previous QA work.<br>- Confirms no unresolved blockers remain for the Guide -> Complete -> Celebrate -> Reward -> Come Back loop.<br>- Confirms final validation evidence includes `flutter analyze` and `flutter test`, or documented skipped-test limitations.<br>- Confirms privacy, local-first, no-backend, no-login, no-cloud-sync, and non-comparison boundaries remain intact.<br>- Release readiness notes identify accepted limitations and remaining Phase 2 UX risks without reopening completed MVP stories.<br>- RL-0020 does not add new feature implementation or broad manual screen retesting unless previous QA evidence is missing or blocked. |
 | Done | RL-0021 | EP-15 | Phase 2 Design Handoff | Must Have | P0 | S | RL-0013 | Yes | Yes | As an implementation team, I want approved Phase 2 designs translated into build-ready guidance, so that developers can implement the redesign consistently without redesigning it during coding. | - Reviews all files in `design/approved/` and records screen-specific implementation notes without changing approved UX direction.<br>- Defines reusable layout, color, icon, typography, spacing, and asset-handling guidance compatible with existing Material 3 constraints.<br>- Identifies which approved visual elements can use existing Material widgets and which require local assets or simplified placeholders.<br>- Adds design QA checkpoints for each approved screen, including mobile layout, touch targets, contrast, and non-overlap expectations.<br>- Does not introduce backend, login, cloud sync, external asset services, new product scope, or redesigned flows.<br>- Because `RL-0014` is Done, the handoff may record Home follow-up guidance but must not reopen RL-0014 unless a significant UX issue is discovered later.<br>- Produces a handoff artifact usable by Code Writer, Code Reviewer, and QA agents. |

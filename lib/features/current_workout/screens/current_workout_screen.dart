@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../data/models/workout_log.dart';
@@ -143,7 +145,10 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
                     else if (activeWorkout == null)
                       const _NoActiveWorkoutCard()
                     else if (_restState != null)
-                      _RestStateCard(restState: _restState!)
+                      _RestStateCard(
+                        restState: _restState!,
+                        onOpenTimer: () => _openRestTimerOverlay(_restState!),
+                      )
                     else
                       _ActiveExerciseCard(
                         workoutLog: activeWorkout,
@@ -433,6 +438,22 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
       _sessionWeightByWorkoutLogId[activeWorkout.id] = adjustment.weight;
       _saveControlSnapshot();
     });
+  }
+
+  Future<void> _openRestTimerOverlay(_RestState restState) async {
+    final shouldSkipRest = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.72),
+      builder: (context) {
+        return _RestTimerOverlay(restState: restState);
+      },
+    );
+
+    if (shouldSkipRest == true && mounted) {
+      _continueFromRest();
+    }
   }
 
   int? _nextExerciseIndexOrNull() {
@@ -843,9 +864,13 @@ class _RestState {
 }
 
 class _RestStateCard extends StatelessWidget {
-  const _RestStateCard({required this.restState});
+  const _RestStateCard({
+    required this.restState,
+    required this.onOpenTimer,
+  });
 
   final _RestState restState;
+  final VoidCallback onOpenTimer;
 
   @override
   Widget build(BuildContext context) {
@@ -913,9 +938,246 @@ class _RestStateCard extends StatelessWidget {
             label: 'Return target',
             value: restState.returnTarget,
           ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: onOpenTimer,
+              style: FilledButton.styleFrom(
+                backgroundColor: CurrentWorkoutScreen._accent,
+                foregroundColor: Colors.black,
+                minimumSize: const Size.fromHeight(54),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                textStyle: const TextStyle(fontWeight: FontWeight.w900),
+              ),
+              icon: const Icon(Icons.hourglass_empty),
+              label: const Text('Open Rest Timer'),
+            ),
+          ),
         ],
       ),
     );
+  }
+}
+
+class _RestTimerOverlay extends StatefulWidget {
+  const _RestTimerOverlay({required this.restState});
+
+  final _RestState restState;
+
+  @override
+  State<_RestTimerOverlay> createState() => _RestTimerOverlayState();
+}
+
+class _RestTimerOverlayState extends State<_RestTimerOverlay> {
+  static const int _initialSeconds = 90;
+  static const int _extensionSeconds = 30;
+
+  Timer? _timer;
+  int _remainingSeconds = _initialSeconds;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = _remainingSeconds / _initialSeconds;
+    return SafeArea(
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          width: double.infinity,
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+          decoration: BoxDecoration(
+            color: CurrentWorkoutScreen._surface,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: CurrentWorkoutScreen._border),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.45),
+                blurRadius: 26,
+                offset: const Offset(0, 14),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'REST TIMER',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: CurrentWorkoutScreen._secondaryText,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _returnToWorkout,
+                    tooltip: 'Close rest timer',
+                    icon: const Icon(
+                      Icons.close,
+                      color: CurrentWorkoutScreen._primaryText,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Rest after ${widget.restState.activeWorkoutName}',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: CurrentWorkoutScreen._primaryText,
+                  fontWeight: FontWeight.w900,
+                  height: 1.12,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Next: ${widget.restState.nextWorkoutName}',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: CurrentWorkoutScreen._secondaryText,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      height: 168,
+                      width: 168,
+                      child: CircularProgressIndicator(
+                        value: progress.clamp(0.0, 1.0),
+                        strokeWidth: 10,
+                        backgroundColor: Colors.white.withValues(alpha: 0.08),
+                        color: CurrentWorkoutScreen._accent,
+                      ),
+                    ),
+                    Text(
+                      _formatTime(_remainingSeconds),
+                      style: Theme.of(context).textTheme.displaySmall
+                          ?.copyWith(
+                            color: CurrentWorkoutScreen._primaryText,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: _skipRest,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: CurrentWorkoutScreen._accent,
+                    foregroundColor: Colors.black,
+                    minimumSize: const Size.fromHeight(56),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    textStyle: const TextStyle(fontWeight: FontWeight.w900),
+                  ),
+                  icon: const Icon(Icons.skip_next),
+                  label: const Text('Skip Rest'),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _extendRest,
+                      style: _secondaryButtonStyle(),
+                      icon: const Icon(Icons.add),
+                      label: const Text('Extend Rest'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _returnToWorkout,
+                      style: _secondaryButtonStyle(),
+                      icon: const Icon(Icons.keyboard_return),
+                      label: const Text('Return'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      if (_remainingSeconds <= 0) {
+        timer.cancel();
+        return;
+      }
+
+      setState(() {
+        _remainingSeconds--;
+      });
+    });
+  }
+
+  void _extendRest() {
+    setState(() {
+      _remainingSeconds += _extensionSeconds;
+    });
+    _startTimer();
+  }
+
+  void _skipRest() {
+    Navigator.pop(context, true);
+  }
+
+  void _returnToWorkout() {
+    Navigator.pop(context, false);
+  }
+
+  ButtonStyle _secondaryButtonStyle() {
+    return OutlinedButton.styleFrom(
+      foregroundColor: CurrentWorkoutScreen._primaryText,
+      side: const BorderSide(color: CurrentWorkoutScreen._border),
+      minimumSize: const Size.fromHeight(52),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      textStyle: const TextStyle(fontWeight: FontWeight.w800),
+    );
+  }
+
+  String _formatTime(int totalSeconds) {
+    final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
+    final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
+
+    return '$minutes:$seconds';
   }
 }
 

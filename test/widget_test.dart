@@ -469,6 +469,85 @@ void main() {
     expect(find.text('Lat Pulldown'), findsWidgets);
   });
 
+  testWidgets('opens Rest Timer overlay during Current Workout rest', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'rest-overlay-log-1',
+          date: _dateKey(DateTime.now()),
+          workoutId: 'rest-overlay-workout-1',
+          workoutName: 'Incline Press',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 1,
+          reps: 10,
+          createdAt: DateTime.now(),
+        ),
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'rest-overlay-log-2',
+          date: _dateKey(DateTime.now()),
+          workoutId: 'rest-overlay-workout-2',
+          workoutName: 'Cable Row',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 1,
+          reps: 12,
+          createdAt: DateTime.now().add(const Duration(minutes: 1)),
+        ),
+      );
+    });
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Start Workout'));
+    await tester.pumpAndSettle();
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(FilledButton, 'Complete Set'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, 'Complete Set'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('REST STATE'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Open Rest Timer'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Open Rest Timer'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('REST TIMER'), findsOneWidget);
+    expect(find.text('Rest after Incline Press'), findsWidgets);
+    expect(find.text('Next: Cable Row'), findsWidgets);
+    expect(find.text('01:30'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text('01:29'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Extend Rest'));
+    await tester.pump();
+    expect(find.text('01:59'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Return'));
+    await tester.pumpAndSettle();
+    expect(find.text('REST TIMER'), findsNothing);
+    expect(find.text('REST STATE'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Open Rest Timer'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Skip Rest'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Exercise 2 of 2'), findsOneWidget);
+    expect(find.text('Cable Row'), findsWidgets);
+  });
+
   testWidgets('shows saved daily session title and starts Current Workout', (
     WidgetTester tester,
   ) async {
