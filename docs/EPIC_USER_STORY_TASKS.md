@@ -350,6 +350,8 @@ Dependency validation:
 | 2026-07-17 | RL-0022 | In Progress | On Hold | Coordinator | Manual testing found missing screens that should be addressed before continuing Current Workout set progression. Partial implementation work remains preserved for later resume. |
 | 2026-07-18 | RL-0033 | Not Started | In Progress | Coordinator | Next eligible P0 prerequisite story selected to resolve the workout-composition screen gap before RL-0022 resumes. |
 | 2026-07-18 | RL-0033 | In Progress | Done | Release Manager | Workout Session Composition implementation, Code Review approval, QA pass, user approval by workflow instruction, and release closeout completed. |
+| 2026-07-19 | RL-0022 | On Hold | In Progress | Coordinator | RL-0033 resolved the missing Workout Session Composition prerequisite, so RL-0022 resumed. |
+| 2026-07-19 | RL-0022 | In Progress | Done | Release Manager | Current Workout set progression, rest handoff, focused QA pass, user approval by workflow instruction, and release closeout completed. |
 
 ---
 
@@ -361,14 +363,14 @@ Dependency validation:
 | Not Started | 15 |
 | In Progress | 0 |
 | Blocked | 0 |
-| On Hold | 1 |
-| Done | 18 |
+| On Hold | 0 |
+| Done | 19 |
 | Canceled | 0 |
 
 Completion Rate:
 
 ```text
-18 / (34 - 0) = 52.9%
+19 / (34 - 0) = 55.9%
 ```
 
 MVP Completion Rate:
@@ -447,6 +449,7 @@ Stories updated:
 * `RL-0033`: Status updated to In Progress after Coordinator selected it as the next eligible prerequisite story before RL-0022 resumes.
 * `RL-0033`: Status updated to Done after Workout Session Composition implementation, Code Review approval, QA pass, user approval, and release closeout.
 * `RL-0022`: Dependency updated to require `RL-0033` before set progression resumes because Current Workout needs one saved daily session with multiple ordered exercises.
+* `RL-0022`: Status updated to Done after RL-0033 resolved the missing-screen prerequisite and Current Workout set progression passed focused QA.
 * `RL-0023`: Dependency remains downstream of `RL-0022`, and therefore also requires `RL-0033` indirectly.
 * `RL-0025`: Dependency updated to include `RL-0033` because planned session detail and Start Today handoff require a saved composed session.
 * `RL-0030` and `RL-0031`: QA scope updated to include Workout Plan Builder and Add Exercise bottom sheet validation.
@@ -595,7 +598,7 @@ Coordinator
 Next Prompt:
 
 ```text
-Review RL-0033 release completion, then decide whether to resume RL-0022 from On Hold now that the workout-composition prerequisite is Done.
+RL-0022 is Done. Select the next eligible story from docs/EPIC_USER_STORY_TASKS.md.
 ```
 
 Required Input Files:
@@ -617,11 +620,11 @@ Optional Input Files:
 Expected Output:
 
 * Coordinator routing decision for the next story.
-* RL-0022 may be reviewed for resume because RL-0033 is Done.
+* Done story states remain preserved.
 
 Blocking Conditions:
 
-* RL-0022 is On Hold because manual testing found missing screens.
+* Do not modify Done stories unless a later approved story explicitly requires it.
 
 Instructions:
 
@@ -725,7 +728,7 @@ Requirement conflicts, gaps, and clarifications:
 | Story | Existing Status | Prerequisite Decision | Reason |
 | ----- | --------------- | --------------------- | ------ |
 | `RL-0015` | Done | Do not retroactively add `RL-0033` or reopen the story. | `RL-0015` delivered the Current Workout foundation and placeholder action before the missing composition flow was discovered. Future stories that depend on executable multi-exercise data must use `RL-0033`. |
-| `RL-0022` | On Hold | `RL-0033` is a direct prerequisite. | Set progression requires a saved daily session with multiple ordered exercises before Exercise -> Rest -> Next Exercise can be validated. |
+| `RL-0022` | Done | `RL-0033` was a direct prerequisite. | Set progression required a saved daily session with multiple ordered exercises before Exercise -> Rest -> Next Exercise could be validated. |
 | `RL-0023` | Not Started | `RL-0033` is an indirect prerequisite through `RL-0022`. | Pause, adjust, skip, and resume states need the same composed-session state model after progression exists. |
 
 Migration impact:
@@ -860,7 +863,7 @@ RL-0020
 | Not Started | RL-0020 | EP-15 | Phase 2 Final Journey QA | Should Have | P1 | S | RL-0031 | Yes | Yes | As a release reviewer, I want a final Phase 2 readiness review, so that already-completed screen and integration QA can be evaluated without repeating the entire QA pass. | - Reviews `RL-0030` screen QA and `RL-0031` integration/regression QA evidence instead of repeating all previous QA work.<br>- Confirms no unresolved blockers remain for the Guide -> Complete -> Celebrate -> Reward -> Come Back loop.<br>- Confirms final validation evidence includes `flutter analyze` and `flutter test`, or documented skipped-test limitations.<br>- Confirms privacy, local-first, no-backend, no-login, no-cloud-sync, and non-comparison boundaries remain intact.<br>- Release readiness notes identify accepted limitations and remaining Phase 2 UX risks without reopening completed MVP stories.<br>- RL-0020 does not add new feature implementation or broad manual screen retesting unless previous QA evidence is missing or blocked. |
 | Done | RL-0021 | EP-15 | Phase 2 Design Handoff | Must Have | P0 | S | RL-0013 | Yes | Yes | As an implementation team, I want approved Phase 2 designs translated into build-ready guidance, so that developers can implement the redesign consistently without redesigning it during coding. | - Reviews all files in `design/approved/` and records screen-specific implementation notes without changing approved UX direction.<br>- Defines reusable layout, color, icon, typography, spacing, and asset-handling guidance compatible with existing Material 3 constraints.<br>- Identifies which approved visual elements can use existing Material widgets and which require local assets or simplified placeholders.<br>- Adds design QA checkpoints for each approved screen, including mobile layout, touch targets, contrast, and non-overlap expectations.<br>- Does not introduce backend, login, cloud sync, external asset services, new product scope, or redesigned flows.<br>- Because `RL-0014` is Done, the handoff may record Home follow-up guidance but must not reopen RL-0014 unless a significant UX issue is discovered later.<br>- Produces a handoff artifact usable by Code Writer, Code Reviewer, and QA agents. |
 | Done | RL-0033 | EP-12 | Workout Session Composition | Must Have | P0 | M | RL-0015, RL-0021 | Yes | Yes | As a user preparing today's workout, I want to create one daily workout session with multiple ordered exercises, so that Dashboard and Current Workout know what workout should be started and guided. | - Uses `design/approved/09_workout_plan_builder.png` for approved Workout Plan Builder layout and screen composition.<br>- Uses `design/approved/10_add_exercise.png` for approved Add Exercise bottom sheet layout and screen composition.<br>- User can create one daily workout session with a session title and at least one valid exercise.<br>- User can add multiple exercises, and new exercises append in insertion order.<br>- User can edit an existing exercise without changing its order.<br>- User can delete an exercise, and remaining exercise numbering closes the gap.<br>- Session and exercises persist locally and remain available after app restart.<br>- Dashboard can show the saved daily session as today's workout handoff.<br>- Current Workout can start from the saved session without creating duplicate completed records.<br>- Scope excludes templates, drag-and-drop sorting, multiple sessions per day, cloud sync, achievements, and timer flow. |
-| On Hold | RL-0022 | EP-12 | Current Workout Set Progression | Must Have | P0 | M | RL-0015, RL-0033 | Yes | Yes | As a user moving through a workout, I want Complete Set to advance me into a rest state or the next exercise, so that workout progress is clear without adding timer UI yet. | - Builds on the Current Workout screen foundation from `RL-0015` and the composed daily session from `RL-0033`.<br>- Complete Set updates local workout progress for the active exercise without duplicating XP/reward behavior.<br>- Current Workout progresses through the saved exercise order using Exercise -> Rest state -> Next Exercise.<br>- RL-0022 does not implement timer countdown UI, timer controls, overlay/modal UI, or cross-screen timer continuity.<br>- Rest state exposes the information required by `RL-0018`, such as active workout, completed set/exercise, next exercise, suggested rest duration, and return target.<br>- Completion state is reached when all planned sets/exercises in the saved session are done and can hand off to `RL-0016`.<br>- Existing workout completion and local persistence behavior remain intact. |
+| Done | RL-0022 | EP-12 | Current Workout Set Progression | Must Have | P0 | M | RL-0015, RL-0033 | Yes | Yes | As a user moving through a workout, I want Complete Set to advance me into a rest state or the next exercise, so that workout progress is clear without adding timer UI yet. | - Builds on the Current Workout screen foundation from `RL-0015` and the composed daily session from `RL-0033`.<br>- Complete Set updates local workout progress for the active exercise without duplicating XP/reward behavior.<br>- Current Workout progresses through the saved exercise order using Exercise -> Rest state -> Next Exercise.<br>- RL-0022 does not implement timer countdown UI, timer controls, overlay/modal UI, or cross-screen timer continuity.<br>- Rest state exposes the information required by `RL-0018`, such as active workout, completed set/exercise, next exercise, suggested rest duration, and return target.<br>- Completion state is reached when all planned sets/exercises in the saved session are done and can hand off to `RL-0016`.<br>- Existing workout completion and local persistence behavior remain intact. |
 | Not Started | RL-0023 | EP-12 | Current Workout Control States | Must Have | P0 | M | RL-0022 | Yes | Yes | As a user whose active session needs small adjustments, I want pause, adjust, skip, and resume states in Current Workout, so that the flow remains flexible without becoming an editor. | - Current Workout supports pause and resume states with clear status text and primary action changes.<br>- Users can skip the active exercise or set without corrupting local workout progress.<br>- Adjust is limited to changing current session reps and current session weight only.<br>- Adjust must not modify weekly plans, edit workout templates, become a workout editor, or modify historical records.<br>- Control states do not turn Current Workout into the Week planner or History editor.<br>- Navigation away and back preserves enough local state to continue the active workout.<br>- QA covers pause, resume, skip, current-session reps/weight adjustment, and return-to-workout behavior. |
 | Not Started | RL-0024 | EP-13 | Workout Summary Private Details And Sharing | Must Have | P0 | M | RL-0016 | Yes | Yes | As a user reviewing a completed workout, I want private session details and optional sharing to be available only from the completion summary, so that I can celebrate without weakening privacy. | - Builds on the immediate Workout Summary from `RL-0016`.<br>- Private session details such as duration, volume, calories, sets, or moment of day appear only in the completion-summary context where locally available.<br>- Optional share-card generation is available only as a user-initiated action.<br>- Existing share-card privacy defaults remain intact and performance metrics remain hidden unless explicitly opted in by existing rules.<br>- Plan Tomorrow and Back to Dashboard actions return users to the correct journey without reopening History as Summary.<br>- History cannot reopen the celebration summary state. |
 | Not Started | RL-0025 | EP-14 | Planned Session Detail And Start Today | Should Have | P1 | M | RL-0017, RL-0015, RL-0033 | Yes | Yes | As a user viewing a planned session, I want a focused detail screen that can start today's workout, so that planning can hand off cleanly to Current Workout. | - Uses `design/approved/08_workout_detail.png` only for planned/session detail that can start a workout.<br>- Planned Session Detail displays session name, exercises, sets/reps, notes, and Start Workout or Start Today action where appropriate.<br>- Start Workout hands off to Current Workout using the locally saved composed session without creating duplicate completed records.<br>- Planned/session detail remains separate from completed History detail.<br>- Local persistence preserves planned workout data and active workout handoff state.<br>- QA covers Week -> planned detail -> Start Today -> Current Workout navigation. |

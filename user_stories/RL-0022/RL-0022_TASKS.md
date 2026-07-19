@@ -9,15 +9,15 @@ design/approved/03_timer.png
 
 | Status | Task ID | Description | Owner Agent |
 | ------ | ------- | ----------- | ----------- |
-| On Hold | RL-0022-T01 | Interpret set progression and rest handoff requirements against Current Workout foundation and Workout Flow responsibilities. | User Story Interpreter |
-| On Hold | RL-0022-T02 | Produce UX specification for Complete Set progression, Exercise -> Rest state -> Next Exercise handoff, and completion state without timer UI. | UX Designer |
-| On Hold | RL-0022-T03 | Implement set progression and rest-state data using existing local workout data while preserving XP/reward idempotency and persistence behavior. | Code Writer |
-| On Hold | RL-0022-T04 | Review implementation for state progression correctness, rest handoff data, persistence regressions, and exclusion of timer countdown/overlay UI. | Code Reviewer |
-| On Hold | RL-0022-T05 | Execute QA for complete-set progression, rest-state information exposed for `RL-0018`, next exercise display, and final completion handoff. | QA Tester |
-| On Hold | RL-0022-T06 | Close story and sync release artifacts. | Release Manager |
+| Done | RL-0022-T01 | Interpret set progression and rest handoff requirements against Current Workout foundation and Workout Flow responsibilities. | User Story Interpreter |
+| Done | RL-0022-T02 | Produce UX specification for Complete Set progression, Exercise -> Rest state -> Next Exercise handoff, and completion state without timer UI. | UX Designer |
+| Done | RL-0022-T03 | Implement set progression and rest-state data using existing local workout data while preserving XP/reward idempotency and persistence behavior. | Code Writer |
+| Done | RL-0022-T04 | Review implementation for state progression correctness, rest handoff data, persistence regressions, and exclusion of timer countdown/overlay UI. | Code Reviewer |
+| Done | RL-0022-T05 | Execute QA for complete-set progression, rest-state information exposed for `RL-0018`, next exercise display, and final completion handoff. | QA Tester |
+| Done | RL-0022-T06 | Close story and sync release artifacts. | Release Manager |
 
 ## Hold Note
 
-RL-0022 is On Hold as of 2026-07-17 because manual testing found missing screens that should be addressed before Current Workout set progression continues.
+RL-0022 was resumed after RL-0033 resolved the missing Workout Plan Builder and Add Exercise screen prerequisite.
 
-Partial implementation and focused widget-test work are preserved in the repository for later resume. Do not continue RL-0022 until the missing-screen gap is resolved or explicitly waived by the user.
+Current Workout set progression, rest handoff, next exercise progression, completion-ready state, and focused QA evidence are released.

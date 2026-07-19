@@ -201,8 +201,8 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
       return _continueFromRest;
     }
 
-    return () {
-      _completeActiveSet(activeWorkout);
+    return () async {
+      await _completeActiveSet(activeWorkout);
     };
   }
 

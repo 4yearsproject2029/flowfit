@@ -2,6 +2,32 @@
 
 ---
 
+# 2026-07-19 - RL-0022 Current Workout Set Progression Release
+
+## Completed
+- Resumed RL-0022 after RL-0033 resolved the missing Workout Plan Builder and Add Exercise prerequisite.
+- Released Current Workout set progression through Exercise -> Rest state -> Next Exercise.
+- Preserved the RL-0022 scope boundary by excluding timer countdown UI, timer controls, rest overlay/modal UI, cross-screen timer continuity, pause, adjust, skip, resume, and Workout Summary navigation.
+- Added RL-0022 UX, interpretation, implementation, code review, QA, and release artifacts.
+- Synced `docs/SPRINT_PLAN.md`, `docs/EPIC_USER_STORY_TASKS.md`, `user_stories/RL-0022/RL-0022_TASKS.md`, and `user_stories/RL-0022/RL-0022_SPRINT_PLAN.md`.
+
+## Verified
+- `flutter analyze` passed with no issues.
+- `flutter test test/widget_test.dart --plain-name "opens Current Workout and advances through rest handoff" -r expanded` passed.
+- `flutter test test/storage_service_test.dart -r expanded` passed with 14 tests.
+- `flutter test -r expanded` was attempted and stalled in the existing Hive-backed widget-test harness after 33 passed and 1 skipped; the run was interrupted and documented as a known limitation.
+
+## Current App State
+- Dashboard can hand off a saved daily session to Current Workout.
+- Current Workout can advance through planned exercises using Complete Set.
+- Rest state exposes active workout, completed set, next exercise, suggested rest duration, and return target for future timer work.
+- Completion-ready state is available for the future RL-0016 Workout Summary story.
+
+## Next Steps
+- Coordinator should select the next eligible story from `docs/EPIC_USER_STORY_TASKS.md`.
+
+---
+
 # Day 1
 
 ## Completed
