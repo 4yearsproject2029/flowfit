@@ -3,154 +3,132 @@
 ## Current Story
 
 Story ID:
-RL-0016
+RL-0034
 
 Status:
 Done
 
 Reason:
-RL-0016 was selected and released after RL-0018 because it is the next eligible P0 Must Have story with dependency RL-0022 complete. It adds the immediate Workout Summary celebration after Current Workout completion.
+RL-0034 was selected after Solution Architect review confirmed `CurrentWorkoutScreen` has grown to 1,584 lines and now increases future workout-flow feature cost and regression risk. The story is a narrow, behavior-preserving structural refactor before additional Current Workout-heavy work, especially RL-0032.
 
 ## Routing Decision Traceability
 
 Decision Point:
-Release Complete
+Initial Selection
 
 Selected Story:
-RL-0016
+RL-0034
 
 Previous Story State:
-In Progress
+Not Started
 
 New Story State:
 Done
 
 Inputs Considered:
 
-- docs/EPIC_USER_STORY_TASKS.md
+- User approval to proceed with Coordinator routing starting with Solution Architect
 - docs/PRODUCT_BRIEF.md
 - docs/PROJECT_CONTEXT.md
 - docs/ARCHITECTURE.md
-- docs/USER_JOURNEY.md
-- docs/SCREEN_STRUCTURE.md
-- user_stories/RL-0016/RL-0016_TASKS.md
-- user_stories/RL-0016/RL-0016_SPRINT_PLAN.md
-- user_stories/RL-0016/RL-0016_UX_SPEC.md
-- user_stories/RL-0016/RL-0016_INTERPRETATION.md
-- user_stories/RL-0016/RL-0016_IMPLEMENTATION_NOTES.md
-- user_stories/RL-0016/RL-0016_CODE_REVIEW.md
-- user_stories/RL-0016/RL-0016_QA_REPORT.md
-- user_stories/RL-0018/RL-0018_RELEASE_NOTE.md
-- design/approved/04_workkout_summary.png
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- user_stories/RL-0034/RL-0034_TASKS.md
+- lib/features/current_workout/screens/current_workout_screen.dart
+- lib/features/workout_summary/screens/workout_summary_screen.dart
 
 Dependency and Blocker Status:
 
-- RL-0022 is Done.
-- RL-0018 is Done.
 - RL-0016 is Done.
-- No unresolved RL-0016 blockers remain.
+- RL-0018 is Done.
+- RL-0022 is Done.
+- RL-0023 is Done.
+- No unresolved RL-0034 blockers are present.
 
-Release Summary:
-RL-0016 released the immediate Workout Summary celebration shell. Completing the final planned set from Current Workout now opens a celebration-first summary with reward progress, session snapshot, and Back to Dashboard action, while private details, optional sharing, Plan Tomorrow, and detailed return actions remain deferred to RL-0024.
+Selection Summary:
+RL-0034 was a P0 Must Have technical-debt story created from the Solution Architect decision to reduce Current Workout regression risk before additional workout-flow expansion. It was selected ahead of RL-0024 and RL-0032 because it lowered implementation risk for upcoming work without changing user-facing behavior.
 
 ## Dependency Validation
 
 - PRODUCT_BRIEF.md: Present.
-- PROJECT_CONTEXT.md: Present.
-- ARCHITECTURE.md: Present.
-- EPIC_USER_STORY_TASKS.md: Present.
-- USER_JOURNEY.md: Present.
-- SCREEN_STRUCTURE.md: Present.
-- RL-0016 task file: Present.
-- RL-0016 sprint plan: Present.
-- RL-0016 UX spec: Present.
-- RL-0016 interpretation: Present.
-- RL-0016 implementation notes: Present.
-- RL-0016 code review: Present and Approved.
-- RL-0016 QA report: Present and Pass.
-- RL-0016 release note: Present.
-- Story dependencies: RL-0022.
+- PROJECT_CONTEXT.md: Present and updated with Current Workout structural refactor context.
+- ARCHITECTURE.md: Present and updated with the Current Workout structural refactor decision.
+- EPIC_USER_STORY_TASKS.md: Present and updated with RL-0034.
+- RL-0034 task file: Present.
+- Story dependencies: RL-0016, RL-0018, RL-0022, RL-0023.
 - Dependency status: all direct dependencies are Done.
 
 ## Execution Order
 
-Completed:
+Planned:
 
-1. Coordinator selected RL-0016.
-2. UX Designer produced Workout Summary guidance.
-3. User Story Interpreter produced implementation-ready requirements.
-4. Code Writer implemented the Summary shell and Current Workout handoff.
-5. Code Reviewer approved the implementation.
-6. QA Tester passed the story with focused evidence.
-7. Release Manager closed the story and synchronized release artifacts.
-
-Next coordinator action:
-
-1. Select RL-0024 as the next eligible P0 story from `docs/EPIC_USER_STORY_TASKS.md`.
+1. Solution Architect records the Current Workout structural refactor decision.
+2. Business Analyst adds RL-0034 and task breakdown.
+3. Coordinator selects RL-0034.
+4. User Story Interpreter produces behavior-preserving requirements.
+5. Code Writer extracts Current Workout modules without behavior changes.
+6. Code Reviewer validates architecture boundaries and behavior preservation.
+7. QA Tester validates focused Current Workout flows and regression evidence.
+8. Release Manager closes RL-0034 and returns control to Coordinator.
 
 ## Assigned Agents
 
-1. Coordinator
-2. UX Designer
-3. User Story Interpreter
-4. Code Writer
-5. Code Reviewer
-6. QA Tester
-7. Release Manager
-8. Coordinator
+1. Solution Architect
+2. Business Analyst
+3. Coordinator
+4. User Story Interpreter
+5. Code Writer
+6. Code Reviewer
+7. QA Tester
+8. Release Manager
+9. Coordinator
 
 ## UX Routing Decision
 
 UX Required:
-Yes
+No
 
 Reason:
-RL-0016 introduced the Workout Summary screen and changed the primary workout completion navigation.
-
-Status:
-Completed
+RL-0034 is a behavior-preserving structural refactor. It must not change screen composition, interaction flow, copy, navigation, visual hierarchy, or accessibility behavior.
 
 ## User Approval Decision
 
 User Approval Required:
-Yes
+No
 
 Reason:
-RL-0016 changes the primary workout completion experience.
+RL-0034 does not change user-facing behavior, permissions, security, integrations, billing, or primary UX. It exists to reduce maintainability risk.
 
 Approval Evidence:
-User instructed Coordinator to continue workflow until release.
-
-Status:
-Approved
+User approved the Coordinator decision to proceed with this routing on 2026-07-20.
 
 ## Required Deliverables
 
-- user_stories/RL-0016/RL-0016_SPRINT_PLAN.md
-- user_stories/RL-0016/RL-0016_UX_SPEC.md
-- user_stories/RL-0016/RL-0016_INTERPRETATION.md
-- user_stories/RL-0016/RL-0016_IMPLEMENTATION_NOTES.md
-- user_stories/RL-0016/RL-0016_CODE_REVIEW.md
-- user_stories/RL-0016/RL-0016_QA_REPORT.md
-- user_stories/RL-0016/RL-0016_RELEASE_NOTE.md
+- user_stories/RL-0034/RL-0034_SPRINT_PLAN.md
+- user_stories/RL-0034/RL-0034_INTERPRETATION.md
+- user_stories/RL-0034/RL-0034_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0034/RL-0034_CODE_REVIEW.md
+- user_stories/RL-0034/RL-0034_QA_REPORT.md
+- user_stories/RL-0034/RL-0034_RELEASE_NOTE.md
 - docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
 - DEVELOPMENT_LOG.md
 
 Status:
-Completed
+Done
 
 ## Risks Or Blockers
 
-- Full `flutter test test/widget_test.dart -r expanded` still stalls in the existing Hive-backed widget harness near an early home-screen test. Focused RL-0016 widget coverage, service tests, analyzer, and diff hygiene passed.
-- RL-0016 intentionally does not add private summary details, optional sharing, Plan Tomorrow, History detail routing, or new achievement unlock logic.
+- The refactor can introduce regressions if private widgets or state helpers are moved without focused tests.
+- The existing Hive-backed broad widget harness can stall; focused widget tests plus analyzer, service tests, and diff hygiene should be used as release evidence if the known harness limitation appears again.
+- No persistence or state-management migration is approved.
 
 ## Expected Outcome
 
-- RL-0016 is Done.
-- Current Workout completion opens Workout Summary immediately.
-- Workout Summary leads with celebration and reward progress.
-- Summary remains separate from History review.
-- Existing local XP, level, weekly goal, and persistence behavior remain intact.
+- Current Workout remains behaviorally unchanged.
+- `current_workout_screen.dart` is smaller and easier to maintain.
+- Rest overlay, adjustment sheet, and display widgets moved into focused modules.
+- Upcoming RL-0024 and RL-0032 work has a lower regression surface.
 
 ## Agent Handoff
 
@@ -163,10 +141,18 @@ Release Manager
 Completed Output:
 
 ```text
-user_stories/RL-0016/RL-0016_RELEASE_NOTE.md
+docs/PROJECT_CONTEXT.md
+docs/ARCHITECTURE.md
 docs/EPIC_USER_STORY_TASKS.md
 docs/SPRINT_PLAN.md
-DEVELOPMENT_LOG.md
+user_stories/RL-0034/RL-0034_TASKS.md
+user_stories/RL-0034/RL-0034_SPRINT_PLAN.md
+user_stories/RL-0034/RL-0034_INTERPRETATION.md
+user_stories/RL-0034/RL-0034_IMPLEMENTATION_NOTES.md
+user_stories/RL-0034/RL-0034_CODE_REVIEW.md
+user_stories/RL-0034/RL-0034_QA_REPORT.md
+user_stories/RL-0034/RL-0034_RELEASE_NOTE.md
+docs/DEVELOPMENT_LOG.md
 ```
 
 Next Agent:
@@ -178,19 +164,21 @@ Coordinator
 Next Prompt:
 
 ```text
-RL-0016 is Done. Select the next eligible story from docs/EPIC_USER_STORY_TASKS.md. Recommended next story: RL-0024.
+/Users/jounghwapak/Developer/AI_Agents/prompts/create_sprint_plan.md
 ```
 
 Required Input Files:
 
+- docs/PROJECT_CONTEXT.md
+- docs/ARCHITECTURE.md
 - docs/EPIC_USER_STORY_TASKS.md
 - docs/SPRINT_PLAN.md
-- user_stories/RL-0016/RL-0016_RELEASE_NOTE.md
+- user_stories/RL-0034/RL-0034_RELEASE_NOTE.md
 
 Expected Output:
 
-- Coordinator routing decision for RL-0024.
+- Next story selection after RL-0034.
 
 Blocking Conditions:
 
-- Do not modify Done stories unless a later approved story explicitly requires it.
+- Stop if the next story's dependencies are not resolved.

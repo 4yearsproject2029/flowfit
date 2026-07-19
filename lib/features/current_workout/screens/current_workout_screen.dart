@@ -5,6 +5,15 @@ import 'package:flutter/material.dart';
 import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
 import '../../workout_summary/screens/workout_summary_screen.dart';
+import '../models/current_workout_rest_state.dart';
+import '../widgets/active_exercise_card.dart';
+import '../widgets/adjust_session_sheet.dart';
+import '../widgets/control_actions_row.dart';
+import '../widgets/current_workout_header.dart';
+import '../widgets/current_workout_palette.dart';
+import '../widgets/current_workout_progress_widgets.dart';
+import '../widgets/current_workout_state_cards.dart';
+import '../widgets/rest_timer_overlay.dart';
 
 class CurrentWorkoutScreen extends StatefulWidget {
   CurrentWorkoutScreen({
@@ -18,16 +27,6 @@ class CurrentWorkoutScreen extends StatefulWidget {
   final String selectedDateLabel;
   final StorageService storageService;
 
-  static const _background = Color(0xFF050606);
-  static const _surface = Color(0xFF101214);
-  static const _elevated = Color(0xFF181B1F);
-  static const _border = Color(0xFF252A2E);
-  static const _accent = Color(0xFF18F7D3);
-  static const _accentDark = Color(0xFF073F39);
-  static const _primaryText = Color(0xFFF5F6F7);
-  static const _secondaryText = Color(0xFFA8AFB7);
-  static const _mutedText = Color(0xFF6F767E);
-
   @override
   State<CurrentWorkoutScreen> createState() => _CurrentWorkoutScreenState();
 }
@@ -40,7 +39,7 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
   late final Set<String> _syncedCompletedWorkoutLogIds;
   late final Map<String, int?> _sessionRepsByWorkoutLogId;
   late final Map<String, double?> _sessionWeightByWorkoutLogId;
-  _RestState? _restState;
+  CurrentWorkoutRestState? _restState;
   bool _isPaused = false;
   bool _isCompletionReady = false;
   bool _hasOpenedWorkoutSummary = false;
@@ -99,7 +98,7 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
     final progressPercent = (progress * 100).round();
 
     return Scaffold(
-      backgroundColor: CurrentWorkoutScreen._background,
+      backgroundColor: CurrentWorkoutPalette.background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -109,12 +108,12 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _CurrentWorkoutHeader(dateLabel: widget.selectedDateLabel),
+                    CurrentWorkoutHeader(dateLabel: widget.selectedDateLabel),
                     const SizedBox(height: 30),
                     Text(
                       'CURRENT WORKOUT',
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: CurrentWorkoutScreen._secondaryText,
+                        color: CurrentWorkoutPalette.secondaryText,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0,
                       ),
@@ -128,32 +127,32 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
                             _progressTitle(),
                             style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
-                                  color: CurrentWorkoutScreen._primaryText,
+                                  color: CurrentWorkoutPalette.primaryText,
                                   fontWeight: FontWeight.w900,
                                   height: 1.04,
                                 ),
                           ),
                         ),
                         const SizedBox(width: 12),
-                        _ProgressPill(label: '$progressPercent%'),
+                        CurrentWorkoutProgressPill(label: '$progressPercent%'),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    _AccentProgressBar(value: progress),
+                    CurrentWorkoutProgressBar(value: progress),
                     const SizedBox(height: 24),
                     if (_isCompletionReady)
-                      const _CompletionReadyCard()
+                      const CompletionReadyCard()
                     else if (_isPaused)
-                      _PausedWorkoutCard(workoutLog: activeWorkout)
+                      PausedWorkoutCard(workoutLog: activeWorkout)
                     else if (activeWorkout == null)
-                      const _NoActiveWorkoutCard()
+                      const NoActiveWorkoutCard()
                     else if (_restState != null)
-                      _RestStateCard(
+                      RestStateCard(
                         restState: _restState!,
                         onOpenTimer: () => _openRestTimerOverlay(_restState!),
                       )
                     else
-                      _ActiveExerciseCard(
+                      ActiveExerciseCard(
                         workoutLog: activeWorkout,
                         completedSets: _completedSetsFor(activeWorkout),
                         targetSets: _targetSets(activeWorkout),
@@ -162,7 +161,7 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
                       ),
                     if (!_isCompletionReady && activeWorkout != null) ...[
                       const SizedBox(height: 14),
-                      _ControlActionsRow(
+                      ControlActionsRow(
                         isPaused: _isPaused,
                         onPause: _pauseWorkout,
                         onAdjust: _restState == null
@@ -182,11 +181,11 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
                       child: FilledButton.icon(
                         onPressed: _primaryAction(activeWorkout),
                         style: FilledButton.styleFrom(
-                          backgroundColor: CurrentWorkoutScreen._accent,
+                          backgroundColor: CurrentWorkoutPalette.accent,
                           foregroundColor: Colors.black,
-                          disabledBackgroundColor: CurrentWorkoutScreen._border,
+                          disabledBackgroundColor: CurrentWorkoutPalette.border,
                           disabledForegroundColor:
-                              CurrentWorkoutScreen._mutedText,
+                              CurrentWorkoutPalette.mutedText,
                           minimumSize: const Size.fromHeight(58),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -314,7 +313,7 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
         _isCompletionReady = true;
         _restState = null;
       } else {
-        _restState = _RestState(
+        _restState = CurrentWorkoutRestState(
           activeWorkoutName: activeWorkout.workoutName,
           completedSetNumber: nextCompletedSet,
           completedSetTotal: targetSets,
@@ -367,7 +366,7 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
         _isCompletionReady = true;
         _restState = null;
       } else {
-        _restState = _RestState(
+        _restState = CurrentWorkoutRestState(
           activeWorkoutName: activeWorkout.workoutName,
           completedSetNumber: nextCompletedSet,
           completedSetTotal: targetSets,
@@ -391,7 +390,7 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
         _isCompletionReady = true;
         _restState = null;
       } else {
-        _restState = _RestState(
+        _restState = CurrentWorkoutRestState(
           activeWorkoutName: activeWorkout.workoutName,
           completedSetNumber: targetSets,
           completedSetTotal: targetSets,
@@ -428,15 +427,15 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
   }
 
   Future<void> _openAdjustSheet(WorkoutLog activeWorkout) async {
-    final adjustment = await showModalBottomSheet<_SessionAdjustment>(
+    final adjustment = await showModalBottomSheet<SessionAdjustment>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: CurrentWorkoutScreen._surface,
+      backgroundColor: CurrentWorkoutPalette.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
       ),
       builder: (context) {
-        return _AdjustSessionSheet(
+        return AdjustSessionSheet(
           workoutLog: activeWorkout,
           sessionReps: _sessionRepsFor(activeWorkout),
           sessionWeight: _sessionWeightFor(activeWorkout),
@@ -455,14 +454,14 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
     });
   }
 
-  Future<void> _openRestTimerOverlay(_RestState restState) async {
+  Future<void> _openRestTimerOverlay(CurrentWorkoutRestState restState) async {
     final shouldSkipRest = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withValues(alpha: 0.72),
       builder: (context) {
-        return _RestTimerOverlay(restState: restState);
+        return RestTimerOverlay(restState: restState);
       },
     );
 
@@ -578,1007 +577,8 @@ class _WorkoutControlSnapshot {
   final Map<String, int> completedSetsByWorkoutLogId;
   final Map<String, int?> sessionRepsByWorkoutLogId;
   final Map<String, double?> sessionWeightByWorkoutLogId;
-  final _RestState? restState;
+  final CurrentWorkoutRestState? restState;
   final bool isPaused;
   final bool isCompletionReady;
   final bool hasOpenedWorkoutSummary;
-}
-
-class _CurrentWorkoutHeader extends StatelessWidget {
-  const _CurrentWorkoutHeader({required this.dateLabel});
-
-  final String dateLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          tooltip: 'Back to dashboard',
-          icon: const Icon(
-            Icons.arrow_back,
-            color: CurrentWorkoutScreen._primaryText,
-          ),
-        ),
-        const Spacer(),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: CurrentWorkoutScreen._surface,
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: CurrentWorkoutScreen._border),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.calendar_today_outlined,
-                color: CurrentWorkoutScreen._accent,
-                size: 16,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                dateLabel,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: CurrentWorkoutScreen._secondaryText,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ProgressPill extends StatelessWidget {
-  const _ProgressPill({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        color: CurrentWorkoutScreen._accentDark,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: CurrentWorkoutScreen._accent,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    );
-  }
-}
-
-class _ActiveExerciseCard extends StatelessWidget {
-  const _ActiveExerciseCard({
-    required this.workoutLog,
-    required this.completedSets,
-    required this.targetSets,
-    required this.sessionReps,
-    required this.sessionWeight,
-  });
-
-  final WorkoutLog workoutLog;
-  final int completedSets;
-  final int targetSets;
-  final int? sessionReps;
-  final double? sessionWeight;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            CurrentWorkoutScreen._elevated,
-            CurrentWorkoutScreen._surface,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: CurrentWorkoutScreen._border),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.28),
-            blurRadius: 22,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 176,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: CurrentWorkoutScreen._accentDark.withValues(alpha: 0.52),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(
-              Icons.fitness_center,
-              color: CurrentWorkoutScreen._accent,
-              size: 72,
-            ),
-          ),
-          const SizedBox(height: 18),
-          Text(
-            workoutLog.workoutName,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: CurrentWorkoutScreen._primaryText,
-              fontWeight: FontWeight.w900,
-              height: 1.04,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _instructionText(workoutLog),
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: CurrentWorkoutScreen._secondaryText,
-              fontWeight: FontWeight.w600,
-              height: 1.32,
-            ),
-          ),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              Expanded(
-                child: _TargetTile(
-                  label: 'Sets',
-                  value: workoutLog.sets?.toString() ?? '1',
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _TargetTile(
-                  label: 'Reps',
-                  value: sessionReps?.toString() ?? 'Not set',
-                ),
-              ),
-            ],
-          ),
-          if (sessionWeight != null) ...[
-            const SizedBox(height: 12),
-            _TargetTile(
-              label: 'Session weight',
-              value: _weightLabel(sessionWeight!),
-            ),
-          ],
-          const SizedBox(height: 12),
-          _TargetTile(
-            label: 'Set progress',
-            value: '$completedSets / $targetSets',
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _instructionText(WorkoutLog workoutLog) {
-    final memo = workoutLog.memo?.trim();
-    if (memo != null && memo.isNotEmpty) {
-      return memo;
-    }
-
-    return 'Focus on your next ${workoutLog.category.toLowerCase()} movement. Complete the set when you are ready.';
-  }
-
-  String _weightLabel(double weight) {
-    if (weight == weight.roundToDouble()) {
-      return '${weight.round()} lb';
-    }
-
-    return '${weight.toStringAsFixed(1)} lb';
-  }
-}
-
-class _ControlActionsRow extends StatelessWidget {
-  const _ControlActionsRow({
-    required this.isPaused,
-    required this.onPause,
-    required this.onAdjust,
-    required this.onSkip,
-    required this.onSkipExercise,
-  });
-
-  final bool isPaused;
-  final VoidCallback onPause;
-  final VoidCallback? onAdjust;
-  final VoidCallback? onSkip;
-  final VoidCallback? onSkipExercise;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: [
-        OutlinedButton.icon(
-          onPressed: isPaused ? null : onPause,
-          style: _controlButtonStyle(),
-          icon: const Icon(Icons.pause),
-          label: const Text('Pause'),
-        ),
-        OutlinedButton.icon(
-          onPressed: isPaused ? null : onAdjust,
-          style: _controlButtonStyle(),
-          icon: const Icon(Icons.tune),
-          label: const Text('Adjust'),
-        ),
-        OutlinedButton.icon(
-          onPressed: isPaused ? null : onSkip,
-          style: _controlButtonStyle(),
-          icon: const Icon(Icons.skip_next),
-          label: const Text('Skip Set'),
-        ),
-        OutlinedButton.icon(
-          onPressed: isPaused ? null : onSkipExercise,
-          style: _controlButtonStyle(),
-          icon: const Icon(Icons.fast_forward),
-          label: const Text('Skip Exercise'),
-        ),
-      ],
-    );
-  }
-
-  ButtonStyle _controlButtonStyle() {
-    return OutlinedButton.styleFrom(
-      foregroundColor: CurrentWorkoutScreen._primaryText,
-      disabledForegroundColor: CurrentWorkoutScreen._mutedText,
-      side: const BorderSide(color: CurrentWorkoutScreen._border),
-      minimumSize: const Size(108, 48),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      textStyle: const TextStyle(fontWeight: FontWeight.w800),
-    );
-  }
-}
-
-class _TargetTile extends StatelessWidget {
-  const _TargetTile({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: CurrentWorkoutScreen._border),
-      ),
-      child: Column(
-        children: [
-          Text(
-            label.toUpperCase(),
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: CurrentWorkoutScreen._mutedText,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 0,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: CurrentWorkoutScreen._primaryText,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RestState {
-  const _RestState({
-    required this.activeWorkoutName,
-    required this.completedSetNumber,
-    required this.completedSetTotal,
-    required this.nextWorkoutName,
-    required this.nextExerciseIndex,
-    required this.suggestedRestDuration,
-    required this.returnTarget,
-  });
-
-  final String activeWorkoutName;
-  final int completedSetNumber;
-  final int completedSetTotal;
-  final String nextWorkoutName;
-  final int nextExerciseIndex;
-  final String suggestedRestDuration;
-  final String returnTarget;
-}
-
-class _RestStateCard extends StatelessWidget {
-  const _RestStateCard({required this.restState, required this.onOpenTimer});
-
-  final _RestState restState;
-  final VoidCallback onOpenTimer;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: CurrentWorkoutScreen._surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: CurrentWorkoutScreen._border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.airline_seat_recline_normal,
-                color: CurrentWorkoutScreen._accent,
-                size: 30,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                'REST STATE',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: CurrentWorkoutScreen._secondaryText,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Text(
-            'Rest after ${restState.activeWorkoutName}',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: CurrentWorkoutScreen._primaryText,
-              fontWeight: FontWeight.w900,
-              height: 1.12,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Completed set ${restState.completedSetNumber} of ${restState.completedSetTotal}.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: CurrentWorkoutScreen._secondaryText,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 16),
-          _HandoffRow(
-            icon: Icons.fitness_center,
-            label: 'Next',
-            value: restState.nextWorkoutName,
-          ),
-          const SizedBox(height: 10),
-          _HandoffRow(
-            icon: Icons.hourglass_empty,
-            label: 'Suggested rest',
-            value: restState.suggestedRestDuration,
-          ),
-          const SizedBox(height: 10),
-          _HandoffRow(
-            icon: Icons.keyboard_return,
-            label: 'Return target',
-            value: restState.returnTarget,
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: onOpenTimer,
-              style: FilledButton.styleFrom(
-                backgroundColor: CurrentWorkoutScreen._accent,
-                foregroundColor: Colors.black,
-                minimumSize: const Size.fromHeight(54),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                textStyle: const TextStyle(fontWeight: FontWeight.w900),
-              ),
-              icon: const Icon(Icons.hourglass_empty),
-              label: const Text('Open Rest Timer'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RestTimerOverlay extends StatefulWidget {
-  const _RestTimerOverlay({required this.restState});
-
-  final _RestState restState;
-
-  @override
-  State<_RestTimerOverlay> createState() => _RestTimerOverlayState();
-}
-
-class _RestTimerOverlayState extends State<_RestTimerOverlay> {
-  static const int _initialSeconds = 90;
-  static const int _extensionSeconds = 30;
-
-  Timer? _timer;
-  int _remainingSeconds = _initialSeconds;
-
-  @override
-  void initState() {
-    super.initState();
-    _startTimer();
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = _remainingSeconds / _initialSeconds;
-    return SafeArea(
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          width: double.infinity,
-          margin: const EdgeInsets.all(16),
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
-          decoration: BoxDecoration(
-            color: CurrentWorkoutScreen._surface,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: CurrentWorkoutScreen._border),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.45),
-                blurRadius: 26,
-                offset: const Offset(0, 14),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'REST TIMER',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: CurrentWorkoutScreen._secondaryText,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: _returnToWorkout,
-                    tooltip: 'Close rest timer',
-                    icon: const Icon(
-                      Icons.close,
-                      color: CurrentWorkoutScreen._primaryText,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Rest after ${widget.restState.activeWorkoutName}',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: CurrentWorkoutScreen._primaryText,
-                  fontWeight: FontWeight.w900,
-                  height: 1.12,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Next: ${widget.restState.nextWorkoutName}',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: CurrentWorkoutScreen._secondaryText,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 18),
-              Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      height: 168,
-                      width: 168,
-                      child: CircularProgressIndicator(
-                        value: progress.clamp(0.0, 1.0),
-                        strokeWidth: 10,
-                        backgroundColor: Colors.white.withValues(alpha: 0.08),
-                        color: CurrentWorkoutScreen._accent,
-                      ),
-                    ),
-                    Text(
-                      _formatTime(_remainingSeconds),
-                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                        color: CurrentWorkoutScreen._primaryText,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 18),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: _skipRest,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: CurrentWorkoutScreen._accent,
-                    foregroundColor: Colors.black,
-                    minimumSize: const Size.fromHeight(56),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    textStyle: const TextStyle(fontWeight: FontWeight.w900),
-                  ),
-                  icon: const Icon(Icons.skip_next),
-                  label: const Text('Skip Rest'),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _extendRest,
-                      style: _secondaryButtonStyle(),
-                      icon: const Icon(Icons.add),
-                      label: const Text('Extend Rest'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _returnToWorkout,
-                      style: _secondaryButtonStyle(),
-                      icon: const Icon(Icons.keyboard_return),
-                      label: const Text('Return'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _startTimer() {
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-
-      if (_remainingSeconds <= 0) {
-        timer.cancel();
-        return;
-      }
-
-      setState(() {
-        _remainingSeconds--;
-      });
-    });
-  }
-
-  void _extendRest() {
-    setState(() {
-      _remainingSeconds += _extensionSeconds;
-    });
-    _startTimer();
-  }
-
-  void _skipRest() {
-    Navigator.pop(context, true);
-  }
-
-  void _returnToWorkout() {
-    Navigator.pop(context, false);
-  }
-
-  ButtonStyle _secondaryButtonStyle() {
-    return OutlinedButton.styleFrom(
-      foregroundColor: CurrentWorkoutScreen._primaryText,
-      side: const BorderSide(color: CurrentWorkoutScreen._border),
-      minimumSize: const Size.fromHeight(52),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      textStyle: const TextStyle(fontWeight: FontWeight.w800),
-    );
-  }
-
-  String _formatTime(int totalSeconds) {
-    final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
-    final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
-
-    return '$minutes:$seconds';
-  }
-}
-
-class _PausedWorkoutCard extends StatelessWidget {
-  const _PausedWorkoutCard({required this.workoutLog});
-
-  final WorkoutLog? workoutLog;
-
-  @override
-  Widget build(BuildContext context) {
-    final workoutName = workoutLog?.workoutName ?? 'Current workout';
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: CurrentWorkoutScreen._surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: CurrentWorkoutScreen._border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.pause_circle_outline,
-            color: CurrentWorkoutScreen._accent,
-            size: 36,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Workout paused',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: CurrentWorkoutScreen._primaryText,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '$workoutName is waiting here. Resume when you are ready.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: CurrentWorkoutScreen._secondaryText,
-              fontWeight: FontWeight.w600,
-              height: 1.32,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CompletionReadyCard extends StatelessWidget {
-  const _CompletionReadyCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: CurrentWorkoutScreen._surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: CurrentWorkoutScreen._border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.emoji_events_outlined,
-            color: CurrentWorkoutScreen._accent,
-            size: 36,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Workout ready for summary',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: CurrentWorkoutScreen._primaryText,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'All planned sets are complete. Workout Summary can take over next.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: CurrentWorkoutScreen._secondaryText,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HandoffRow extends StatelessWidget {
-  const _HandoffRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, color: CurrentWorkoutScreen._accent, size: 20),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            '$label: $value',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: CurrentWorkoutScreen._primaryText,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _NoActiveWorkoutCard extends StatelessWidget {
-  const _NoActiveWorkoutCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: CurrentWorkoutScreen._surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: CurrentWorkoutScreen._border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.event_busy_outlined,
-            color: CurrentWorkoutScreen._accent,
-            size: 34,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'No workout is ready yet.',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: CurrentWorkoutScreen._primaryText,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Plan a workout from the Dashboard to start the flow.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: CurrentWorkoutScreen._secondaryText,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AccentProgressBar extends StatelessWidget {
-  const _AccentProgressBar({required this.value});
-
-  final double value;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(999),
-      child: SizedBox(
-        height: 7,
-        child: LinearProgressIndicator(
-          value: value,
-          backgroundColor: Colors.white.withValues(alpha: 0.08),
-          color: CurrentWorkoutScreen._accent,
-        ),
-      ),
-    );
-  }
-}
-
-class _SessionAdjustment {
-  const _SessionAdjustment({required this.reps, required this.weight});
-
-  final int? reps;
-  final double? weight;
-}
-
-class _AdjustSessionSheet extends StatefulWidget {
-  const _AdjustSessionSheet({
-    required this.workoutLog,
-    required this.sessionReps,
-    required this.sessionWeight,
-  });
-
-  final WorkoutLog workoutLog;
-  final int? sessionReps;
-  final double? sessionWeight;
-
-  @override
-  State<_AdjustSessionSheet> createState() => _AdjustSessionSheetState();
-}
-
-class _AdjustSessionSheetState extends State<_AdjustSessionSheet> {
-  late final TextEditingController _repsController;
-  late final TextEditingController _weightController;
-
-  @override
-  void initState() {
-    super.initState();
-    _repsController = TextEditingController(
-      text: widget.sessionReps?.toString() ?? '',
-    );
-    _weightController = TextEditingController(
-      text: widget.sessionWeight == null
-          ? ''
-          : _formatWeight(widget.sessionWeight!),
-    );
-  }
-
-  @override
-  void dispose() {
-    _repsController.dispose();
-    _weightController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, bottomInset + 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Adjust session',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: CurrentWorkoutScreen._primaryText,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  tooltip: 'Close',
-                  icon: const Icon(
-                    Icons.close,
-                    color: CurrentWorkoutScreen._primaryText,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              widget.workoutLog.workoutName,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: CurrentWorkoutScreen._secondaryText,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _repsController,
-              keyboardType: TextInputType.number,
-              style: const TextStyle(color: CurrentWorkoutScreen._primaryText),
-              decoration: _inputDecoration('Current reps'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _weightController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              style: const TextStyle(color: CurrentWorkoutScreen._primaryText),
-              decoration: _inputDecoration('Current weight'),
-            ),
-            const SizedBox(height: 18),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: _saveAdjustment,
-                style: FilledButton.styleFrom(
-                  backgroundColor: CurrentWorkoutScreen._accent,
-                  foregroundColor: Colors.black,
-                  minimumSize: const Size.fromHeight(54),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  textStyle: const TextStyle(fontWeight: FontWeight.w900),
-                ),
-                icon: const Icon(Icons.check),
-                label: const Text('Save Adjustment'),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  InputDecoration _inputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      labelStyle: const TextStyle(color: CurrentWorkoutScreen._secondaryText),
-      filled: true,
-      fillColor: CurrentWorkoutScreen._elevated,
-      enabledBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: CurrentWorkoutScreen._border),
-      ),
-      focusedBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: CurrentWorkoutScreen._accent),
-      ),
-    );
-  }
-
-  void _saveAdjustment() {
-    Navigator.pop(
-      context,
-      _SessionAdjustment(
-        reps: _parsePositiveInt(_repsController.text),
-        weight: _parsePositiveDouble(_weightController.text),
-      ),
-    );
-  }
-
-  int? _parsePositiveInt(String value) {
-    final parsedValue = int.tryParse(value.trim());
-    if (parsedValue == null || parsedValue < 1) {
-      return null;
-    }
-
-    return parsedValue;
-  }
-
-  double? _parsePositiveDouble(String value) {
-    final parsedValue = double.tryParse(value.trim());
-    if (parsedValue == null || parsedValue <= 0) {
-      return null;
-    }
-
-    return parsedValue;
-  }
-
-  String _formatWeight(double weight) {
-    if (weight == weight.roundToDouble()) {
-      return weight.round().toString();
-    }
-
-    return weight.toStringAsFixed(1);
-  }
 }

@@ -419,7 +419,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('12'), findsOneWidget);
-    expect(find.text('55.5 lb'), findsOneWidget);
+    expect(find.text('55.5 kg'), findsOneWidget);
     await tester.runAsync(() async {
       final storedLog = StorageService()
           .getWorkoutLogsByDate(_dateKey(DateTime.now()))
@@ -435,7 +435,7 @@ void main() {
 
     expect(find.text('Exercise 1 of 2'), findsOneWidget);
     expect(find.text('12'), findsOneWidget);
-    expect(find.text('55.5 lb'), findsOneWidget);
+    expect(find.text('55.5 kg'), findsOneWidget);
 
     await tester.dragUntilVisible(
       find.widgetWithText(OutlinedButton, 'Skip Set'),

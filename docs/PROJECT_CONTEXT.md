@@ -23,7 +23,7 @@ Created Date:
 Last Updated:
 
 ```text
-2026-07-17
+2026-07-20
 ```
 
 Owner:
@@ -134,7 +134,13 @@ The key product refinement is to make the completed MVP feel like a Workout Flow
 Phase 2 progress:
 
 * RL-0014 Dashboard Redesign is Done.
+* RL-0015 Current Workout Foundation is Done.
+* RL-0022 Current Workout Set Progression is Done.
+* RL-0023 Current Workout Control States is Done.
+* RL-0018 Rest Timer Overlay is Done.
+* RL-0016 Completion Celebration is Done.
 * The Home Dashboard now uses the approved dark dashboard direction and focuses on today's action, XP/level context, weekly progress, next achievement, and bottom navigation.
+* The Current Workout screen now owns execution, rest handoff, pause/resume/skip/adjust states, rest timer overlay entry, and summary handoff; the implementation has grown large enough that a narrow structural refactor is approved before additional Current Workout expansion.
 * Accepted remaining Home visual differences are tracked in `docs/IMPROVEMENT_BACKLOG.md` and should not reopen RL-0014 unless a significant UX issue is discovered later.
 
 ---
@@ -197,6 +203,7 @@ Project-specific goals:
 * Add the Workout Plan Builder as the lightweight daily session composition flow required before Current Workout can execute multiple exercises.
 * Keep Add Exercise scoped to a single planned exercise inside one daily session.
 * Make Current Workout the guided workout execution surface.
+* Split Current Workout implementation into maintainable screen, state/controller, widget, and overlay boundaries before adding cross-screen rest timer continuity or other Current Workout-heavy features.
 * Keep Workout Summary separate from History and show it only immediately after completion.
 * Keep Week focused on lightweight planning.
 * Keep History read-only.
@@ -288,6 +295,7 @@ Product-specific principles:
 * Preserve completed MVP behavior unless Phase 2 explicitly changes the user flow.
 * Extend before replacing.
 * Avoid broad rewrites and unrelated refactors.
+* When a feature screen grows large enough to increase downstream regression risk, prefer a narrow behavior-preserving extraction story before adding more feature scope to that screen.
 * Keep generated non-iOS platform folders unless platform scope is explicitly changed.
 * Do not rename the Dart package, bundle identifiers, Android namespace, or generated project names unless a dedicated story requires it.
 * Keep existing Hive adapter read/write order stable unless a migration plan is documented.

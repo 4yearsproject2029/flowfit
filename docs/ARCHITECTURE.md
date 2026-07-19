@@ -152,6 +152,7 @@ Current rule:
 * Preserve existing local state and service patterns where they work.
 * Introduce or expand Riverpod gradually only when a Phase 2 story needs shared reactive state across Home, Current Workout, Summary, Week, History, Achievement, or the floating Rest Timer.
 * Do not perform a standalone state-management rewrite.
+* Current Workout should be structurally stabilized before adding cross-screen rest timer continuity or other execution-flow features.
 
 Target shared state areas:
 
@@ -162,6 +163,67 @@ Target shared state areas:
 * XP and level progress.
 * Achievement unlocks.
 * Share-card preferences and events.
+
+---
+
+## Current Workout Structural Refactor Decision
+
+Decision:
+
+Perform a narrow, behavior-preserving Current Workout structural refactor now as a dedicated story before adding more Current Workout-heavy behavior.
+
+Current State:
+
+* `lib/features/current_workout/screens/current_workout_screen.dart` is 1,584 lines as of 2026-07-20.
+* The file currently owns route-level screen composition, active workout progress state, rest state, pause/resume/skip/adjust behavior, completion handoff, rest timer overlay UI, adjustment sheet UI, and several private display widgets.
+* Existing behavior is working and should be treated as the technical source of truth.
+
+Target State:
+
+* Keep `CurrentWorkoutScreen` as the route-level orchestration surface.
+* Extract display widgets into focused files under `lib/features/current_workout/widgets/`.
+* Extract rest overlay UI into `lib/features/current_workout/widgets/` or `lib/shared/overlays/` only if it becomes shared by a later story.
+* Extract current-session adjustment UI into a focused widget file.
+* Extract pure workout-progress calculations and state-transition helpers into a small controller or service only when tests can preserve current behavior without introducing a state-management rewrite.
+* Preserve existing Hive models, storage behavior, route entry points, UI copy, and focused widget coverage.
+
+Alternatives Considered:
+
+* Delay refactor until after RL-0024.
+* Delay refactor until RL-0032.
+* Rewrite Current Workout around a new global state-management layer.
+
+Pros:
+
+* Reduces future feature cost for workout-flow work.
+* Lowers regression risk before rest timer continuity, return-to-workout entry, and integration QA.
+* Keeps future Code Writer and Code Reviewer passes smaller and easier to validate.
+* Aligns implementation with the existing feature-first folder structure.
+
+Cons:
+
+* Adds a short technical story before the next user-facing feature.
+* Carries moderate regression risk if extraction changes behavior accidentally.
+* Requires focused widget and service verification even though behavior should remain unchanged.
+
+Reason:
+
+The file has crossed the maintainability threshold for upcoming Phase 2 workflow work. A dedicated extraction story is lower risk than mixing structural cleanup into feature stories, and it avoids a broad rewrite by preserving existing behavior and public routes.
+
+Migration Risks:
+
+* Moving private widget classes can break imports, test finders, or route behavior.
+* Extracting state helpers can accidentally change completion, pause, skip, rest, or summary handoff behavior.
+* The existing Hive-backed widget-test harness can stall on broad runs, so focused behavior tests plus analyzer and diff hygiene should remain the release gate unless the harness is separately fixed.
+
+Required Guardrails:
+
+* No UX redesign.
+* No new feature behavior.
+* No persistence schema changes.
+* No new dependencies.
+* No Riverpod/global-state migration unless a later approved story requires it.
+* `flutter analyze` and focused Current Workout widget tests must pass.
 
 ---
 
