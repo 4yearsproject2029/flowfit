@@ -332,6 +332,143 @@ void main() {
     // widget-test harness.
   });
 
+  testWidgets('uses Current Workout pause adjust skip and return states', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'control-workout-log-1',
+          date: _dateKey(DateTime.now()),
+          workoutId: 'control-workout-1',
+          workoutName: 'Bench Press',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 2,
+          reps: 10,
+          weight: 50,
+          createdAt: DateTime.now(),
+        ),
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'control-workout-log-2',
+          date: _dateKey(DateTime.now()),
+          workoutId: 'control-workout-2',
+          workoutName: 'Lat Pulldown',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 1,
+          reps: 8,
+          createdAt: DateTime.now().add(const Duration(minutes: 1)),
+        ),
+      );
+    });
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Start Workout'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Exercise 1 of 2'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Pause'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Adjust'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Skip Set'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Skip Exercise'), findsOneWidget);
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(OutlinedButton, 'Pause'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Pause'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Workout paused'), findsWidgets);
+    expect(find.widgetWithText(FilledButton, 'Resume Workout'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Resume Workout'));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(FilledButton, 'Complete Set'), findsOneWidget);
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(OutlinedButton, 'Adjust'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Adjust'));
+    await tester.pumpAndSettle();
+    expect(find.text('Adjust session'), findsOneWidget);
+
+    await tester.enterText(find.widgetWithText(TextField, 'Current reps'), '12');
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Current weight'),
+      '55.5',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Save Adjustment'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('12'), findsOneWidget);
+    expect(find.text('55.5 lb'), findsOneWidget);
+    await tester.runAsync(() async {
+      final storedLog = StorageService()
+          .getWorkoutLogsByDate(_dateKey(DateTime.now()))
+          .first;
+      expect(storedLog.reps, 10);
+      expect(storedLog.weight, 50);
+    });
+
+    Navigator.of(tester.element(find.text('CURRENT WORKOUT'))).pop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Start Workout'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Exercise 1 of 2'), findsOneWidget);
+    expect(find.text('12'), findsOneWidget);
+    expect(find.text('55.5 lb'), findsOneWidget);
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(OutlinedButton, 'Skip Set'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Skip Set'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('REST STATE'), findsOneWidget);
+    expect(find.text('Completed set 1 of 2.'), findsOneWidget);
+    expect(find.text('Next: Bench Press'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Continue Workout'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Exercise 1 of 2'), findsOneWidget);
+    expect(find.text('1 / 2'), findsOneWidget);
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(OutlinedButton, 'Skip Exercise'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Skip Exercise'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('REST STATE'), findsOneWidget);
+    expect(find.text('Completed set 2 of 2.'), findsOneWidget);
+    expect(find.text('Next: Lat Pulldown'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Continue Workout'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Exercise 2 of 2'), findsOneWidget);
+    expect(find.text('Lat Pulldown'), findsWidgets);
+  });
+
   testWidgets('shows saved daily session title and starts Current Workout', (
     WidgetTester tester,
   ) async {

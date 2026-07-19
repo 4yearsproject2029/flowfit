@@ -2,6 +2,34 @@
 
 ---
 
+# 2026-07-19 - RL-0023 Current Workout Control States Release
+
+## Completed
+- Selected RL-0023 as the next eligible P0 story after RL-0022 release.
+- Released Current Workout pause, resume, Skip Set, Skip Exercise, and current-session reps/weight adjustment controls.
+- Added in-memory active-session snapshots so returning from Dashboard to the same Current Workout session preserves enough local state to continue.
+- Kept adjustment session-only: saved workout plans, templates, and historical records are not modified.
+- Added RL-0023 sprint plan, UX, interpretation, implementation, code review, QA, and release artifacts.
+- Synced `docs/SPRINT_PLAN.md`, `docs/EPIC_USER_STORY_TASKS.md`, `user_stories/RL-0023/RL-0023_TASKS.md`, and `DEVELOPMENT_LOG.md`.
+
+## Verified
+- `flutter analyze` passed with no issues.
+- `flutter test test/widget_test.dart --plain-name "uses Current Workout pause adjust skip and return states" -r expanded` passed.
+- `flutter test test/widget_test.dart --plain-name "opens Current Workout and advances through rest handoff" -r expanded` passed.
+- `flutter test test/storage_service_test.dart -r expanded` passed with 14 tests.
+- `flutter test -r expanded` was attempted and stalled in the existing Hive-backed widget-test harness after 33 passed and 1 skipped; the run was interrupted and reported shutdown stream errors.
+
+## Current App State
+- Current Workout supports pause/resume during active execution.
+- Current Workout supports skipping a set or the active exercise.
+- Current Workout supports current-session reps and weight adjustment without mutating saved records.
+- Returning from Dashboard to Current Workout restores in-memory active-session state for the same workout.
+
+## Next Steps
+- Coordinator should select the next eligible story from `docs/EPIC_USER_STORY_TASKS.md`.
+
+---
+
 # 2026-07-19 - RL-0022 Current Workout Set Progression Release
 
 ## Completed

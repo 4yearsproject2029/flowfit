@@ -30,27 +30,52 @@ class CurrentWorkoutScreen extends StatefulWidget {
 }
 
 class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
+  static final Map<String, _WorkoutControlSnapshot> _controlSnapshots = {};
+
   late int _currentExerciseIndex;
   late final Map<String, int> _completedSetsByWorkoutLogId;
   late final Set<String> _syncedCompletedWorkoutLogIds;
+  late final Map<String, int?> _sessionRepsByWorkoutLogId;
+  late final Map<String, double?> _sessionWeightByWorkoutLogId;
   _RestState? _restState;
+  bool _isPaused = false;
   bool _isCompletionReady = false;
 
   List<WorkoutLog> get _workoutLogs => widget.workoutLogs;
+  String get _snapshotKey {
+    final workoutLogIds = _workoutLogs.map((workoutLog) => workoutLog.id).join(
+      '|',
+    );
+    return '${widget.selectedDateLabel}|$workoutLogIds';
+  }
 
   @override
   void initState() {
     super.initState();
-    _currentExerciseIndex = _firstActiveExerciseIndex();
+    final snapshot = _controlSnapshots[_snapshotKey];
+    _currentExerciseIndex =
+        snapshot?.currentExerciseIndex ?? _firstActiveExerciseIndex();
     _completedSetsByWorkoutLogId = {
       for (final workoutLog in _workoutLogs)
         if (workoutLog.isCompleted) workoutLog.id: _targetSets(workoutLog),
+      ...?snapshot?.completedSetsByWorkoutLogId,
     };
     _syncedCompletedWorkoutLogIds = {
       for (final workoutLog in _workoutLogs)
         if (workoutLog.isCompleted) workoutLog.id,
     };
+    _sessionRepsByWorkoutLogId = {
+      for (final workoutLog in _workoutLogs) workoutLog.id: workoutLog.reps,
+      ...?snapshot?.sessionRepsByWorkoutLogId,
+    };
+    _sessionWeightByWorkoutLogId = {
+      for (final workoutLog in _workoutLogs) workoutLog.id: workoutLog.weight,
+      ...?snapshot?.sessionWeightByWorkoutLogId,
+    };
+    _restState = snapshot?.restState;
+    _isPaused = snapshot?.isPaused ?? false;
     _isCompletionReady =
+        snapshot?.isCompletionReady ??
         _workoutLogs.isNotEmpty &&
         _workoutLogs.every(
           (workoutLog) =>
@@ -113,6 +138,8 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
                     const SizedBox(height: 24),
                     if (_isCompletionReady)
                       const _CompletionReadyCard()
+                    else if (_isPaused)
+                      _PausedWorkoutCard(workoutLog: activeWorkout)
                     else if (activeWorkout == null)
                       const _NoActiveWorkoutCard()
                     else if (_restState != null)
@@ -122,7 +149,25 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
                         workoutLog: activeWorkout,
                         completedSets: _completedSetsFor(activeWorkout),
                         targetSets: _targetSets(activeWorkout),
+                        sessionReps: _sessionRepsFor(activeWorkout),
+                        sessionWeight: _sessionWeightFor(activeWorkout),
                       ),
+                    if (!_isCompletionReady && activeWorkout != null) ...[
+                      const SizedBox(height: 14),
+                      _ControlActionsRow(
+                        isPaused: _isPaused,
+                        onPause: _pauseWorkout,
+                        onAdjust: _restState == null
+                            ? () => _openAdjustSheet(activeWorkout)
+                            : null,
+                        onSkip: _restState == null
+                            ? () => _skipActiveSet(activeWorkout)
+                            : null,
+                        onSkipExercise: _restState == null
+                            ? () => _skipActiveExercise(activeWorkout)
+                            : null,
+                      ),
+                    ],
                     const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
@@ -185,6 +230,10 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
       return 'Workout complete';
     }
 
+    if (_isPaused) {
+      return 'Workout paused';
+    }
+
     if (_restState != null) {
       return 'Rest after set ${_restState!.completedSetNumber}';
     }
@@ -195,6 +244,10 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
   VoidCallback? _primaryAction(WorkoutLog? activeWorkout) {
     if (activeWorkout == null || _isCompletionReady) {
       return null;
+    }
+
+    if (_isPaused) {
+      return _resumeWorkout;
     }
 
     if (_restState != null) {
@@ -210,6 +263,9 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
     if (_isCompletionReady) {
       return Icons.flag_outlined;
     }
+    if (_isPaused) {
+      return Icons.play_arrow;
+    }
     if (_restState != null) {
       return Icons.arrow_forward;
     }
@@ -219,6 +275,9 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
   String _primaryActionLabel() {
     if (_isCompletionReady) {
       return 'Summary comes next';
+    }
+    if (_isPaused) {
+      return 'Resume Workout';
     }
     if (_restState != null) {
       return 'Continue Workout';
@@ -251,11 +310,79 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
           returnTarget: 'Current Workout',
         );
       }
+      _saveControlSnapshot();
     });
 
     if (exerciseComplete) {
       await _syncWorkoutCompletion(activeWorkout);
     }
+  }
+
+  void _pauseWorkout() {
+    setState(() {
+      _isPaused = true;
+      _saveControlSnapshot();
+    });
+  }
+
+  void _resumeWorkout() {
+    setState(() {
+      _isPaused = false;
+      _saveControlSnapshot();
+    });
+  }
+
+  void _skipActiveSet(WorkoutLog activeWorkout) {
+    final targetSets = _targetSets(activeWorkout);
+    final completedSets = _completedSetsFor(activeWorkout);
+    final nextCompletedSet = (completedSets + 1).clamp(0, targetSets);
+    final exerciseComplete = nextCompletedSet >= targetSets;
+    final nextExerciseIndex = exerciseComplete
+        ? _nextExerciseIndexOrNull()
+        : _currentExerciseIndex;
+
+    setState(() {
+      _completedSetsByWorkoutLogId[activeWorkout.id] = nextCompletedSet;
+      if (nextExerciseIndex == null) {
+        _isCompletionReady = true;
+        _restState = null;
+      } else {
+        _restState = _RestState(
+          activeWorkoutName: activeWorkout.workoutName,
+          completedSetNumber: nextCompletedSet,
+          completedSetTotal: targetSets,
+          nextWorkoutName: _workoutLogs[nextExerciseIndex].workoutName,
+          nextExerciseIndex: nextExerciseIndex,
+          suggestedRestDuration: '90 sec',
+          returnTarget: 'Current Workout',
+        );
+      }
+      _saveControlSnapshot();
+    });
+  }
+
+  void _skipActiveExercise(WorkoutLog activeWorkout) {
+    final targetSets = _targetSets(activeWorkout);
+    final nextExerciseIndex = _nextExerciseIndexOrNull();
+
+    setState(() {
+      _completedSetsByWorkoutLogId[activeWorkout.id] = targetSets;
+      if (nextExerciseIndex == null) {
+        _isCompletionReady = true;
+        _restState = null;
+      } else {
+        _restState = _RestState(
+          activeWorkoutName: activeWorkout.workoutName,
+          completedSetNumber: targetSets,
+          completedSetTotal: targetSets,
+          nextWorkoutName: _workoutLogs[nextExerciseIndex].workoutName,
+          nextExerciseIndex: nextExerciseIndex,
+          suggestedRestDuration: '90 sec',
+          returnTarget: 'Current Workout',
+        );
+      }
+      _saveControlSnapshot();
+    });
   }
 
   Future<void> _syncWorkoutCompletion(WorkoutLog workoutLog) async {
@@ -276,6 +403,35 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
     setState(() {
       _currentExerciseIndex = restState.nextExerciseIndex;
       _restState = null;
+      _saveControlSnapshot();
+    });
+  }
+
+  Future<void> _openAdjustSheet(WorkoutLog activeWorkout) async {
+    final adjustment = await showModalBottomSheet<_SessionAdjustment>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: CurrentWorkoutScreen._surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+      ),
+      builder: (context) {
+        return _AdjustSessionSheet(
+          workoutLog: activeWorkout,
+          sessionReps: _sessionRepsFor(activeWorkout),
+          sessionWeight: _sessionWeightFor(activeWorkout),
+        );
+      },
+    );
+
+    if (adjustment == null || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _sessionRepsByWorkoutLogId[activeWorkout.id] = adjustment.reps;
+      _sessionWeightByWorkoutLogId[activeWorkout.id] = adjustment.weight;
+      _saveControlSnapshot();
     });
   }
 
@@ -318,6 +474,50 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
 
     return sets;
   }
+
+  int? _sessionRepsFor(WorkoutLog workoutLog) {
+    return _sessionRepsByWorkoutLogId[workoutLog.id];
+  }
+
+  double? _sessionWeightFor(WorkoutLog workoutLog) {
+    return _sessionWeightByWorkoutLogId[workoutLog.id];
+  }
+
+  void _saveControlSnapshot() {
+    _controlSnapshots[_snapshotKey] = _WorkoutControlSnapshot(
+      currentExerciseIndex: _currentExerciseIndex,
+      completedSetsByWorkoutLogId: Map.unmodifiable(
+        _completedSetsByWorkoutLogId,
+      ),
+      sessionRepsByWorkoutLogId: Map.unmodifiable(_sessionRepsByWorkoutLogId),
+      sessionWeightByWorkoutLogId: Map.unmodifiable(
+        _sessionWeightByWorkoutLogId,
+      ),
+      restState: _restState,
+      isPaused: _isPaused,
+      isCompletionReady: _isCompletionReady,
+    );
+  }
+}
+
+class _WorkoutControlSnapshot {
+  const _WorkoutControlSnapshot({
+    required this.currentExerciseIndex,
+    required this.completedSetsByWorkoutLogId,
+    required this.sessionRepsByWorkoutLogId,
+    required this.sessionWeightByWorkoutLogId,
+    required this.restState,
+    required this.isPaused,
+    required this.isCompletionReady,
+  });
+
+  final int currentExerciseIndex;
+  final Map<String, int> completedSetsByWorkoutLogId;
+  final Map<String, int?> sessionRepsByWorkoutLogId;
+  final Map<String, double?> sessionWeightByWorkoutLogId;
+  final _RestState? restState;
+  final bool isPaused;
+  final bool isCompletionReady;
 }
 
 class _CurrentWorkoutHeader extends StatelessWidget {
@@ -400,11 +600,15 @@ class _ActiveExerciseCard extends StatelessWidget {
     required this.workoutLog,
     required this.completedSets,
     required this.targetSets,
+    required this.sessionReps,
+    required this.sessionWeight,
   });
 
   final WorkoutLog workoutLog;
   final int completedSets;
   final int targetSets;
+  final int? sessionReps;
+  final double? sessionWeight;
 
   @override
   Widget build(BuildContext context) {
@@ -477,11 +681,18 @@ class _ActiveExerciseCard extends StatelessWidget {
               Expanded(
                 child: _TargetTile(
                   label: 'Reps',
-                  value: workoutLog.reps?.toString() ?? 'Not set',
+                  value: sessionReps?.toString() ?? 'Not set',
                 ),
               ),
             ],
           ),
+          if (sessionWeight != null) ...[
+            const SizedBox(height: 12),
+            _TargetTile(
+              label: 'Session weight',
+              value: _weightLabel(sessionWeight!),
+            ),
+          ],
           const SizedBox(height: 12),
           _TargetTile(
             label: 'Set progress',
@@ -499,6 +710,75 @@ class _ActiveExerciseCard extends StatelessWidget {
     }
 
     return 'Focus on your next ${workoutLog.category.toLowerCase()} movement. Complete the set when you are ready.';
+  }
+
+  String _weightLabel(double weight) {
+    if (weight == weight.roundToDouble()) {
+      return '${weight.round()} lb';
+    }
+
+    return '${weight.toStringAsFixed(1)} lb';
+  }
+}
+
+class _ControlActionsRow extends StatelessWidget {
+  const _ControlActionsRow({
+    required this.isPaused,
+    required this.onPause,
+    required this.onAdjust,
+    required this.onSkip,
+    required this.onSkipExercise,
+  });
+
+  final bool isPaused;
+  final VoidCallback onPause;
+  final VoidCallback? onAdjust;
+  final VoidCallback? onSkip;
+  final VoidCallback? onSkipExercise;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: [
+        OutlinedButton.icon(
+          onPressed: isPaused ? null : onPause,
+          style: _controlButtonStyle(),
+          icon: const Icon(Icons.pause),
+          label: const Text('Pause'),
+        ),
+        OutlinedButton.icon(
+          onPressed: isPaused ? null : onAdjust,
+          style: _controlButtonStyle(),
+          icon: const Icon(Icons.tune),
+          label: const Text('Adjust'),
+        ),
+        OutlinedButton.icon(
+          onPressed: isPaused ? null : onSkip,
+          style: _controlButtonStyle(),
+          icon: const Icon(Icons.skip_next),
+          label: const Text('Skip Set'),
+        ),
+        OutlinedButton.icon(
+          onPressed: isPaused ? null : onSkipExercise,
+          style: _controlButtonStyle(),
+          icon: const Icon(Icons.fast_forward),
+          label: const Text('Skip Exercise'),
+        ),
+      ],
+    );
+  }
+
+  ButtonStyle _controlButtonStyle() {
+    return OutlinedButton.styleFrom(
+      foregroundColor: CurrentWorkoutScreen._primaryText,
+      disabledForegroundColor: CurrentWorkoutScreen._mutedText,
+      side: const BorderSide(color: CurrentWorkoutScreen._border),
+      minimumSize: const Size(108, 48),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      textStyle: const TextStyle(fontWeight: FontWeight.w800),
+    );
   }
 }
 
@@ -632,6 +912,53 @@ class _RestStateCard extends StatelessWidget {
             icon: Icons.keyboard_return,
             label: 'Return target',
             value: restState.returnTarget,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PausedWorkoutCard extends StatelessWidget {
+  const _PausedWorkoutCard({required this.workoutLog});
+
+  final WorkoutLog? workoutLog;
+
+  @override
+  Widget build(BuildContext context) {
+    final workoutName = workoutLog?.workoutName ?? 'Current workout';
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: CurrentWorkoutScreen._surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: CurrentWorkoutScreen._border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.pause_circle_outline,
+            color: CurrentWorkoutScreen._accent,
+            size: 36,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Workout paused',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: CurrentWorkoutScreen._primaryText,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '$workoutName is waiting here. Resume when you are ready.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: CurrentWorkoutScreen._secondaryText,
+              fontWeight: FontWeight.w600,
+              height: 1.32,
+            ),
           ),
         ],
       ),
@@ -773,5 +1100,184 @@ class _AccentProgressBar extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _SessionAdjustment {
+  const _SessionAdjustment({required this.reps, required this.weight});
+
+  final int? reps;
+  final double? weight;
+}
+
+class _AdjustSessionSheet extends StatefulWidget {
+  const _AdjustSessionSheet({
+    required this.workoutLog,
+    required this.sessionReps,
+    required this.sessionWeight,
+  });
+
+  final WorkoutLog workoutLog;
+  final int? sessionReps;
+  final double? sessionWeight;
+
+  @override
+  State<_AdjustSessionSheet> createState() => _AdjustSessionSheetState();
+}
+
+class _AdjustSessionSheetState extends State<_AdjustSessionSheet> {
+  late final TextEditingController _repsController;
+  late final TextEditingController _weightController;
+
+  @override
+  void initState() {
+    super.initState();
+    _repsController = TextEditingController(
+      text: widget.sessionReps?.toString() ?? '',
+    );
+    _weightController = TextEditingController(
+      text: widget.sessionWeight == null
+          ? ''
+          : _formatWeight(widget.sessionWeight!),
+    );
+  }
+
+  @override
+  void dispose() {
+    _repsController.dispose();
+    _weightController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20, 20, 20, bottomInset + 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Adjust session',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: CurrentWorkoutScreen._primaryText,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  tooltip: 'Close',
+                  icon: const Icon(
+                    Icons.close,
+                    color: CurrentWorkoutScreen._primaryText,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              widget.workoutLog.workoutName,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: CurrentWorkoutScreen._secondaryText,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _repsController,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(color: CurrentWorkoutScreen._primaryText),
+              decoration: _inputDecoration('Current reps'),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _weightController,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              style: const TextStyle(color: CurrentWorkoutScreen._primaryText),
+              decoration: _inputDecoration('Current weight'),
+            ),
+            const SizedBox(height: 18),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: _saveAdjustment,
+                style: FilledButton.styleFrom(
+                  backgroundColor: CurrentWorkoutScreen._accent,
+                  foregroundColor: Colors.black,
+                  minimumSize: const Size.fromHeight(54),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  textStyle: const TextStyle(fontWeight: FontWeight.w900),
+                ),
+                icon: const Icon(Icons.check),
+                label: const Text('Save Adjustment'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: CurrentWorkoutScreen._secondaryText),
+      filled: true,
+      fillColor: CurrentWorkoutScreen._elevated,
+      enabledBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: CurrentWorkoutScreen._border),
+      ),
+      focusedBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: CurrentWorkoutScreen._accent),
+      ),
+    );
+  }
+
+  void _saveAdjustment() {
+    Navigator.pop(
+      context,
+      _SessionAdjustment(
+        reps: _parsePositiveInt(_repsController.text),
+        weight: _parsePositiveDouble(_weightController.text),
+      ),
+    );
+  }
+
+  int? _parsePositiveInt(String value) {
+    final parsedValue = int.tryParse(value.trim());
+    if (parsedValue == null || parsedValue < 1) {
+      return null;
+    }
+
+    return parsedValue;
+  }
+
+  double? _parsePositiveDouble(String value) {
+    final parsedValue = double.tryParse(value.trim());
+    if (parsedValue == null || parsedValue <= 0) {
+      return null;
+    }
+
+    return parsedValue;
+  }
+
+  String _formatWeight(double weight) {
+    if (weight == weight.roundToDouble()) {
+      return weight.round().toString();
+    }
+
+    return weight.toStringAsFixed(1);
   }
 }
