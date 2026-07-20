@@ -93,6 +93,84 @@ RL-0024
 
 ---
 
+### RL-0024
+
+Epic:
+
+EP-13 Workout Summary Private Details And Sharing
+
+Status:
+
+Done
+
+Summary:
+
+- Added private local session details to Workout Summary, including exercises, sets, volume when derivable, weekly goal progress, and moment context.
+- Added optional user-initiated share-card access from Summary while preserving existing privacy defaults.
+- Added Plan Tomorrow routing to the planning flow and kept Back to Dashboard as a clear Summary exit.
+- Preserved Summary/History separation by avoiding any History route that reopens the celebration Summary state.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- user_stories/RL-0024/RL-0024_SPRINT_PLAN.md
+- user_stories/RL-0024/RL-0024_UX_SPEC.md
+- user_stories/RL-0024/RL-0024_INTERPRETATION.md
+- user_stories/RL-0024/RL-0024_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0024/RL-0024_CODE_REVIEW.md
+- user_stories/RL-0024/RL-0024_QA_REPORT.md
+- user_stories/RL-0024/RL-0024_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- user_stories/RL-0024/RL-0024_TASKS.md
+- lib/features/workout_summary/screens/workout_summary_screen.dart
+- test/widget_test.dart
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Complete a Current Workout and confirm Workout Summary shows private session details.
+- Tap a share-card action and confirm preview opens only by explicit user action.
+- Confirm performance metrics remain hidden unless existing privacy controls opt them in.
+- Tap Plan Tomorrow and confirm the planning flow opens for the next day.
+- Confirm History does not reopen Workout Summary.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by explicit user workflow instruction to continue until release is complete on 2026-07-20.
+
+Known Limitations:
+
+- None
+
+Lessons Learned:
+
+- Reusing the existing share-card section/service kept privacy behavior aligned and avoided parallel sharing logic.
+
+Next Recommended Story:
+
+RL-0032
+
+---
+
 ### RL-0035
 
 Epic:

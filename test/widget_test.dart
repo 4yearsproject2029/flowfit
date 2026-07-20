@@ -240,6 +240,7 @@ void main() {
           isCompleted: false,
           sets: 1,
           reps: 10,
+          weight: 20,
           memo: 'Press the dumbbells overhead until arms are fully extended.',
           createdAt: DateTime.now(),
         ),
@@ -324,13 +325,54 @@ void main() {
     expect(find.text('Incredible work today.'), findsOneWidget);
     expect(find.text('Reward progress'), findsOneWidget);
     expect(find.textContaining('XP'), findsWidgets);
+    expect(find.text('Share cards'), findsOneWidget);
     expect(find.text('SESSION SNAPSHOT'), findsOneWidget);
     expect(find.text('EXERCISES'), findsOneWidget);
     expect(find.text('SETS DONE'), findsOneWidget);
+    expect(find.text('VOLUME'), findsOneWidget);
+    expect(find.text('200 kg'), findsOneWidget);
+    expect(find.text('MOMENT OF THE DAY'), findsOneWidget);
+    expect(find.text('Dumbbell Shoulder Press'), findsWidgets);
+    expect(find.widgetWithText(FilledButton, 'Plan Tomorrow'), findsOneWidget);
     expect(
-      find.widgetWithText(FilledButton, 'Back to Dashboard'),
+      find.widgetWithText(OutlinedButton, 'Back to Dashboard'),
       findsOneWidget,
     );
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(OutlinedButton, 'Workout'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Workout'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Share card preview'), findsOneWidget);
+    expect(find.text('Workout Complete'), findsOneWidget);
+    final preview = find.byType(ShareCardPreview);
+    expect(
+      find.descendant(of: preview, matching: find.text('20 kg')),
+      findsNothing,
+    );
+    expect(
+      find.descendant(of: preview, matching: find.text('1 sets')),
+      findsNothing,
+    );
+    await closeShareCardPreviewForTest(tester);
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(FilledButton, 'Plan Tomorrow'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, 'Plan Tomorrow'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Session title'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Save Workout'), findsOneWidget);
   });
 
   testWidgets('uses Current Workout pause adjust skip and return states', (
