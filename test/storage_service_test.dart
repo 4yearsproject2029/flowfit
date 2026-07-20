@@ -376,6 +376,38 @@ void main() {
   });
 
   test(
+    'weekly goal progress counts one completed daily session once',
+    () async {
+      await storageService.saveWeeklyGoal(5);
+
+      for (var index = 1; index <= 6; index++) {
+        final logId = 'session-exercise-$index';
+        await storageService.addWorkoutLog(
+          WorkoutLog(
+            id: logId,
+            date: '2026-06-30',
+            workoutId: logId,
+            workoutName: 'Exercise $index',
+            category: 'Strength',
+            isCompleted: false,
+            createdAt: DateTime(2026, 6, 30, 9, index),
+          ),
+        );
+        await storageService.toggleWorkoutCompletion(logId);
+      }
+
+      final progress = WeeklyGoalService().calculateProgress(
+        weeklyGoal: storageService.getWeeklyGoal()!,
+        workoutLogs: storageService.getWorkoutLogs(),
+        today: DateTime(2026, 6, 30),
+      );
+
+      expect(progress.completedWorkouts, 1);
+      expect(progress.progressLabel, '1 / 5 workouts complete');
+    },
+  );
+
+  test(
     'detects return after missed week without removing XP or level',
     () async {
       final today = DateTime.now();

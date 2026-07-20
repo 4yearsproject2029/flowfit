@@ -10,12 +10,13 @@ void main() {
     weeklyGoalService = WeeklyGoalService();
   });
 
-  test('counts completed workouts in the current Monday to Sunday week', () {
+  test('counts completed sessions in the current Monday to Sunday week', () {
     final progress = weeklyGoalService.calculateProgress(
       weeklyGoal: 3,
       today: DateTime(2026, 6, 30),
       workoutLogs: [
-        _workoutLog(id: 'mon', date: '2026-06-29', isCompleted: true),
+        _workoutLog(id: 'mon-a', date: '2026-06-29', isCompleted: true),
+        _workoutLog(id: 'mon-b', date: '2026-06-29', isCompleted: true),
         _workoutLog(id: 'tue', date: '2026-06-30', isCompleted: true),
         _workoutLog(id: 'sun', date: '2026-07-05', isCompleted: true),
         _workoutLog(id: 'incomplete', date: '2026-07-01'),
@@ -53,6 +54,7 @@ void main() {
         _workoutLog(id: 'mon-b', date: '2026-06-29', isCompleted: true),
         _workoutLog(id: 'tue', date: '2026-06-30', isCompleted: true),
         _workoutLog(id: 'wed', date: '2026-07-01', isCompleted: true),
+        _workoutLog(id: 'thu', date: '2026-07-02', isCompleted: true),
       ],
     );
 
@@ -68,6 +70,29 @@ void main() {
       DateTime(2026, 6, 29),
     );
   });
+
+  test(
+    'counts a completed daily session once when it has multiple exercises',
+    () {
+      final progress = weeklyGoalService.calculateProgress(
+        weeklyGoal: 5,
+        today: DateTime(2026, 6, 30),
+        workoutLogs: [
+          _workoutLog(id: 'exercise-1', date: '2026-06-30', isCompleted: true),
+          _workoutLog(id: 'exercise-2', date: '2026-06-30', isCompleted: true),
+          _workoutLog(id: 'exercise-3', date: '2026-06-30', isCompleted: true),
+          _workoutLog(id: 'exercise-4', date: '2026-06-30', isCompleted: true),
+          _workoutLog(id: 'exercise-5', date: '2026-06-30', isCompleted: true),
+          _workoutLog(id: 'exercise-6', date: '2026-06-30', isCompleted: true),
+        ],
+      );
+
+      expect(progress.completedWorkouts, 1);
+      expect(progress.progressValue, closeTo(1 / 5, 0.001));
+      expect(progress.progressLabel, '1 / 5 workouts complete');
+      expect(progress.statusMessage, '4 workouts to go this week.');
+    },
+  );
 }
 
 WorkoutLog _workoutLog({

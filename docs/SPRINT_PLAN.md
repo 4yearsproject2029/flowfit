@@ -3,21 +3,21 @@
 ## Current Story
 
 Story ID:
-RL-0034
+RL-0035
 
 Status:
 Done
 
 Reason:
-RL-0034 was selected after Solution Architect review confirmed `CurrentWorkoutScreen` has grown to 1,584 lines and now increases future workout-flow feature cost and regression risk. The story is a narrow, behavior-preserving structural refactor before additional Current Workout-heavy work, especially RL-0032.
+RL-0035 was selected as a P0 bug-fix hotfix after user validation found Weekly Progress counted completed exercise rows instead of completed daily workout sessions. The fix protects the completed Weekly Goals behavior now that one daily session can contain multiple ordered exercises.
 
 ## Routing Decision Traceability
 
 Decision Point:
-Initial Selection
+Bug Intake
 
 Selected Story:
-RL-0034
+RL-0035
 
 Previous Story State:
 Not Started
@@ -27,49 +27,51 @@ Done
 
 Inputs Considered:
 
-- User approval to proceed with Coordinator routing starting with Solution Architect
+- User-reported Weekly Progress bug
+- /Users/jounghwapak/Developer/AI_Agents/system/coordinator.md
 - docs/PRODUCT_BRIEF.md
 - docs/PROJECT_CONTEXT.md
 - docs/ARCHITECTURE.md
 - docs/EPIC_USER_STORY_TASKS.md
 - docs/SPRINT_PLAN.md
-- user_stories/RL-0034/RL-0034_TASKS.md
+- lib/data/services/weekly_goal_service.dart
+- lib/features/workout_plan/screens/workout_plan_builder_screen.dart
 - lib/features/current_workout/screens/current_workout_screen.dart
-- lib/features/workout_summary/screens/workout_summary_screen.dart
+- test/weekly_goal_service_test.dart
+- test/storage_service_test.dart
 
 Dependency and Blocker Status:
 
-- RL-0016 is Done.
-- RL-0018 is Done.
-- RL-0022 is Done.
-- RL-0023 is Done.
-- No unresolved RL-0034 blockers are present.
+- RL-0008 is Done.
+- RL-0033 is Done.
+- No unresolved RL-0035 blockers are present.
 
 Selection Summary:
-RL-0034 was a P0 Must Have technical-debt story created from the Solution Architect decision to reduce Current Workout regression risk before additional workout-flow expansion. It was selected ahead of RL-0024 and RL-0032 because it lowered implementation risk for upcoming work without changing user-facing behavior.
+RL-0035 was selected ahead of the next Phase 2 feature because it fixes a user-visible regression in the completed Weekly Goals system. The root cause was that the existing weekly goal service counted completed `WorkoutLog` rows, while the current daily-session model stores each exercise as a separate log on the same session date.
 
 ## Dependency Validation
 
 - PRODUCT_BRIEF.md: Present.
-- PROJECT_CONTEXT.md: Present and updated with Current Workout structural refactor context.
-- ARCHITECTURE.md: Present and updated with the Current Workout structural refactor decision.
-- EPIC_USER_STORY_TASKS.md: Present and updated with RL-0034.
-- RL-0034 task file: Present.
-- Story dependencies: RL-0016, RL-0018, RL-0022, RL-0023.
+- PROJECT_CONTEXT.md: Present.
+- ARCHITECTURE.md: Present.
+- EPIC_USER_STORY_TASKS.md: Present and updated with RL-0035.
+- RL-0035 task file: Present.
+- Story dependencies: RL-0008, RL-0033.
 - Dependency status: all direct dependencies are Done.
 
 ## Execution Order
 
-Planned:
+Completed:
 
-1. Solution Architect records the Current Workout structural refactor decision.
-2. Business Analyst adds RL-0034 and task breakdown.
-3. Coordinator selects RL-0034.
-4. User Story Interpreter produces behavior-preserving requirements.
-5. Code Writer extracts Current Workout modules without behavior changes.
-6. Code Reviewer validates architecture boundaries and behavior preservation.
-7. QA Tester validates focused Current Workout flows and regression evidence.
-8. Release Manager closes RL-0034 and returns control to Coordinator.
+1. Coordinator read `coordinator.md`.
+2. Solution Architect identified the row-count versus session-count mismatch.
+3. Business Analyst added RL-0035 and task breakdown.
+4. Coordinator selected RL-0035.
+5. User Story Interpreter produced bug-fix interpretation.
+6. Code Writer corrected `WeeklyGoalService`.
+7. Code Reviewer approved the focused implementation.
+8. QA Tester validated focused service, storage, and analyzer evidence.
+9. Release Manager closed RL-0035 and returned control to Coordinator.
 
 ## Assigned Agents
 
@@ -89,46 +91,46 @@ UX Required:
 No
 
 Reason:
-RL-0034 is a behavior-preserving structural refactor. It must not change screen composition, interaction flow, copy, navigation, visual hierarchy, or accessibility behavior.
+RL-0035 changes weekly progress counting semantics only. Existing Dashboard and Summary UI consume the corrected progress value without layout, navigation, copy, or interaction changes.
 
 ## User Approval Decision
 
 User Approval Required:
-No
+Yes
 
 Reason:
-RL-0034 does not change user-facing behavior, permissions, security, integrations, billing, or primary UX. It exists to reduce maintainability risk.
+The user explicitly reported the bug from manual validation and requested the workflow to fix it.
 
 Approval Evidence:
-User approved the Coordinator decision to proceed with this routing on 2026-07-20.
+User instructed Codex to execute the coordinator workflow and fix the bug on 2026-07-20.
 
 ## Required Deliverables
 
-- user_stories/RL-0034/RL-0034_SPRINT_PLAN.md
-- user_stories/RL-0034/RL-0034_INTERPRETATION.md
-- user_stories/RL-0034/RL-0034_IMPLEMENTATION_NOTES.md
-- user_stories/RL-0034/RL-0034_CODE_REVIEW.md
-- user_stories/RL-0034/RL-0034_QA_REPORT.md
-- user_stories/RL-0034/RL-0034_RELEASE_NOTE.md
+- user_stories/RL-0035/RL-0035_TASKS.md
+- user_stories/RL-0035/RL-0035_SPRINT_PLAN.md
+- user_stories/RL-0035/RL-0035_INTERPRETATION.md
+- user_stories/RL-0035/RL-0035_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0035/RL-0035_CODE_REVIEW.md
+- user_stories/RL-0035/RL-0035_QA_REPORT.md
+- user_stories/RL-0035/RL-0035_RELEASE_NOTE.md
 - docs/EPIC_USER_STORY_TASKS.md
 - docs/SPRINT_PLAN.md
-- DEVELOPMENT_LOG.md
+- docs/DEVELOPMENT_LOG.md
 
 Status:
 Done
 
 ## Risks Or Blockers
 
-- The refactor can introduce regressions if private widgets or state helpers are moved without focused tests.
-- The existing Hive-backed broad widget harness can stall; focused widget tests plus analyzer, service tests, and diff hygiene should be used as release evidence if the known harness limitation appears again.
-- No persistence or state-management migration is approved.
+- Counting by date assumes the current Phase 2 constraint of one daily session per date.
+- XP remains exercise-log based in this story because XP changes were out of scope.
+- Broader MVP validation and consistency recovery services may need a future audit if stakeholders want all metrics to use session semantics.
 
 ## Expected Outcome
 
-- Current Workout remains behaviorally unchanged.
-- `current_workout_screen.dart` is smaller and easier to maintain.
-- Rest overlay, adjustment sheet, and display widgets moved into focused modules.
-- Upcoming RL-0024 and RL-0032 work has a lower regression surface.
+- A completed session with six exercises displays as `1 / 5 workouts complete`.
+- Weekly Progress no longer shows values like `6 / 3 workouts complete` after one completed daily session.
+- Existing Monday-to-Sunday week boundaries remain unchanged.
 
 ## Agent Handoff
 
@@ -141,18 +143,16 @@ Release Manager
 Completed Output:
 
 ```text
-docs/PROJECT_CONTEXT.md
-docs/ARCHITECTURE.md
 docs/EPIC_USER_STORY_TASKS.md
 docs/SPRINT_PLAN.md
-user_stories/RL-0034/RL-0034_TASKS.md
-user_stories/RL-0034/RL-0034_SPRINT_PLAN.md
-user_stories/RL-0034/RL-0034_INTERPRETATION.md
-user_stories/RL-0034/RL-0034_IMPLEMENTATION_NOTES.md
-user_stories/RL-0034/RL-0034_CODE_REVIEW.md
-user_stories/RL-0034/RL-0034_QA_REPORT.md
-user_stories/RL-0034/RL-0034_RELEASE_NOTE.md
 docs/DEVELOPMENT_LOG.md
+user_stories/RL-0035/RL-0035_TASKS.md
+user_stories/RL-0035/RL-0035_SPRINT_PLAN.md
+user_stories/RL-0035/RL-0035_INTERPRETATION.md
+user_stories/RL-0035/RL-0035_IMPLEMENTATION_NOTES.md
+user_stories/RL-0035/RL-0035_CODE_REVIEW.md
+user_stories/RL-0035/RL-0035_QA_REPORT.md
+user_stories/RL-0035/RL-0035_RELEASE_NOTE.md
 ```
 
 Next Agent:
@@ -169,15 +169,13 @@ Next Prompt:
 
 Required Input Files:
 
-- docs/PROJECT_CONTEXT.md
-- docs/ARCHITECTURE.md
 - docs/EPIC_USER_STORY_TASKS.md
 - docs/SPRINT_PLAN.md
-- user_stories/RL-0034/RL-0034_RELEASE_NOTE.md
+- user_stories/RL-0035/RL-0035_RELEASE_NOTE.md
 
 Expected Output:
 
-- Next story selection after RL-0034.
+- Next story selection after RL-0035.
 
 Blocking Conditions:
 

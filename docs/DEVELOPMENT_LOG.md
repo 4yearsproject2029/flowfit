@@ -90,3 +90,76 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0024
+
+---
+
+### RL-0035
+
+Epic:
+
+EP-06 Weekly Goals
+
+Status:
+
+Done
+
+Summary:
+
+- Fixed Weekly Progress overcounting when one daily workout session contains multiple completed exercises.
+- Updated `WeeklyGoalService` to count unique completed session dates in the current Monday-to-Sunday week.
+- Added pure service and storage-backed regressions for a six-exercise completed daily session.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- user_stories/RL-0035/RL-0035_TASKS.md
+- user_stories/RL-0035/RL-0035_SPRINT_PLAN.md
+- user_stories/RL-0035/RL-0035_INTERPRETATION.md
+- user_stories/RL-0035/RL-0035_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0035/RL-0035_CODE_REVIEW.md
+- user_stories/RL-0035/RL-0035_QA_REPORT.md
+- user_stories/RL-0035/RL-0035_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- lib/data/services/weekly_goal_service.dart
+- test/weekly_goal_service_test.dart
+- test/storage_service_test.dart
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Confirm after completing a six-exercise daily session with weekly goal 5, Dashboard Weekly Progress shows `1 / 5 workouts complete`.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Required by bug report and workflow instruction
+
+Known Limitations:
+
+- Date-based de-duplication assumes the current one-daily-session-per-date product constraint.
+
+Lessons Learned:
+
+- Weekly goal progress must use session semantics after Workout Session Composition introduced multiple exercise rows per daily session.
+
+Next Recommended Story:
+
+RL-0024

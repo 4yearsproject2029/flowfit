@@ -106,7 +106,7 @@ Rules:
 * Completed stories keep their IDs permanently.
 * Canceled stories keep their IDs permanently.
 * Split stories receive new IDs.
-* The next new Story ID after the current backlog is `RL-0034`.
+* The next new Story ID after the current backlog is `RL-0036`.
 
 ---
 
@@ -360,6 +360,8 @@ Dependency validation:
 | 2026-07-19 | RL-0016 | In Progress | Done | Release Manager | Workout Summary celebration shell implemented, Code Review approved, focused QA pass, user approval by workflow instruction, and release closeout completed. |
 | 2026-07-20 | RL-0034 | Not Started | In Progress | Coordinator | Behavior-preserving Current Workout structural refactor selected before additional workout-flow expansion. |
 | 2026-07-20 | RL-0034 | In Progress | Done | Release Manager | Current Workout structural refactor completed, Code Review approved, QA passed with documented widget-harness limitation, and release closeout completed. |
+| 2026-07-20 | RL-0035 | Not Started | In Progress | Coordinator | User-reported Weekly Progress overcount bug selected as a P0 hotfix before additional Phase 2 feature work. |
+| 2026-07-20 | RL-0035 | In Progress | Done | Release Manager | Weekly Progress now counts completed daily sessions once, focused service and storage regressions passed, analyzer passed, and release artifacts synced. |
 
 ---
 
@@ -414,6 +416,7 @@ Stories added:
 * `RL-0032`: Cross-Screen Rest Timer Continuity.
 * `RL-0033`: Workout Session Composition.
 * `RL-0034`: Current Workout Structural Refactor.
+* `RL-0035`: Weekly Session Progress Bug Fix.
 
 Stories removed:
 
@@ -468,6 +471,8 @@ Stories updated:
 * `RL-0034`: Status updated to In Progress after Coordinator selected it as the next eligible P0 story before additional workout-flow expansion.
 * `RL-0034`: Status updated to Done after structural refactor implementation, Code Review approval, QA pass, and release closeout.
 * `RL-0032`: Dependency updated to include `RL-0034` because cross-screen rest timer continuity should build on the extracted Current Workout structure.
+* `RL-0035`: Added as a P0 bug-fix story after user validation found Weekly Progress counted completed exercises inside one daily session as multiple workouts.
+* `RL-0035`: Status updated to Done after weekly goal progress was corrected to de-duplicate completed daily sessions by date.
 
 Priority changes:
 
@@ -540,6 +545,7 @@ Reasoning:
 | v1.34 | 2026-07-19 | Release Manager Agent | Closed RL-0022 as Done after Current Workout set progression implementation, focused QA pass, and release closeout. |
 | v1.35 | 2026-07-19 | Release Manager Agent | Closed RL-0023 as Done after Current Workout control states implementation, focused QA pass, and release closeout. |
 | v1.36 | 2026-07-19 | Release Manager Agent | Closed RL-0018 as Done after Rest Timer overlay implementation, focused QA pass, and release closeout. |
+| v1.37 | 2026-07-20 | Release Manager Agent | Added and closed RL-0035 after fixing Weekly Progress to count completed daily sessions instead of completed exercise rows. |
 
 ---
 
@@ -806,6 +812,8 @@ RL-0016
 ↓
 RL-0034
 ↓
+RL-0035
+↓
 RL-0024
 ↓
 RL-0032
@@ -857,6 +865,8 @@ RL-0016
 ↓
 RL-0034
 ↓
+RL-0035
+↓
 RL-0024
 ↓
 RL-0032
@@ -900,6 +910,7 @@ RL-0020
 | Done | RL-0022 | EP-12 | Current Workout Set Progression | Must Have | P0 | M | RL-0015, RL-0033 | Yes | Yes | As a user moving through a workout, I want Complete Set to advance me into a rest state or the next exercise, so that workout progress is clear without adding timer UI yet. | - Builds on the Current Workout screen foundation from `RL-0015` and the composed daily session from `RL-0033`.<br>- Complete Set updates local workout progress for the active exercise without duplicating XP/reward behavior.<br>- Current Workout progresses through the saved exercise order using Exercise -> Rest state -> Next Exercise.<br>- RL-0022 does not implement timer countdown UI, timer controls, overlay/modal UI, or cross-screen timer continuity.<br>- Rest state exposes the information required by `RL-0018`, such as active workout, completed set/exercise, next exercise, suggested rest duration, and return target.<br>- Completion state is reached when all planned sets/exercises in the saved session are done and can hand off to `RL-0016`.<br>- Existing workout completion and local persistence behavior remain intact. |
 | Done | RL-0023 | EP-12 | Current Workout Control States | Must Have | P0 | M | RL-0022 | Yes | Yes | As a user whose active session needs small adjustments, I want pause, adjust, skip, and resume states in Current Workout, so that the flow remains flexible without becoming an editor. | - Current Workout supports pause and resume states with clear status text and primary action changes.<br>- Users can skip the active exercise or set without corrupting local workout progress.<br>- Adjust is limited to changing current session reps and current session weight only.<br>- Adjust must not modify weekly plans, edit workout templates, become a workout editor, or modify historical records.<br>- Control states do not turn Current Workout into the Week planner or History editor.<br>- Navigation away and back preserves enough local state to continue the active workout.<br>- QA covers pause, resume, skip, current-session reps/weight adjustment, and return-to-workout behavior. |
 | Done | RL-0034 | EP-12 | Current Workout Structural Refactor | Must Have | P0 | S | RL-0016, RL-0018, RL-0022, RL-0023 | No | No | As a development team, I want Current Workout split into smaller behavior-preserving modules, so that upcoming workout-flow features can be implemented with lower regression risk. | - `CurrentWorkoutScreen` remains the route-level screen entry point.<br>- Rest timer overlay UI is extracted from `current_workout_screen.dart` into a focused widget/module without changing user-facing behavior.<br>- Current-session adjustment UI is extracted from `current_workout_screen.dart` into a focused widget/module without changing user-facing behavior.<br>- Current Workout display cards/widgets are extracted into focused widget files where doing so does not alter behavior.<br>- Pure workout-progress calculations or state-transition helpers are extracted only when focused tests can preserve current behavior.<br>- No UX redesign, new feature behavior, persistence schema change, new dependency, backend, login, cloud sync, or broad state-management migration is introduced.<br>- Focused Current Workout widget tests, relevant service tests, `flutter analyze`, and diff hygiene pass or known harness limitations are documented. |
+| Done | RL-0035 | EP-06 | Weekly Session Progress Bug Fix | Must Have | P0 | S | RL-0008, RL-0033 | No | Yes | As a beginner fitness user, I want Weekly Progress to count completed workout sessions instead of completed exercises, so that my weekly goal reflects how many sessions I completed rather than how many exercises were inside one session. | - Weekly Progress counts completed daily workout sessions, not completed exercise rows.<br>- Completing one daily session increases Weekly Progress by exactly 1 regardless of how many exercises are completed in that session.<br>- Multiple completed exercises with the same session date count as one completed workout session.<br>- The same completed session is not counted more than once.<br>- Existing Monday-to-Sunday weekly boundary behavior remains unchanged.<br>- Incomplete exercises do not count toward Weekly Progress.<br>- No Hive schema migration, backend, login, cloud sync, or broad workout-history redesign is introduced. |
 | Not Started | RL-0024 | EP-13 | Workout Summary Private Details And Sharing | Must Have | P0 | M | RL-0016 | Yes | Yes | As a user reviewing a completed workout, I want private session details and optional sharing to be available only from the completion summary, so that I can celebrate without weakening privacy. | - Builds on the immediate Workout Summary from `RL-0016`.<br>- Private session details such as duration, volume, calories, sets, or moment of day appear only in the completion-summary context where locally available.<br>- Optional share-card generation is available only as a user-initiated action.<br>- Existing share-card privacy defaults remain intact and performance metrics remain hidden unless explicitly opted in by existing rules.<br>- Plan Tomorrow and Back to Dashboard actions return users to the correct journey without reopening History as Summary.<br>- History cannot reopen the celebration summary state. |
 | Not Started | RL-0025 | EP-14 | Planned Session Detail And Start Today | Should Have | P1 | M | RL-0017, RL-0015, RL-0033 | Yes | Yes | As a user viewing a planned session, I want a focused detail screen that can start today's workout, so that planning can hand off cleanly to Current Workout. | - Uses `design/approved/08_workout_detail.png` only for planned/session detail that can start a workout.<br>- Planned Session Detail displays session name, exercises, sets/reps, notes, and Start Workout or Start Today action where appropriate.<br>- Start Workout hands off to Current Workout using the locally saved composed session without creating duplicate completed records.<br>- Planned/session detail remains separate from completed History detail.<br>- Local persistence preserves planned workout data and active workout handoff state.<br>- QA covers Week -> planned detail -> Start Today -> Current Workout navigation. |
 | Not Started | RL-0026 | EP-14 | Read-Only History | Should Have | P1 | M | RL-0016, RL-0017 | Yes | Yes | As a user reviewing completed sessions, I want History to show completed workouts without editing or celebration states, so that review feels clear and safe. | - Uses `design/approved/07_history.png` for approved History layout and screen composition.<br>- History displays completed workout records grouped by recent periods where practical.<br>- History is read-only and excludes planning edits, Start Workout, rest timer controls, and Workout Summary celebration behavior.<br>- History can navigate to completed Workout Detail, deferred to `RL-0027`.<br>- Dashboard and Week do not duplicate History as a primary section.<br>- QA verifies completed records are review-only and navigation returns cleanly. |
@@ -953,3 +964,4 @@ Story-level Phase 2 task files:
 | `RL-0032` | `user_stories/RL-0032/RL-0032_TASKS.md` |
 | `RL-0033` | `user_stories/RL-0033/RL-0033_TASKS.md` |
 | `RL-0034` | `user_stories/RL-0034/RL-0034_TASKS.md` |
+| `RL-0035` | `user_stories/RL-0035/RL-0035_TASKS.md` |

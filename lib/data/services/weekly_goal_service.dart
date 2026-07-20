@@ -57,23 +57,29 @@ class WeeklyGoalService {
   }) {
     final weekStart = startOfWeek(today);
     final weekEnd = weekStart.add(const Duration(days: 6));
-    final completedWorkouts = workoutLogs.where((log) {
+    final completedSessionDates = <DateTime>{};
+
+    for (final log in workoutLogs) {
       if (!log.isCompleted) {
-        return false;
+        continue;
       }
 
       final logDate = DateTime.tryParse(log.date);
       if (logDate == null) {
-        return false;
+        continue;
       }
 
       final dateOnly = DateTime(logDate.year, logDate.month, logDate.day);
-      return !dateOnly.isBefore(weekStart) && !dateOnly.isAfter(weekEnd);
-    }).length;
+      if (dateOnly.isBefore(weekStart) || dateOnly.isAfter(weekEnd)) {
+        continue;
+      }
+
+      completedSessionDates.add(dateOnly);
+    }
 
     return WeeklyGoalProgress(
       weeklyGoal: weeklyGoal,
-      completedWorkouts: completedWorkouts,
+      completedWorkouts: completedSessionDates.length,
     );
   }
 
