@@ -241,3 +241,86 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0024
+
+---
+
+### RL-0032
+
+Epic:
+
+EP-14 Cross-Screen Rest Timer Continuity
+
+Status:
+
+Done
+
+Summary:
+
+- Added runtime-local active rest timer continuity for the active workout flow.
+- Added a compact Dashboard recovery affordance that shows remaining/rest-complete state and a Return action.
+- Preserved the existing RL-0018 Rest Timer overlay as the full-control timer surface.
+- Added cleanup so the compact affordance disappears after rest advances or the active workout flow no longer has rest state.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- lib/features/current_workout/services/rest_timer_continuity_service.dart
+- lib/features/current_workout/widgets/active_rest_timer_affordance.dart
+- user_stories/RL-0032/RL-0032_SPRINT_PLAN.md
+- user_stories/RL-0032/RL-0032_UX_SPEC.md
+- user_stories/RL-0032/RL-0032_INTERPRETATION.md
+- user_stories/RL-0032/RL-0032_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0032/RL-0032_CODE_REVIEW.md
+- user_stories/RL-0032/RL-0032_QA_REPORT.md
+- user_stories/RL-0032/RL-0032_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- user_stories/RL-0032/RL-0032_TASKS.md
+- lib/features/current_workout/screens/current_workout_screen.dart
+- lib/features/home/screens/home_screen.dart
+- test/widget_test.dart
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Start Current Workout with at least two exercises.
+- Complete a set to enter rest state.
+- Navigate back to Dashboard and confirm the compact Rest timer affordance appears.
+- Tap Return and confirm Current Workout opens at the active rest state.
+- Continue the workout and confirm the Dashboard affordance clears.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by explicit user workflow instruction to continue until release is complete on 2026-07-20.
+
+Known Limitations:
+
+- Week, History, and Achievement route validation is deferred because those named surfaces are not separate navigable screens in the current app.
+- App restart persistence, background timers, cross-device sync, backend, login, and cloud sync remain out of scope.
+
+Lessons Learned:
+
+- A runtime-local service was sufficient for in-app rest continuity and avoided a broad state-management rewrite.
+- Timer tick listeners need a newly published value so compact countdown UI reliably rebuilds.
+
+Next Recommended Story:
+
+RL-0017

@@ -7,6 +7,8 @@ import '../../../data/services/level_service.dart';
 import '../../../data/services/storage_service.dart';
 import '../../../data/services/weekly_goal_service.dart';
 import '../../current_workout/screens/current_workout_screen.dart';
+import '../../current_workout/services/rest_timer_continuity_service.dart';
+import '../../current_workout/widgets/active_rest_timer_affordance.dart';
 import '../../workout_plan/screens/workout_plan_builder_screen.dart';
 
 class _DashboardColors {
@@ -37,115 +39,121 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _DashboardColors.background,
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
-              sliver: SliverToBoxAdapter(
-                child: _DashboardHeader(storageService: storageService),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
-              sliver: SliverToBoxAdapter(
-                child: ValueListenableBuilder<Box<WorkoutLog>>(
-                  valueListenable: storageService.workoutLogsListenable,
-                  builder: (context, _, child) {
-                    return ValueListenableBuilder<Box<bool>>(
-                      valueListenable: storageService.plannedRestListenable,
+      body: Stack(
+        children: [
+          SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
+                  sliver: SliverToBoxAdapter(
+                    child: _DashboardHeader(storageService: storageService),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  sliver: SliverToBoxAdapter(
+                    child: ValueListenableBuilder<Box<WorkoutLog>>(
+                      valueListenable: storageService.workoutLogsListenable,
                       builder: (context, _, child) {
-                        final selectedDateKey = _dateKey(selectedDate);
-                        final workoutLogs = storageService.getWorkoutLogsByDate(
-                          selectedDateKey,
-                        );
-                        final sessionTitle = storageService
-                            .getWorkoutSessionTitle(selectedDateKey);
-                        final isPlannedRest = storageService.isPlannedRestDate(
-                          selectedDateKey,
-                        );
+                        return ValueListenableBuilder<Box<bool>>(
+                          valueListenable: storageService.plannedRestListenable,
+                          builder: (context, _, child) {
+                            final selectedDateKey = _dateKey(selectedDate);
+                            final workoutLogs = storageService
+                                .getWorkoutLogsByDate(selectedDateKey);
+                            final sessionTitle = storageService
+                                .getWorkoutSessionTitle(selectedDateKey);
+                            final isPlannedRest = storageService
+                                .isPlannedRestDate(selectedDateKey);
 
-                        return _TodaysFocusSection(
-                          selectedDateLabel: _selectedDateLabel(selectedDate),
-                          sessionTitle: sessionTitle,
-                          workoutLogs: workoutLogs,
-                          isPlannedRest: isPlannedRest,
-                          onPrimaryAction: workoutLogs.isEmpty || isPlannedRest
-                              ? null
-                              : () => _openCurrentWorkout(workoutLogs),
-                          onPlanWorkout: _showAddWorkoutSheet,
-                          onMarkPlannedRest: () {
-                            _markSelectedDateAsPlannedRest(selectedDateKey);
+                            return _TodaysFocusSection(
+                              selectedDateLabel: _selectedDateLabel(
+                                selectedDate,
+                              ),
+                              sessionTitle: sessionTitle,
+                              workoutLogs: workoutLogs,
+                              isPlannedRest: isPlannedRest,
+                              onPrimaryAction:
+                                  workoutLogs.isEmpty || isPlannedRest
+                                  ? null
+                                  : () => _openCurrentWorkout(workoutLogs),
+                              onPlanWorkout: _showAddWorkoutSheet,
+                              onMarkPlannedRest: () {
+                                _markSelectedDateAsPlannedRest(selectedDateKey);
+                              },
+                            );
                           },
                         );
                       },
-                    );
-                  },
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
-              sliver: SliverToBoxAdapter(
-                child: ValueListenableBuilder<Box<WorkoutLog>>(
-                  valueListenable: storageService.workoutLogsListenable,
-                  builder: (context, box, child) {
-                    final weeklyGoal = storageService.getWeeklyGoal();
-                    if (weeklyGoal == null) {
-                      return const SizedBox.shrink();
-                    }
-
-                    final progress = WeeklyGoalService().calculateProgress(
-                      weeklyGoal: weeklyGoal,
-                      workoutLogs: storageService.getWorkoutLogs(),
-                      today: DateTime.now(),
-                    );
-
-                    return _WeeklyGoalSummarySection(progress: progress);
-                  },
-                ),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
-              sliver: SliverToBoxAdapter(
-                child: ValueListenableBuilder<Box<WorkoutLog>>(
-                  valueListenable: storageService.workoutLogsListenable,
-                  builder: (context, _, child) {
-                    return ValueListenableBuilder<Box<bool>>(
-                      valueListenable: storageService.plannedRestListenable,
-                      builder: (context, _, child) {
-                        final status = storageService
-                            .getConsistencyRecoveryStatus(
-                              today: DateTime.now(),
-                            );
-
-                        if (!status.hasReturnedAfterMissedWeek) {
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
+                  sliver: SliverToBoxAdapter(
+                    child: ValueListenableBuilder<Box<WorkoutLog>>(
+                      valueListenable: storageService.workoutLogsListenable,
+                      builder: (context, box, child) {
+                        final weeklyGoal = storageService.getWeeklyGoal();
+                        if (weeklyGoal == null) {
                           return const SizedBox.shrink();
                         }
 
-                        return _ConsistencyRecoverySection(status: status);
+                        final progress = WeeklyGoalService().calculateProgress(
+                          weeklyGoal: weeklyGoal,
+                          workoutLogs: storageService.getWorkoutLogs(),
+                          today: DateTime.now(),
+                        );
+
+                        return _WeeklyGoalSummarySection(progress: progress);
                       },
-                    );
-                  },
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 22, 20, 100),
-              sliver: SliverToBoxAdapter(
-                child: ValueListenableBuilder<Box<int>>(
-                  valueListenable: storageService.xpTotalListenable,
-                  builder: (context, box, child) {
-                    return _NextAchievementSection(
-                      xpTotal: storageService.getXpTotal(),
-                    );
-                  },
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
+                  sliver: SliverToBoxAdapter(
+                    child: ValueListenableBuilder<Box<WorkoutLog>>(
+                      valueListenable: storageService.workoutLogsListenable,
+                      builder: (context, _, child) {
+                        return ValueListenableBuilder<Box<bool>>(
+                          valueListenable: storageService.plannedRestListenable,
+                          builder: (context, _, child) {
+                            final status = storageService
+                                .getConsistencyRecoveryStatus(
+                                  today: DateTime.now(),
+                                );
+
+                            if (!status.hasReturnedAfterMissedWeek) {
+                              return const SizedBox.shrink();
+                            }
+
+                            return _ConsistencyRecoverySection(status: status);
+                          },
+                        );
+                      },
+                    ),
+                  ),
                 ),
-              ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 22, 20, 100),
+                  sliver: SliverToBoxAdapter(
+                    child: ValueListenableBuilder<Box<int>>(
+                      valueListenable: storageService.xpTotalListenable,
+                      builder: (context, box, child) {
+                        return _NextAchievementSection(
+                          xpTotal: storageService.getXpTotal(),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          ActiveRestTimerAffordance(onReturnToWorkout: _returnToWorkout),
+        ],
       ),
       bottomNavigationBar: const _DashboardBottomNavigation(),
     );
@@ -158,6 +166,20 @@ class _HomeScreenState extends State<HomeScreen> {
           return CurrentWorkoutScreen(
             workoutLogs: workoutLogs,
             selectedDateLabel: _selectedDateLabel(selectedDate),
+          );
+        },
+      ),
+    );
+  }
+
+  void _returnToWorkout(ActiveRestTimerState activeRest) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return CurrentWorkoutScreen(
+            workoutLogs: activeRest.workoutLogs,
+            selectedDateLabel: activeRest.selectedDateLabel,
+            storageService: storageService,
           );
         },
       ),

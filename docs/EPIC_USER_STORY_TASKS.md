@@ -364,6 +364,8 @@ Dependency validation:
 | 2026-07-20 | RL-0035 | In Progress | Done | Release Manager | Weekly Progress now counts completed daily sessions once, focused service and storage regressions passed, analyzer passed, and release artifacts synced. |
 | 2026-07-20 | RL-0024 | Not Started | In Progress | Coordinator | Next eligible P0 Workout Summary private details and sharing story selected after RL-0035 hotfix release; RL-0016 dependency is Done. |
 | 2026-07-20 | RL-0024 | In Progress | Done | Release Manager | Workout Summary private details, optional share-card entry, Plan Tomorrow, Back to Dashboard, privacy defaults, focused QA pass, user approval by workflow instruction, and release closeout completed. |
+| 2026-07-20 | RL-0032 | Not Started | In Progress | Coordinator | Next eligible Phase 2 story selected after RL-0024 release; dependencies RL-0018, RL-0023, and RL-0034 are Done. |
+| 2026-07-20 | RL-0032 | In Progress | Done | Release Manager | Cross-screen rest timer continuity completed, Code Review approved, QA passed, user approval by workflow instruction, and release closeout completed. |
 
 ---
 
@@ -372,17 +374,17 @@ Dependency validation:
 | Metric | Value |
 | ------ | ----- |
 | Total Stories | 35 |
-| Not Started | 12 |
+| Not Started | 11 |
 | In Progress | 0 |
 | Blocked | 0 |
 | On Hold | 0 |
-| Done | 23 |
+| Done | 24 |
 | Canceled | 0 |
 
 Completion Rate:
 
 ```text
-23 / (35 - 0) = 65.7%
+24 / (35 - 0) = 68.6%
 ```
 
 MVP Completion Rate:
@@ -477,6 +479,7 @@ Stories updated:
 * `RL-0035`: Status updated to Done after weekly goal progress was corrected to de-duplicate completed daily sessions by date.
 * `RL-0024`: Status updated to In Progress after Coordinator selected the next eligible P0 story following RL-0035 release.
 * `RL-0024`: Status updated to Done after Workout Summary private details, optional sharing, Plan Tomorrow, Back to Dashboard, privacy-default verification, Code Review approval, QA pass, user approval by workflow instruction, and release closeout.
+* `RL-0032`: Status updated to In Progress after Coordinator selected Cross-Screen Rest Timer Continuity as the next eligible story following RL-0024 release.
 
 Priority changes:
 
@@ -788,7 +791,7 @@ Migration impact:
 | EP-11 | Dashboard Redesign | Refocus Home Dashboard around today's next action and remove dashboard responsibilities that belong elsewhere. | P0 | Done |
 | EP-12 | Guided Workout Flow | Make Current Workout the primary execution surface for step-by-step workout guidance. | P0 | In Progress |
 | EP-13 | Completion Celebration | Separate immediate post-workout celebration from history review and reinforce rewards after completion. | P0 | Not Started |
-| EP-14 | Journey Separation | Align Week, History, Achievement, and Rest Timer with their approved responsibilities. | P1 | Not Started |
+| EP-14 | Journey Separation | Align Week, History, Achievement, and Rest Timer with their approved responsibilities. | P1 | In Progress |
 | EP-15 | Phase 2 UX Quality | Validate the redesigned journey across common iPhone layouts, accessibility expectations, and local-first behavior. | P1 | In Progress |
 
 ---
@@ -923,7 +926,7 @@ RL-0020
 | Not Started | RL-0029 | EP-14 | Achievement Unlock And Share Moments | Should Have | P1 | S | RL-0028, RL-0024 | Yes | Yes | As a user who earns recognition, I want recent unlock and share moments to be visible only when I choose, so that rewards feel celebratory and private. | - Achievement shows recent unlock moments without requiring social posting.<br>- Share actions are user-initiated and preserve existing share-card privacy defaults.<br>- Recent unlock language reinforces consistency and return, not performance comparison.<br>- Dashboard remains limited to short-term preview and does not become the full Achievement hub.<br>- Existing share-card generation tracking remains local.<br>- QA covers unlock visibility, share entry point, and privacy-default preservation. |
 | Not Started | RL-0030 | EP-15 | Phase 2 Screen QA | Should Have | P1 | M | RL-0032, RL-0024, RL-0027, RL-0029, RL-0033 | Yes | Yes | As a QA reviewer, I want each approved Phase 2 screen validated independently, so that screen-level layout and accessibility issues are caught before integration testing. | - Screen QA only: validates Home, Workout Plan Builder, Add Exercise bottom sheet, Current Workout, Rest Timer, Workout Summary, Week, Achievement, History, and Workout Detail independently against `design/approved/` responsibilities.<br>- Checks common iPhone layouts for readable text, touch targets, contrast, navigation predictability, and non-overlapping content.<br>- Confirms each screen owns only its intended responsibility.<br>- Does not validate full cross-screen journeys, navigation survival, or end-to-end regression flows except where needed to enter the screen under test.<br>- Runs `flutter analyze`.<br>- Runs focused widget or service tests relevant to changed screens where available.<br>- Documents any skipped tests or manual-only checks without changing production behavior just for the harness. |
 | Not Started | RL-0031 | EP-15 | Phase 2 Journey Regression QA | Should Have | P1 | M | RL-0030 | Yes | Yes | As a QA reviewer, I want cross-screen integration and regression QA, so that the redesigned screens work together as one product experience. | - Cross-screen integration and regression QA only.<br>- Validates Dashboard -> Workout Plan Builder -> Add Exercise -> Save Workout -> Dashboard -> Current Workout handoff.<br>- Validates Dashboard -> Current Workout -> Rest -> Completion -> Summary -> Achievement/Reward -> Dashboard flow.<br>- Validates Week -> Planned Session Detail -> Start Today -> Current Workout handoff.<br>- Validates History -> Completed Workout Detail review without reopening Summary.<br>- Validates Rest Timer continuity behavior from `RL-0032` across allowed navigation paths.<br>- Validates Achievement rewards and share moments preserve privacy and non-comparison rules.<br>- Runs `flutter test` or documents skipped tests as known limitations.<br>- Produces final integration evidence for `RL-0020` release readiness. |
-| Not Started | RL-0032 | EP-14 | Cross-Screen Rest Timer Continuity | Should Have | P1 | M | RL-0018, RL-0023, RL-0034 | Yes | Yes | As a user resting during an active workout, I want the timer to survive navigation and give me a way back to the workout, so that rest remains connected to the workout flow across screens. | - Builds on the Rest Timer overlay from `RL-0018`.<br>- Timer survives allowed navigation during an active workout flow.<br>- Global/floating timer state remains visible or recoverable where it supports active workout continuity.<br>- Users have a clear return-to-workout entry point from active timer state.<br>- Active timer state persists during the workout flow without introducing backend, login, cloud sync, or cross-device behavior.<br>- Timer continuity remains scoped to active workout flow and is not a Dashboard feature, standalone timer mode, or background service outside the app.<br>- QA covers navigation survival, active timer state, return-to-workout entry, and cleanup when rest/workout ends. |
+| Done | RL-0032 | EP-14 | Cross-Screen Rest Timer Continuity | Should Have | P1 | M | RL-0018, RL-0023, RL-0034 | Yes | Yes | As a user resting during an active workout, I want the timer to survive navigation and give me a way back to the workout, so that rest remains connected to the workout flow across screens. | - Builds on the Rest Timer overlay from `RL-0018`.<br>- Timer survives allowed navigation during an active workout flow.<br>- Global/floating timer state remains visible or recoverable where it supports active workout continuity.<br>- Users have a clear return-to-workout entry point from active timer state.<br>- Active timer state persists during the workout flow without introducing backend, login, cloud sync, or cross-device behavior.<br>- Timer continuity remains scoped to active workout flow and is not a Dashboard feature, standalone timer mode, or background service outside the app.<br>- QA covers navigation survival, active timer state, return-to-workout entry, and cleanup when rest/workout ends. |
 
 ---
 

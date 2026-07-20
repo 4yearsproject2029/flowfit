@@ -9,6 +9,7 @@ import 'package:flowfit/data/models/workout.dart';
 import 'package:flowfit/data/models/workout_log.dart';
 import 'package:flowfit/data/services/storage_service.dart';
 import 'package:flowfit/data/services/weekly_goal_service.dart';
+import 'package:flowfit/features/current_workout/services/rest_timer_continuity_service.dart';
 import 'package:flowfit/features/share_cards/widgets/share_card_preview.dart';
 import 'package:flowfit/features/timer/widgets/rest_timer.dart';
 import 'package:flowfit/main.dart';
@@ -54,6 +55,7 @@ void main() {
       await Hive.box<int>(LocalDatabase.shareCardGenerationBoxName).clear();
       await Hive.box<String>(LocalDatabase.workoutSessionTitleBoxName).clear();
     });
+    RestTimerContinuityService().clear();
   }
 
   Future<void> completeOnboardingForTest(
@@ -598,6 +600,88 @@ void main() {
 
     expect(find.text('Exercise 2 of 2'), findsOneWidget);
     expect(find.text('Cable Row'), findsWidgets);
+  });
+
+  testWidgets('recovers active rest timer after navigating to dashboard', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'continuity-log-1',
+          date: _dateKey(DateTime.now()),
+          workoutId: 'continuity-workout-1',
+          workoutName: 'Incline Press',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 1,
+          reps: 10,
+          createdAt: DateTime.now(),
+        ),
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'continuity-log-2',
+          date: _dateKey(DateTime.now()),
+          workoutId: 'continuity-workout-2',
+          workoutName: 'Cable Row',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 1,
+          reps: 12,
+          createdAt: DateTime.now().add(const Duration(minutes: 1)),
+        ),
+      );
+    });
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Start Workout'));
+    await tester.pumpAndSettle();
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(FilledButton, 'Complete Set'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, 'Complete Set'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('REST STATE'), findsOneWidget);
+    Navigator.of(tester.element(find.text('CURRENT WORKOUT'))).pop();
+    await tester.pumpAndSettle();
+
+    expect(find.text("TODAY'S FOCUS"), findsOneWidget);
+    expect(find.text('Rest timer'), findsOneWidget);
+    expect(find.text('01:30 remaining'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Return'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Open Rest Timer'), findsNothing);
+
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.textContaining('remaining'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Return'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('CURRENT WORKOUT'), findsOneWidget);
+    expect(find.text('REST STATE'), findsOneWidget);
+    expect(find.text('Rest after Incline Press'), findsOneWidget);
+
+    await tester.dragUntilVisible(
+      find.widgetWithText(FilledButton, 'Continue Workout'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, 'Continue Workout'));
+    await tester.pumpAndSettle();
+    expect(find.text('Exercise 2 of 2'), findsOneWidget);
+
+    Navigator.of(tester.element(find.text('CURRENT WORKOUT'))).pop();
+    await tester.pumpAndSettle();
+    expect(find.text('Rest timer'), findsNothing);
   });
 
   testWidgets('shows saved daily session title and starts Current Workout', (

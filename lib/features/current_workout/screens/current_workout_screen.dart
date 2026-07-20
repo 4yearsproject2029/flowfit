@@ -6,6 +6,7 @@ import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
 import '../../workout_summary/screens/workout_summary_screen.dart';
 import '../models/current_workout_rest_state.dart';
+import '../services/rest_timer_continuity_service.dart';
 import '../widgets/active_exercise_card.dart';
 import '../widgets/adjust_session_sheet.dart';
 import '../widgets/control_actions_row.dart';
@@ -85,6 +86,7 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
               (workoutLog) =>
                   _completedSetsFor(workoutLog) >= _targetSets(workoutLog),
             );
+    _syncRestTimerContinuity();
   }
 
   @override
@@ -532,6 +534,22 @@ class _CurrentWorkoutScreenState extends State<CurrentWorkoutScreen> {
       isPaused: _isPaused,
       isCompletionReady: _isCompletionReady,
       hasOpenedWorkoutSummary: _hasOpenedWorkoutSummary,
+    );
+    _syncRestTimerContinuity();
+  }
+
+  void _syncRestTimerContinuity() {
+    final restState = _restState;
+    if (restState == null || _isCompletionReady || _workoutLogs.isEmpty) {
+      RestTimerContinuityService().clear(snapshotKey: _snapshotKey);
+      return;
+    }
+
+    RestTimerContinuityService().startOrUpdate(
+      snapshotKey: _snapshotKey,
+      selectedDateLabel: widget.selectedDateLabel,
+      workoutLogs: _workoutLogs,
+      restState: restState,
     );
   }
 
