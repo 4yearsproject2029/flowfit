@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 
 import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
+import '../../workout_detail/screens/planned_session_detail_screen.dart';
 import '../../workout_plan/screens/workout_plan_builder_screen.dart';
 
 class WeekScreen extends StatefulWidget {
@@ -102,6 +103,15 @@ class _WeekScreenState extends State<WeekScreen> {
                               workoutLogs: workoutLogs,
                               isPlannedRest: isPlannedRest,
                               onPlanWorkout: _openWorkoutPlanBuilder,
+                              onOpenDetail: workoutLogs.isEmpty
+                                  ? null
+                                  : () => _openPlannedSessionDetail(
+                                      sessionTitle: sessionTitle,
+                                      selectedDateLabel: _selectedDateLabel(
+                                        _selectedDate,
+                                      ),
+                                      workoutLogs: workoutLogs,
+                                    ),
                             ),
                             const SizedBox(height: 24),
                             const _SuggestionsSection(),
@@ -128,6 +138,29 @@ class _WeekScreenState extends State<WeekScreen> {
           return WorkoutPlanBuilderScreen(
             selectedDateKey: _dateKey(_selectedDate),
             selectedDateLabel: _selectedDateLabel(_selectedDate),
+            storageService: widget.storageService,
+          );
+        },
+      ),
+    );
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _openPlannedSessionDetail({
+    required String sessionTitle,
+    required String selectedDateLabel,
+    required List<WorkoutLog> workoutLogs,
+  }) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return PlannedSessionDetailScreen(
+            sessionTitle: sessionTitle,
+            selectedDateLabel: selectedDateLabel,
+            workoutLogs: workoutLogs,
             storageService: widget.storageService,
           );
         },
@@ -463,6 +496,7 @@ class _SelectedDayPlanCard extends StatelessWidget {
     required this.workoutLogs,
     required this.isPlannedRest,
     required this.onPlanWorkout,
+    required this.onOpenDetail,
   });
 
   final String dateLabel;
@@ -470,6 +504,7 @@ class _SelectedDayPlanCard extends StatelessWidget {
   final List<WorkoutLog> workoutLogs;
   final bool isPlannedRest;
   final VoidCallback onPlanWorkout;
+  final VoidCallback? onOpenDetail;
 
   @override
   Widget build(BuildContext context) {
@@ -482,129 +517,133 @@ class _SelectedDayPlanCard extends StatelessWidget {
         ? sessionTitle
         : 'No workout planned';
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: WeekScreen.elevated,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: WeekScreen.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: WeekScreen.primaryText,
-                        fontWeight: FontWeight.w900,
-                        height: 1.08,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      dateLabel,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: WeekScreen.secondaryText,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              _PlanBadge(
-                icon: isPlannedRest
-                    ? Icons.self_improvement
-                    : hasPlan
-                    ? Icons.fitness_center
-                    : Icons.add_task,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          if (isPlannedRest)
-            const _PlanMessage(
-              title: 'Recovery is planned',
-              message:
-                  'This day stays focused on recovery, not history review.',
-            )
-          else if (!hasPlan)
-            const _PlanMessage(
-              title: 'Build a simple session',
-              message:
-                  'Use the existing planner to add exercises for this day.',
-            )
-          else ...[
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
+    return InkWell(
+      onTap: onOpenDetail,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: WeekScreen.elevated,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: WeekScreen.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _PlanMetric(
-                  icon: Icons.schedule,
-                  label: '${_estimatedMinutes(workoutLogs)} min',
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: WeekScreen.primaryText,
+                          fontWeight: FontWeight.w900,
+                          height: 1.08,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        dateLabel,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: WeekScreen.secondaryText,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                _PlanMetric(
-                  icon: Icons.local_fire_department_outlined,
-                  label: '${workoutLogs.length} exercises',
+                const SizedBox(width: 12),
+                _PlanBadge(
+                  icon: isPlannedRest
+                      ? Icons.self_improvement
+                      : hasPlan
+                      ? Icons.fitness_center
+                      : Icons.add_task,
                 ),
               ],
             ),
-            const SizedBox(height: 18),
-            Text(
-              'SESSION PREVIEW',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: WeekScreen.mutedText,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0,
+            const SizedBox(height: 16),
+            if (isPlannedRest)
+              const _PlanMessage(
+                title: 'Recovery is planned',
+                message:
+                    'This day stays focused on recovery, not history review.',
+              )
+            else if (!hasPlan)
+              const _PlanMessage(
+                title: 'Build a simple session',
+                message:
+                    'Use the existing planner to add exercises for this day.',
+              )
+            else ...[
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  _PlanMetric(
+                    icon: Icons.schedule,
+                    label: '${_estimatedMinutes(workoutLogs)} min',
+                  ),
+                  _PlanMetric(
+                    icon: Icons.local_fire_department_outlined,
+                    label: '${workoutLogs.length} exercises',
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 8),
-            for (final log in previewLogs)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: _ExercisePreviewRow(workoutLog: log),
-              ),
-            if (remainingCount > 0)
+              const SizedBox(height: 18),
               Text(
-                '+$remainingCount more exercises',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: WeekScreen.secondaryText,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-          ],
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: onPlanWorkout,
-              style: FilledButton.styleFrom(
-                backgroundColor: WeekScreen.accent,
-                foregroundColor: Colors.black,
-                minimumSize: const Size.fromHeight(52),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                textStyle: const TextStyle(
+                'SESSION PREVIEW',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: WeekScreen.mutedText,
                   fontWeight: FontWeight.w900,
-                  fontSize: 16,
+                  letterSpacing: 0,
                 ),
               ),
-              icon: Icon(hasPlan || isPlannedRest ? Icons.edit : Icons.add),
-              label: Text(
-                hasPlan || isPlannedRest ? 'Adjust Plan' : 'Plan Workout',
+              const SizedBox(height: 8),
+              for (final log in previewLogs)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: _ExercisePreviewRow(workoutLog: log),
+                ),
+              if (remainingCount > 0)
+                Text(
+                  '+$remainingCount more exercises',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: WeekScreen.secondaryText,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+            ],
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: onPlanWorkout,
+                style: FilledButton.styleFrom(
+                  backgroundColor: WeekScreen.accent,
+                  foregroundColor: Colors.black,
+                  minimumSize: const Size.fromHeight(52),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
+                  ),
+                ),
+                icon: Icon(hasPlan || isPlannedRest ? Icons.edit : Icons.add),
+                label: Text(
+                  hasPlan || isPlannedRest ? 'Adjust Plan' : 'Plan Workout',
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

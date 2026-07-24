@@ -10,6 +10,88 @@ Rules:
 
 ## 2026-07-24
 
+### RL-0025
+
+Epic:
+
+EP-14 Planned Session Detail And Start Today
+
+Status:
+
+Done
+
+Summary:
+
+- Added Planned Session Detail from the Week saved-session preview.
+- Displayed saved local session title, selected date, movement list, sets, reps, weight, and notes.
+- Added Start Today or Start Workout handoff into Current Workout using existing local workout rows.
+- Preserved planned-vs-completed detail separation by leaving History list and completed Workout Detail out of scope.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- lib/features/workout_detail/screens/planned_session_detail_screen.dart
+- user_stories/RL-0025/RL-0025_SPRINT_PLAN.md
+- user_stories/RL-0025/RL-0025_UX_SPEC.md
+- user_stories/RL-0025/RL-0025_INTERPRETATION.md
+- user_stories/RL-0025/RL-0025_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0025/RL-0025_CODE_REVIEW.md
+- user_stories/RL-0025/RL-0025_QA_REPORT.md
+- user_stories/RL-0025/RL-0025_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- lib/features/week/screens/week_screen.dart
+- test/widget_test.dart
+- user_stories/RL-0025/RL-0025_TASKS.md
+- user_stories/RL-0025/RL-0025_SPRINT_PLAN.md
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Open Home and tap Week.
+- Tap a saved session preview to open Session Detail.
+- Confirm local movements, targets, and notes appear.
+- Tap Start Today and confirm Current Workout opens with the saved session.
+- Confirm no duplicate workout rows are created and completed History detail is absent.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by user workflow instruction to continue on 2026-07-24.
+
+Known Limitations:
+
+- History list is deferred to RL-0026.
+- Completed Workout Detail is deferred to RL-0027.
+- Planned detail remains read-only; editing remains in the existing Workout Plan Builder.
+
+Lessons Learned:
+
+- Passing existing `WorkoutLog` rows directly into Current Workout keeps the handoff simple and avoids a duplicate persistence path.
+
+Next Recommended Story:
+
+RL-0026
+
+---
+
 ### RL-0017
 
 Epic:
