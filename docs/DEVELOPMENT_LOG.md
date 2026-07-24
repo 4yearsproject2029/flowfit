@@ -8,6 +8,89 @@ Rules:
 
 ---
 
+## 2026-07-24
+
+### RL-0017
+
+Epic:
+
+EP-14 Week Planning
+
+Status:
+
+Done
+
+Summary:
+
+- Added a dedicated Week planning screen with current-week day navigation.
+- Displayed selected-day local workout session title, exercise count, estimated duration, and preview rows.
+- Added empty and planned-rest states without turning Week into History or a detail/start surface.
+- Wired the Home bottom navigation Week item to the new Week screen and reused the existing Workout Plan Builder for Plan/Adjust actions.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- lib/features/week/screens/week_screen.dart
+- user_stories/RL-0017/RL-0017_SPRINT_PLAN.md
+- user_stories/RL-0017/RL-0017_UX_SPEC.md
+- user_stories/RL-0017/RL-0017_INTERPRETATION.md
+- user_stories/RL-0017/RL-0017_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0017/RL-0017_CODE_REVIEW.md
+- user_stories/RL-0017/RL-0017_QA_REPORT.md
+- user_stories/RL-0017/RL-0017_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- lib/features/home/screens/home_screen.dart
+- test/widget_test.dart
+- user_stories/RL-0017/RL-0017_TASKS.md
+- user_stories/RL-0017/RL-0017_SPRINT_PLAN.md
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Open Home and tap Week.
+- Confirm Week shows the current week, selected-day plan, and Plan/Adjust action.
+- Confirm saved local sessions appear as preview rows.
+- Confirm Start Today, History list, and completed Workout Detail are absent from RL-0017.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by explicit user workflow instruction to run without stopping through release on 2026-07-24.
+
+Known Limitations:
+
+- Planned Session Detail and Start Today are deferred to RL-0025.
+- History list and completed Workout Detail are deferred to RL-0026 and RL-0027.
+- Broad Hive-backed `test/widget_test.dart` can stall; focused Week tests, analyzer, storage tests, and diff hygiene passed.
+
+Lessons Learned:
+
+- Reusing the existing Workout Plan Builder keeps Week focused on planning visibility and avoids introducing a second editing or autosave path.
+
+Next Recommended Story:
+
+RL-0025
+
+---
+
 ## 2026-07-20
 
 ### RL-0034

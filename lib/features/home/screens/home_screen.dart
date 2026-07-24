@@ -9,6 +9,7 @@ import '../../../data/services/weekly_goal_service.dart';
 import '../../current_workout/screens/current_workout_screen.dart';
 import '../../current_workout/services/rest_timer_continuity_service.dart';
 import '../../current_workout/widgets/active_rest_timer_affordance.dart';
+import '../../week/screens/week_screen.dart';
 import '../../workout_plan/screens/workout_plan_builder_screen.dart';
 
 class _DashboardColors {
@@ -155,7 +156,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ActiveRestTimerAffordance(onReturnToWorkout: _returnToWorkout),
         ],
       ),
-      bottomNavigationBar: const _DashboardBottomNavigation(),
+      bottomNavigationBar: _DashboardBottomNavigation(
+        onWeekSelected: _openWeek,
+      ),
     );
   }
 
@@ -199,6 +202,20 @@ class _HomeScreenState extends State<HomeScreen> {
             selectedDateLabel: _selectedDateLabel(selectedDate),
             storageService: storageService,
           );
+        },
+      ),
+    );
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _openWeek() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return WeekScreen(storageService: storageService);
         },
       ),
     );
@@ -766,7 +783,9 @@ class _AccentProgressBar extends StatelessWidget {
 }
 
 class _DashboardBottomNavigation extends StatelessWidget {
-  const _DashboardBottomNavigation();
+  const _DashboardBottomNavigation({required this.onWeekSelected});
+
+  final VoidCallback onWeekSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -779,8 +798,8 @@ class _DashboardBottomNavigation extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Row(
-          children: const [
-            _DashboardNavItem(
+          children: [
+            const _DashboardNavItem(
               icon: Icons.home_outlined,
               selectedIcon: Icons.home,
               label: 'Home',
@@ -790,12 +809,13 @@ class _DashboardBottomNavigation extends StatelessWidget {
             _DashboardNavItem(
               icon: Icons.calendar_month_outlined,
               label: 'Week',
+              onTap: onWeekSelected,
             ),
-            _DashboardNavItem(
+            const _DashboardNavItem(
               icon: Icons.emoji_events_outlined,
               label: 'Achievement',
             ),
-            _DashboardNavItem(icon: Icons.history, label: 'History'),
+            const _DashboardNavItem(icon: Icons.history, label: 'History'),
           ],
         ),
       ),
@@ -809,12 +829,14 @@ class _DashboardNavItem extends StatelessWidget {
     required this.label,
     this.selectedIcon,
     this.isSelected = false,
+    this.onTap,
   });
 
   final IconData icon;
   final IconData? selectedIcon;
   final String label;
   final bool isSelected;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -823,25 +845,32 @@ class _DashboardNavItem extends StatelessWidget {
         : _DashboardColors.secondaryText;
 
     return Expanded(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            isSelected ? selectedIcon ?? icon : icon,
-            color: color,
-            size: 24,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: SizedBox(
+          height: 54,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isSelected ? selectedIcon ?? icon : icon,
+                color: color,
+                size: 24,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: color,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -226,6 +226,78 @@ void main() {
     );
   });
 
+  testWidgets('opens Week and shows selected-day planned session preview', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      final today = DateTime.now();
+      await StorageService().saveWorkoutSessionTitle(
+        date: _dateKey(today),
+        title: 'Chest & Triceps',
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'week-log-1',
+          date: _dateKey(today),
+          workoutId: 'week-workout-1',
+          workoutName: 'Incline DB Press',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 3,
+          reps: 12,
+          createdAt: today,
+        ),
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'week-log-2',
+          date: _dateKey(today),
+          workoutId: 'week-workout-2',
+          workoutName: 'Flat Bench Press',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 3,
+          reps: 12,
+          createdAt: today.add(const Duration(minutes: 1)),
+        ),
+      );
+    });
+
+    await pumpFlowFitApp(tester);
+    await tester.tap(find.text('Week'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Your Week'), findsOneWidget);
+    expect(find.text('WEEK PLANNING'), findsOneWidget);
+    expect(find.text("TODAY'S PLAN"), findsOneWidget);
+    expect(find.text('Chest & Triceps'), findsOneWidget);
+    expect(find.text('Incline DB Press'), findsOneWidget);
+    expect(find.text('Flat Bench Press'), findsOneWidget);
+    expect(find.text('2 exercises'), findsOneWidget);
+    expect(find.text('Start Today'), findsNothing);
+    expect(find.text('History'), findsOneWidget);
+  });
+
+  testWidgets('opens Week empty state without history or start-today scope', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.text('Week'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Your Week'), findsOneWidget);
+    expect(find.text('No workout planned'), findsOneWidget);
+    expect(find.text('Build a simple session'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Plan Workout'), findsOneWidget);
+    expect(find.text('Start Today'), findsNothing);
+    expect(find.text('Completed Workout Detail'), findsNothing);
+  });
+
   testWidgets('opens Current Workout and advances through rest handoff', (
     WidgetTester tester,
   ) async {
