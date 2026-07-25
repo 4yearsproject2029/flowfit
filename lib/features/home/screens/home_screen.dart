@@ -10,6 +10,7 @@ import '../../current_workout/screens/current_workout_screen.dart';
 import '../../current_workout/services/rest_timer_continuity_service.dart';
 import '../../current_workout/widgets/active_rest_timer_affordance.dart';
 import '../../history/screens/history_screen.dart';
+import '../../navigation/widgets/phase2_bottom_navigation.dart';
 import '../../week/screens/week_screen.dart';
 import '../../workout_plan/screens/workout_plan_builder_screen.dart';
 
@@ -157,7 +158,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ActiveRestTimerAffordance(onReturnToWorkout: _returnToWorkout),
         ],
       ),
-      bottomNavigationBar: _DashboardBottomNavigation(
+      bottomNavigationBar: Phase2BottomNavigation(
+        selectedTab: Phase2Tab.home,
         onWeekSelected: _openWeek,
         onHistorySelected: _openHistory,
       ),
@@ -792,108 +794,6 @@ class _AccentProgressBar extends StatelessWidget {
           value: value,
           backgroundColor: Colors.white.withValues(alpha: 0.08),
           color: _DashboardColors.accent,
-        ),
-      ),
-    );
-  }
-}
-
-class _DashboardBottomNavigation extends StatelessWidget {
-  const _DashboardBottomNavigation({
-    required this.onWeekSelected,
-    required this.onHistorySelected,
-  });
-
-  final VoidCallback onWeekSelected;
-  final VoidCallback onHistorySelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: _DashboardColors.surface,
-        border: Border(top: BorderSide(color: _DashboardColors.border)),
-      ),
-      padding: const EdgeInsets.fromLTRB(8, 7, 8, 8),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          children: [
-            const _DashboardNavItem(
-              icon: Icons.home_outlined,
-              selectedIcon: Icons.home,
-              label: 'Home',
-              isSelected: true,
-            ),
-            _DashboardNavItem(icon: Icons.today_outlined, label: 'Today'),
-            _DashboardNavItem(
-              icon: Icons.calendar_month_outlined,
-              label: 'Week',
-              onTap: onWeekSelected,
-            ),
-            const _DashboardNavItem(
-              icon: Icons.emoji_events_outlined,
-              label: 'Achievement',
-            ),
-            _DashboardNavItem(
-              icon: Icons.history,
-              label: 'History',
-              onTap: onHistorySelected,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DashboardNavItem extends StatelessWidget {
-  const _DashboardNavItem({
-    required this.icon,
-    required this.label,
-    this.selectedIcon,
-    this.isSelected = false,
-    this.onTap,
-  });
-
-  final IconData icon;
-  final IconData? selectedIcon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isSelected
-        ? _DashboardColors.accent
-        : _DashboardColors.secondaryText;
-
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: SizedBox(
-          height: 54,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                isSelected ? selectedIcon ?? icon : icon,
-                color: color,
-                size: 24,
-              ),
-              const SizedBox(height: 2),
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: color,
-                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

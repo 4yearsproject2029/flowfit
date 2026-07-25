@@ -454,6 +454,53 @@ void main() {
     expect(find.text('Your Week'), findsNothing);
   });
 
+  testWidgets('bottom navigation switches directly between implemented tabs', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      final today = DateTime.now();
+      await StorageService().saveWorkoutSessionTitle(
+        date: _dateKey(today),
+        title: 'Tab Switch Session',
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'tab-switch-log-1',
+          date: _dateKey(today),
+          workoutId: 'tab-switch-workout-1',
+          workoutName: 'Step Ups',
+          category: 'Strength',
+          isCompleted: true,
+          sets: 2,
+          reps: 10,
+          createdAt: today,
+        ),
+      );
+    });
+
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tab Switch Session'), findsOneWidget);
+
+    await tester.tap(find.text('Week'));
+    await tester.pumpAndSettle();
+    expect(find.text('Your Week'), findsOneWidget);
+
+    await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tab Switch Session'), findsOneWidget);
+    expect(find.text('Your Week'), findsNothing);
+
+    await tester.tap(find.text('Home'));
+    await tester.pumpAndSettle();
+    expect(find.text("TODAY'S FOCUS"), findsOneWidget);
+    expect(find.text('Tab Switch Session'), findsOneWidget);
+  });
+
   testWidgets(
     'opens completed Workout Detail from History as read-only review',
     (WidgetTester tester) async {

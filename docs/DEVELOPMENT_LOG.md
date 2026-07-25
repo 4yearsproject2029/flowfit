@@ -10,6 +10,91 @@ Rules:
 
 ## 2026-07-25
 
+### RL-0036
+
+Epic:
+
+EP-14 Bottom Navigation Tab Switching Bug Fix
+
+Status:
+
+Done
+
+Summary:
+
+- Fixed bottom navigation so implemented tabs switch directly among Home, Week, and History.
+- Added shared `Phase2BottomNavigation` to remove inconsistent per-screen tab wiring.
+- Replaced Home, Week, and History bottom navigation copies with the shared widget.
+- Preserved Today and Achievement as placeholders.
+- Preserved Week planning, History review, planned Session Detail, and completed Workout Detail behavior.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- lib/features/navigation/widgets/phase2_bottom_navigation.dart
+- user_stories/RL-0036/RL-0036_TASKS.md
+- user_stories/RL-0036/RL-0036_SPRINT_PLAN.md
+- user_stories/RL-0036/RL-0036_UX_SPEC.md
+- user_stories/RL-0036/RL-0036_INTERPRETATION.md
+- user_stories/RL-0036/RL-0036_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0036/RL-0036_CODE_REVIEW.md
+- user_stories/RL-0036/RL-0036_QA_REPORT.md
+- user_stories/RL-0036/RL-0036_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- lib/features/home/screens/home_screen.dart
+- lib/features/week/screens/week_screen.dart
+- lib/features/history/screens/history_screen.dart
+- test/widget_test.dart
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Open Home and tap History.
+- From History, tap Week and confirm Week opens directly.
+- From Week, tap History and confirm History opens directly.
+- Tap Home from Week and History and confirm Dashboard returns.
+- Confirm Today and Achievement do not navigate yet.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by user request to act as coordinator and work on this bug on 2026-07-25.
+
+Known Limitations:
+
+- Today and Achievement remain placeholders.
+- Manual device QA was not run in this agent environment.
+
+Lessons Learned:
+
+- A shared bottom navigation widget prevents tab wiring from drifting as new implemented tabs are added.
+
+Next Recommended Story:
+
+RL-0019
+
+---
+
+## 2026-07-25
+
 ### RL-0027
 
 Epic:

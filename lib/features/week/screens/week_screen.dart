@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
 import '../../history/screens/history_screen.dart';
+import '../../navigation/widgets/phase2_bottom_navigation.dart';
 import '../../workout_detail/screens/planned_session_detail_screen.dart';
 import '../../workout_plan/screens/workout_plan_builder_screen.dart';
 
@@ -128,8 +129,12 @@ class _WeekScreenState extends State<WeekScreen> {
           },
         ),
       ),
-      bottomNavigationBar: _WeekBottomNavigation(
-        storageService: widget.storageService,
+      bottomNavigationBar: Phase2BottomNavigation(
+        selectedTab: Phase2Tab.week,
+        onHomeSelected: () => Navigator.of(context).popUntil((route) {
+          return route.isFirst;
+        }),
+        onHistorySelected: _openHistory,
       ),
     );
   }
@@ -150,6 +155,16 @@ class _WeekScreenState extends State<WeekScreen> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  void _openHistory() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return HistoryScreen(storageService: widget.storageService);
+        },
+      ),
+    );
   }
 
   Future<void> _openPlannedSessionDetail({
@@ -890,110 +905,6 @@ class _SuggestionTile extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _WeekBottomNavigation extends StatelessWidget {
-  const _WeekBottomNavigation({required this.storageService});
-
-  final StorageService storageService;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: WeekScreen.surface,
-        border: Border(top: BorderSide(color: WeekScreen.border)),
-      ),
-      padding: const EdgeInsets.fromLTRB(8, 7, 8, 8),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          children: [
-            _WeekNavItem(
-              icon: Icons.home_outlined,
-              selectedIcon: Icons.home,
-              label: 'Home',
-              onTap: () => Navigator.of(context).pop(),
-            ),
-            const _WeekNavItem(icon: Icons.today_outlined, label: 'Today'),
-            const _WeekNavItem(
-              icon: Icons.calendar_month,
-              label: 'Week',
-              isSelected: true,
-            ),
-            const _WeekNavItem(
-              icon: Icons.emoji_events_outlined,
-              label: 'Achievement',
-            ),
-            _WeekNavItem(
-              icon: Icons.history,
-              label: 'History',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (context) {
-                      return HistoryScreen(storageService: storageService);
-                    },
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _WeekNavItem extends StatelessWidget {
-  const _WeekNavItem({
-    required this.icon,
-    required this.label,
-    this.selectedIcon,
-    this.isSelected = false,
-    this.onTap,
-  });
-
-  final IconData icon;
-  final IconData? selectedIcon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isSelected ? WeekScreen.accent : WeekScreen.secondaryText;
-
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: SizedBox(
-          height: 54,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                isSelected ? selectedIcon ?? icon : icon,
-                color: color,
-                size: 24,
-              ),
-              const SizedBox(height: 2),
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: color,
-                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
