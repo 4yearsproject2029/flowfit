@@ -8,6 +8,90 @@ Rules:
 
 ---
 
+## 2026-07-25
+
+### RL-0026
+
+Epic:
+
+EP-14 Read-Only History
+
+Status:
+
+Done
+
+Summary:
+
+- Added a dedicated read-only History screen for completed workout review.
+- Grouped completed local workout rows into daily completed-session entries.
+- Added completed-session and exercise summary counts with This Week, Last Week, and Earlier grouping.
+- Wired Home and Week bottom navigation to History while returning Home to the Dashboard root.
+- Preserved completed Workout Detail as deferred RL-0027 scope.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- lib/features/history/screens/history_screen.dart
+- user_stories/RL-0026/RL-0026_SPRINT_PLAN.md
+- user_stories/RL-0026/RL-0026_UX_SPEC.md
+- user_stories/RL-0026/RL-0026_INTERPRETATION.md
+- user_stories/RL-0026/RL-0026_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0026/RL-0026_CODE_REVIEW.md
+- user_stories/RL-0026/RL-0026_QA_REPORT.md
+- user_stories/RL-0026/RL-0026_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- lib/features/home/screens/home_screen.dart
+- lib/features/week/screens/week_screen.dart
+- test/widget_test.dart
+- user_stories/RL-0026/RL-0026_TASKS.md
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Open Home and tap History.
+- Confirm completed sessions appear and incomplete planned sessions do not.
+- Confirm History rows are read-only and do not open Workout Summary.
+- Open Week, tap History, then tap Home.
+- Confirm Home returns to the Dashboard root.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by user workflow instruction to continue and stop after release on 2026-07-25.
+
+Known Limitations:
+
+- Completed Workout Detail is deferred to RL-0027.
+- Manual device QA was not run in this agent environment.
+
+Lessons Learned:
+
+- Grouping completed `WorkoutLog` rows by date preserves daily-session semantics and avoids reopening the storage model.
+
+Next Recommended Story:
+
+RL-0027
+
+---
+
 ## 2026-07-24
 
 ### RL-0025

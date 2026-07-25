@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 
 import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
+import '../../history/screens/history_screen.dart';
 import '../../workout_detail/screens/planned_session_detail_screen.dart';
 import '../../workout_plan/screens/workout_plan_builder_screen.dart';
 
@@ -127,7 +128,9 @@ class _WeekScreenState extends State<WeekScreen> {
           },
         ),
       ),
-      bottomNavigationBar: const _WeekBottomNavigation(),
+      bottomNavigationBar: _WeekBottomNavigation(
+        storageService: widget.storageService,
+      ),
     );
   }
 
@@ -893,7 +896,9 @@ class _SuggestionTile extends StatelessWidget {
 }
 
 class _WeekBottomNavigation extends StatelessWidget {
-  const _WeekBottomNavigation();
+  const _WeekBottomNavigation({required this.storageService});
+
+  final StorageService storageService;
 
   @override
   Widget build(BuildContext context) {
@@ -923,7 +928,19 @@ class _WeekBottomNavigation extends StatelessWidget {
               icon: Icons.emoji_events_outlined,
               label: 'Achievement',
             ),
-            const _WeekNavItem(icon: Icons.history, label: 'History'),
+            _WeekNavItem(
+              icon: Icons.history,
+              label: 'History',
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) {
+                      return HistoryScreen(storageService: storageService);
+                    },
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),

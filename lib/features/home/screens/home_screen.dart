@@ -9,6 +9,7 @@ import '../../../data/services/weekly_goal_service.dart';
 import '../../current_workout/screens/current_workout_screen.dart';
 import '../../current_workout/services/rest_timer_continuity_service.dart';
 import '../../current_workout/widgets/active_rest_timer_affordance.dart';
+import '../../history/screens/history_screen.dart';
 import '../../week/screens/week_screen.dart';
 import '../../workout_plan/screens/workout_plan_builder_screen.dart';
 
@@ -158,6 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: _DashboardBottomNavigation(
         onWeekSelected: _openWeek,
+        onHistorySelected: _openHistory,
       ),
     );
   }
@@ -216,6 +218,20 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute<void>(
         builder: (context) {
           return WeekScreen(storageService: storageService);
+        },
+      ),
+    );
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _openHistory() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return HistoryScreen(storageService: storageService);
         },
       ),
     );
@@ -783,9 +799,13 @@ class _AccentProgressBar extends StatelessWidget {
 }
 
 class _DashboardBottomNavigation extends StatelessWidget {
-  const _DashboardBottomNavigation({required this.onWeekSelected});
+  const _DashboardBottomNavigation({
+    required this.onWeekSelected,
+    required this.onHistorySelected,
+  });
 
   final VoidCallback onWeekSelected;
+  final VoidCallback onHistorySelected;
 
   @override
   Widget build(BuildContext context) {
@@ -815,7 +835,11 @@ class _DashboardBottomNavigation extends StatelessWidget {
               icon: Icons.emoji_events_outlined,
               label: 'Achievement',
             ),
-            const _DashboardNavItem(icon: Icons.history, label: 'History'),
+            _DashboardNavItem(
+              icon: Icons.history,
+              label: 'History',
+              onTap: onHistorySelected,
+            ),
           ],
         ),
       ),

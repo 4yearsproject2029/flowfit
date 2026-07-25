@@ -298,6 +298,162 @@ void main() {
     expect(find.text('Completed Workout Detail'), findsNothing);
   });
 
+  testWidgets('opens read-only History from dashboard navigation', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      final today = DateTime.now();
+      await StorageService().saveWorkoutSessionTitle(
+        date: _dateKey(today),
+        title: 'Upper Body Power',
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'history-log-1',
+          date: _dateKey(today),
+          workoutId: 'history-workout-1',
+          workoutName: 'Bench Press',
+          category: 'Strength',
+          isCompleted: true,
+          sets: 3,
+          reps: 8,
+          weight: 60,
+          createdAt: today,
+        ),
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'history-incomplete-log',
+          date: _dateKey(today),
+          workoutId: 'history-workout-2',
+          workoutName: 'Incomplete Row',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 3,
+          reps: 10,
+          createdAt: today.add(const Duration(minutes: 1)),
+        ),
+      );
+    });
+
+    await pumpFlowFitApp(tester);
+    await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('History'), findsWidgets);
+    expect(find.text('WORKOUTS'), findsOneWidget);
+    expect(find.text('EXERCISES'), findsOneWidget);
+    expect(find.text('Upper Body Power'), findsOneWidget);
+    expect(find.text('1 exercises'), findsOneWidget);
+    expect(find.text('3 sets'), findsOneWidget);
+    expect(find.text('1440 kg volume'), findsOneWidget);
+    expect(find.text('100% Done'), findsOneWidget);
+    expect(find.text('Incomplete Row'), findsNothing);
+    expect(find.widgetWithText(FilledButton, 'Start Workout'), findsNothing);
+    expect(find.text('SESSION SNAPSHOT'), findsNothing);
+    expect(find.text('Workout Detail'), findsNothing);
+
+    await tester.tap(find.text('Home'));
+    await tester.pumpAndSettle();
+    expect(find.text("TODAY'S FOCUS"), findsOneWidget);
+  });
+
+  testWidgets('History groups completed exercise rows into one session', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      final today = DateTime.now();
+      await StorageService().saveWorkoutSessionTitle(
+        date: _dateKey(today),
+        title: 'Full Body Burn',
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'group-history-log-1',
+          date: _dateKey(today),
+          workoutId: 'group-history-workout-1',
+          workoutName: 'Squat',
+          category: 'Strength',
+          isCompleted: true,
+          sets: 3,
+          reps: 8,
+          createdAt: today,
+        ),
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'group-history-log-2',
+          date: _dateKey(today),
+          workoutId: 'group-history-workout-2',
+          workoutName: 'Press',
+          category: 'Strength',
+          isCompleted: true,
+          sets: 2,
+          reps: 10,
+          createdAt: today.add(const Duration(minutes: 1)),
+        ),
+      );
+    });
+
+    await pumpFlowFitApp(tester);
+    await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Full Body Burn'), findsOneWidget);
+    expect(find.text('2 exercises'), findsOneWidget);
+    expect(find.text('5 sets'), findsOneWidget);
+    expect(find.text('100% Done'), findsOneWidget);
+    expect(find.text('Squat'), findsNothing);
+    expect(find.text('Press'), findsNothing);
+    expect(find.widgetWithText(FilledButton, 'Start Today'), findsNothing);
+  });
+
+  testWidgets('opens History from Week and returns to dashboard Home', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      final today = DateTime.now();
+      await StorageService().saveWorkoutSessionTitle(
+        date: _dateKey(today),
+        title: 'Recovery Session',
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'week-history-log-1',
+          date: _dateKey(today),
+          workoutId: 'week-history-workout-1',
+          workoutName: 'Mobility Flow',
+          category: 'Mobility',
+          isCompleted: true,
+          sets: 1,
+          reps: 10,
+          createdAt: today,
+        ),
+      );
+    });
+
+    await pumpFlowFitApp(tester);
+    await tester.tap(find.text('Week'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Your Week'), findsOneWidget);
+    await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Recovery Session'), findsOneWidget);
+    await tester.tap(find.text('Home'));
+    await tester.pumpAndSettle();
+
+    expect(find.text("TODAY'S FOCUS"), findsOneWidget);
+    expect(find.text('Your Week'), findsNothing);
+  });
+
   testWidgets('opens planned session detail and starts Current Workout', (
     WidgetTester tester,
   ) async {
