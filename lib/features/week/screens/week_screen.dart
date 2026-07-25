@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 
 import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
+import '../../achievement/screens/achievement_screen.dart';
 import '../../history/screens/history_screen.dart';
 import '../../navigation/widgets/phase2_bottom_navigation.dart';
 import '../../workout_detail/screens/planned_session_detail_screen.dart';
@@ -134,6 +135,7 @@ class _WeekScreenState extends State<WeekScreen> {
         onHomeSelected: () => Navigator.of(context).popUntil((route) {
           return route.isFirst;
         }),
+        onAchievementSelected: _openAchievement,
         onHistorySelected: _openHistory,
       ),
     );
@@ -162,6 +164,16 @@ class _WeekScreenState extends State<WeekScreen> {
       MaterialPageRoute<void>(
         builder: (context) {
           return HistoryScreen(storageService: widget.storageService);
+        },
+      ),
+    );
+  }
+
+  void _openAchievement() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return AchievementScreen(storageService: widget.storageService);
         },
       ),
     );

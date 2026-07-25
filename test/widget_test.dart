@@ -501,6 +501,124 @@ void main() {
     expect(find.text('Tab Switch Session'), findsOneWidget);
   });
 
+  testWidgets('opens Achievement tab from Home with local level progress', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      final today = DateTime.now();
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'achievement-log-1',
+          date: _dateKey(today),
+          workoutId: 'achievement-workout-1',
+          workoutName: 'Incline Walk',
+          category: 'Cardio',
+          isCompleted: false,
+          createdAt: today,
+        ),
+      );
+      await StorageService().toggleWorkoutCompletion('achievement-log-1');
+    });
+
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.text('Achievement'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Achievements'), findsOneWidget);
+    expect(find.text('CURRENT LEVEL'), findsOneWidget);
+    expect(find.text('Level 1'), findsWidgets);
+    expect(find.text('REP SCORE'), findsOneWidget);
+    expect(find.text('10 XP'), findsOneWidget);
+    expect(find.text('First Rep Ready'), findsOneWidget);
+    expect(find.text('10 / 100 XP to Level 2'), findsOneWidget);
+    expect(find.text('1 completed locally on this device.'), findsOneWidget);
+  });
+
+  testWidgets(
+    'Achievement bottom navigation switches directly to implemented tabs',
+    (WidgetTester tester) async {
+      await resetHiveBoxesForTest(tester);
+      await completeOnboardingForTest(tester);
+      await tester.runAsync(() async {
+        final today = DateTime.now();
+        await StorageService().saveWorkoutSessionTitle(
+          date: _dateKey(today),
+          title: 'Achievement Nav Session',
+        );
+        await StorageService().addWorkoutLog(
+          WorkoutLog(
+            id: 'achievement-nav-log-1',
+            date: _dateKey(today),
+            workoutId: 'achievement-nav-workout-1',
+            workoutName: 'Goblet Squat',
+            category: 'Strength',
+            isCompleted: true,
+            sets: 3,
+            reps: 8,
+            createdAt: today,
+          ),
+        );
+      });
+
+      await pumpFlowFitApp(tester);
+
+      await tester.tap(find.text('Achievement'));
+      await tester.pumpAndSettle();
+      expect(find.text('Achievements'), findsOneWidget);
+
+      await tester.tap(find.text('Week'));
+      await tester.pumpAndSettle();
+      expect(find.text('Your Week'), findsOneWidget);
+
+      await tester.tap(find.text('Achievement'));
+      await tester.pumpAndSettle();
+      expect(find.text('Achievements'), findsOneWidget);
+      expect(find.text('Your Week'), findsNothing);
+
+      await tester.tap(find.text('History'));
+      await tester.pumpAndSettle();
+      expect(find.text('Achievement Nav Session'), findsOneWidget);
+
+      await tester.tap(find.text('Achievement'));
+      await tester.pumpAndSettle();
+      expect(find.text('Achievements'), findsOneWidget);
+
+      await tester.tap(find.text('Home'));
+      await tester.pumpAndSettle();
+      expect(find.text("TODAY'S FOCUS"), findsOneWidget);
+    },
+  );
+
+  testWidgets('Achievement hub avoids comparison and sharing language', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.text('Achievement'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Achievements'), findsOneWidget);
+    expect(
+      find.textContaining('leaderboard', findRichText: true),
+      findsNothing,
+    );
+    expect(find.textContaining('ranking', findRichText: true), findsNothing);
+    expect(find.textContaining('percentile', findRichText: true), findsNothing);
+    expect(find.textContaining('Top', findRichText: true), findsNothing);
+    expect(
+      find.textContaining('public profile', findRichText: true),
+      findsNothing,
+    );
+    expect(find.textContaining('penalty', findRichText: true), findsNothing);
+    expect(find.textContaining('level lost', findRichText: true), findsNothing);
+    expect(find.textContaining('Share', findRichText: true), findsNothing);
+  });
+
   testWidgets(
     'opens completed Workout Detail from History as read-only review',
     (WidgetTester tester) async {

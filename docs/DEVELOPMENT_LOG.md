@@ -10,6 +10,91 @@ Rules:
 
 ## 2026-07-25
 
+### RL-0019
+
+Epic:
+
+EP-14 Achievement Hub Foundation
+
+Status:
+
+Done
+
+Summary:
+
+- Added the Achievement hub foundation as an implemented primary tab.
+- Displayed local level, Rep Score, current recognition, next-level progress, weekly rhythm, and completed-session signals.
+- Reused existing local XP, level, weekly goal, and workout-log data.
+- Connected Achievement to the shared bottom navigation from Home, Week, and History.
+- Preserved Today as a placeholder and kept Home limited to the short Next Achievement preview.
+- Deferred detailed medals, milestone catalogs, title collections, recent unlocks, and share moments to later stories.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- lib/features/achievement/screens/achievement_screen.dart
+- user_stories/RL-0019/RL-0019_SPRINT_PLAN.md
+- user_stories/RL-0019/RL-0019_UX_SPEC.md
+- user_stories/RL-0019/RL-0019_INTERPRETATION.md
+- user_stories/RL-0019/RL-0019_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0019/RL-0019_CODE_REVIEW.md
+- user_stories/RL-0019/RL-0019_QA_REPORT.md
+- user_stories/RL-0019/RL-0019_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- lib/features/navigation/widgets/phase2_bottom_navigation.dart
+- lib/features/home/screens/home_screen.dart
+- lib/features/week/screens/week_screen.dart
+- lib/features/history/screens/history_screen.dart
+- test/widget_test.dart
+- user_stories/RL-0019/RL-0019_TASKS.md
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Open Home and tap Achievement.
+- Confirm level, Rep Score, recognition, and progress are visible.
+- From Achievement, tap Week, History, and Home.
+- Confirm Today remains inert.
+- Confirm no ranking, leaderboard, public percentile, share action, penalty, or level-loss language appears.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by user instruction to continue the workflow on 2026-07-25.
+
+Known Limitations:
+
+- Manual device QA was not run in this agent environment.
+- The broad widget-file run stalled after early tests and was interrupted; focused RL-0019 tests and related navigation regression passed.
+
+Lessons Learned:
+
+- The Achievement hub can use existing local XP and level data safely before adding a milestone catalog or unlock flow.
+
+Next Recommended Story:
+
+RL-0028
+
+---
+
 ### RL-0036
 
 Epic:

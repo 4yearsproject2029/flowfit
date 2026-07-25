@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum Phase2Tab { home, week, history }
+enum Phase2Tab { home, week, achievement, history }
 
 class Phase2BottomNavigation extends StatelessWidget {
   const Phase2BottomNavigation({
@@ -8,12 +8,14 @@ class Phase2BottomNavigation extends StatelessWidget {
     required this.selectedTab,
     this.onHomeSelected,
     this.onWeekSelected,
+    this.onAchievementSelected,
     this.onHistorySelected,
   });
 
   final Phase2Tab selectedTab;
   final VoidCallback? onHomeSelected;
   final VoidCallback? onWeekSelected;
+  final VoidCallback? onAchievementSelected;
   final VoidCallback? onHistorySelected;
 
   static const surface = Color(0xFF101214);
@@ -48,9 +50,14 @@ class Phase2BottomNavigation extends StatelessWidget {
               isSelected: selectedTab == Phase2Tab.week,
               onTap: selectedTab == Phase2Tab.week ? null : onWeekSelected,
             ),
-            const _Phase2NavItem(
+            _Phase2NavItem(
               icon: Icons.emoji_events_outlined,
+              selectedIcon: Icons.emoji_events,
               label: 'Achievement',
+              isSelected: selectedTab == Phase2Tab.achievement,
+              onTap: selectedTab == Phase2Tab.achievement
+                  ? null
+                  : onAchievementSelected,
             ),
             _Phase2NavItem(
               icon: Icons.history,

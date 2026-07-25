@@ -6,6 +6,7 @@ import '../../../data/services/consistency_recovery_service.dart';
 import '../../../data/services/level_service.dart';
 import '../../../data/services/storage_service.dart';
 import '../../../data/services/weekly_goal_service.dart';
+import '../../achievement/screens/achievement_screen.dart';
 import '../../current_workout/screens/current_workout_screen.dart';
 import '../../current_workout/services/rest_timer_continuity_service.dart';
 import '../../current_workout/widgets/active_rest_timer_affordance.dart';
@@ -161,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: Phase2BottomNavigation(
         selectedTab: Phase2Tab.home,
         onWeekSelected: _openWeek,
+        onAchievementSelected: _openAchievement,
         onHistorySelected: _openHistory,
       ),
     );
@@ -234,6 +236,20 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute<void>(
         builder: (context) {
           return HistoryScreen(storageService: storageService);
+        },
+      ),
+    );
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _openAchievement() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return AchievementScreen(storageService: storageService);
         },
       ),
     );
