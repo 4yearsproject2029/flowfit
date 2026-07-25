@@ -454,6 +454,126 @@ void main() {
     expect(find.text('Your Week'), findsNothing);
   });
 
+  testWidgets(
+    'opens completed Workout Detail from History as read-only review',
+    (WidgetTester tester) async {
+      await resetHiveBoxesForTest(tester);
+      await completeOnboardingForTest(tester);
+      await tester.runAsync(() async {
+        final today = DateTime.now();
+        await StorageService().saveWorkoutSessionTitle(
+          date: _dateKey(today),
+          title: 'Upper Body Power',
+        );
+        await StorageService().addWorkoutLog(
+          WorkoutLog(
+            id: 'completed-detail-log-1',
+            date: _dateKey(today),
+            workoutId: 'completed-detail-workout-1',
+            workoutName: 'Barbell Bench Press',
+            category: 'Strength',
+            isCompleted: true,
+            sets: 4,
+            reps: 8,
+            weight: 85,
+            memo: 'Strong controlled reps.',
+            createdAt: today,
+          ),
+        );
+        await StorageService().addWorkoutLog(
+          WorkoutLog(
+            id: 'completed-detail-log-2',
+            date: _dateKey(today),
+            workoutId: 'completed-detail-workout-2',
+            workoutName: 'Incline Dumbbell Fly',
+            category: 'Strength',
+            isCompleted: true,
+            sets: 3,
+            reps: 12,
+            weight: 22,
+            createdAt: today.add(const Duration(minutes: 1)),
+          ),
+        );
+      });
+
+      await pumpFlowFitApp(tester);
+      await tester.tap(find.text('History'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Upper Body Power'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Workout Detail'), findsOneWidget);
+      expect(find.text('Completed Record'), findsOneWidget);
+      expect(find.text('Upper Body Power'), findsOneWidget);
+      expect(find.text('MOVEMENT LIST'), findsOneWidget);
+      expect(find.text('Barbell Bench Press'), findsOneWidget);
+      expect(find.text('4 sets · 8 reps · 85 kg'), findsOneWidget);
+      expect(find.text('Strong controlled reps.'), findsOneWidget);
+      expect(find.text('Incline Dumbbell Fly'), findsOneWidget);
+      expect(find.text('3 sets · 12 reps · 22 kg'), findsOneWidget);
+      expect(find.text('Read-only history record.'), findsNothing);
+      expect(find.textContaining('Read-only history record'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Start Workout'), findsNothing);
+      expect(find.widgetWithText(FilledButton, 'Start Today'), findsNothing);
+      expect(find.text('Incredible work today.'), findsNothing);
+      expect(find.text('Share cards'), findsNothing);
+
+      await tester.tap(find.byTooltip('Back to History'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('History'), findsWidgets);
+      expect(find.text('Upper Body Power'), findsOneWidget);
+      expect(find.text('Workout Detail'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'planned Session Detail still starts Current Workout after completed detail release',
+    (WidgetTester tester) async {
+      await resetHiveBoxesForTest(tester);
+      await completeOnboardingForTest(tester);
+      await tester.runAsync(() async {
+        final today = DateTime.now();
+        await StorageService().saveWorkoutSessionTitle(
+          date: _dateKey(today),
+          title: 'Planned Push Day',
+        );
+        await StorageService().addWorkoutLog(
+          WorkoutLog(
+            id: 'planned-guard-log-1',
+            date: _dateKey(today),
+            workoutId: 'planned-guard-workout-1',
+            workoutName: 'Push Press',
+            category: 'Strength',
+            isCompleted: false,
+            sets: 3,
+            reps: 6,
+            weight: 45,
+            createdAt: today,
+          ),
+        );
+      });
+
+      await pumpFlowFitApp(tester);
+      await tester.tap(find.text('Week'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Planned Push Day'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Session Detail'), findsOneWidget);
+      expect(find.text('Planned Session'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Start Today'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Start Today'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('CURRENT WORKOUT'), findsOneWidget);
+      expect(find.text('Push Press'), findsWidgets);
+    },
+  );
+
   testWidgets('opens planned session detail and starts Current Workout', (
     WidgetTester tester,
   ) async {

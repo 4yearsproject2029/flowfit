@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 
 import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
+import '../../workout_detail/screens/completed_workout_detail_screen.dart';
 
 class HistoryScreen extends StatelessWidget {
   HistoryScreen({super.key, StorageService? storageService})
@@ -368,98 +369,116 @@ class _HistorySessionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      button: false,
+      button: true,
       label: 'Completed history item for ${session.title}',
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: HistoryScreen.surface,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: HistoryScreen.border),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                color: HistoryScreen.accentDark,
-                borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: () => _openCompletedDetail(context),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: HistoryScreen.surface,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: HistoryScreen.border),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: HistoryScreen.accentDark,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.check_circle_outline,
+                  color: HistoryScreen.accent,
+                  size: 24,
+                ),
               ),
-              child: const Icon(
-                Icons.check_circle_outline,
-                color: HistoryScreen.accent,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _dateLabel(session.date),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: HistoryScreen.secondaryText,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    session.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: HistoryScreen.primaryText,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 7),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 5,
-                    children: [
-                      _HistoryMetaChip(
-                        icon: Icons.fitness_center,
-                        label: '${session.logs.length} exercises',
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _dateLabel(session.date),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: HistoryScreen.secondaryText,
+                        fontWeight: FontWeight.w700,
                       ),
-                      if (session.totalSets > 0)
-                        _HistoryMetaChip(
-                          icon: Icons.repeat,
-                          label: '${session.totalSets} sets',
-                        ),
-                      if (session.totalVolume > 0)
-                        _HistoryMetaChip(
-                          icon: Icons.monitor_weight_outlined,
-                          label: '${session.totalVolume.round()} kg volume',
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 7),
-                  Text(
-                    '100% Done',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: HistoryScreen.accent,
-                      fontWeight: FontWeight.w900,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    Text(
+                      session.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: HistoryScreen.primaryText,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 7),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 5,
+                      children: [
+                        _HistoryMetaChip(
+                          icon: Icons.fitness_center,
+                          label: '${session.logs.length} exercises',
+                        ),
+                        if (session.totalSets > 0)
+                          _HistoryMetaChip(
+                            icon: Icons.repeat,
+                            label: '${session.totalSets} sets',
+                          ),
+                        if (session.totalVolume > 0)
+                          _HistoryMetaChip(
+                            icon: Icons.monitor_weight_outlined,
+                            label: '${session.totalVolume.round()} kg volume',
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 7),
+                    Text(
+                      '100% Done',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: HistoryScreen.accent,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Tooltip(
-              message: 'Workout Detail is coming in RL-0027',
-              child: Icon(
-                Icons.arrow_forward_ios,
-                color: HistoryScreen.mutedText.withValues(alpha: 0.7),
-                size: 16,
+              const SizedBox(width: 8),
+              Tooltip(
+                message: 'Open completed Workout Detail',
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: HistoryScreen.accent.withValues(alpha: 0.85),
+                  size: 16,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  void _openCompletedDetail(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return CompletedWorkoutDetailScreen(
+            sessionTitle: session.title,
+            completedDateLabel: _dateLabel(session.date),
+            workoutLogs: session.logs,
+          );
+        },
       ),
     );
   }

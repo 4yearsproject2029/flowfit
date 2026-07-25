@@ -10,6 +10,89 @@ Rules:
 
 ## 2026-07-25
 
+### RL-0027
+
+Epic:
+
+EP-14 Completed Workout Detail
+
+Status:
+
+Done
+
+Summary:
+
+- Added completed Workout Detail opened from History.
+- Displayed completed session title, date, movement list, set count, volume, categories, weights, reps, and notes from local records.
+- Kept completed detail read-only with no Start Workout, Start Today, edit, share, reward, rest timer, or Workout Summary behavior.
+- Preserved planned Session Detail as the startable detail path from Week.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- lib/features/workout_detail/screens/completed_workout_detail_screen.dart
+- user_stories/RL-0027/RL-0027_SPRINT_PLAN.md
+- user_stories/RL-0027/RL-0027_UX_SPEC.md
+- user_stories/RL-0027/RL-0027_INTERPRETATION.md
+- user_stories/RL-0027/RL-0027_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0027/RL-0027_CODE_REVIEW.md
+- user_stories/RL-0027/RL-0027_QA_REPORT.md
+- user_stories/RL-0027/RL-0027_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- lib/features/history/screens/history_screen.dart
+- test/widget_test.dart
+- user_stories/RL-0027/RL-0027_TASKS.md
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Open Home and tap History.
+- Tap a completed session to open Workout Detail.
+- Confirm completed exercises, sets, reps, weight, and notes appear.
+- Confirm Start Workout, Start Today, edit, share, reward, rest timer, and Workout Summary actions are absent.
+- Tap Back and confirm History is restored.
+- Open Week, open planned Session Detail, and confirm Start Today still opens Current Workout.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by user workflow instruction to continue with the workflow in the same pattern on 2026-07-25.
+
+Known Limitations:
+
+- Manual device QA was not run in this agent environment.
+- Completed history editing remains out of scope.
+
+Lessons Learned:
+
+- Keeping completed detail separate from planned detail prevents the approved visual's Start Workout affordance from leaking into History review.
+
+Next Recommended Story:
+
+RL-0019
+
+---
+
+## 2026-07-25
+
 ### RL-0026
 
 Epic:
