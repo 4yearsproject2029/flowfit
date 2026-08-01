@@ -38,6 +38,14 @@ class AchievementScreen extends StatelessWidget {
                 final xpTotal = storageService.getXpTotal();
                 final levelProgress = LevelService().calculateProgress(xpTotal);
                 final completedSessions = _completedSessionCount();
+                final milestoneStates = _milestoneStates(
+                  completedSessions: completedSessions,
+                  xpTotal: xpTotal,
+                  currentLevel: levelProgress.currentLevel,
+                );
+                final titleStates = _titleStates(
+                  currentLevel: levelProgress.currentLevel,
+                );
 
                 return CustomScrollView(
                   slivers: [
@@ -78,10 +86,13 @@ class AchievementScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SliverPadding(
+                    SliverPadding(
                       padding: EdgeInsets.fromLTRB(20, 22, 20, 100),
                       sliver: SliverToBoxAdapter(
-                        child: _UpcomingRecognitionSection(),
+                        child: _RecognitionSections(
+                          milestoneStates: milestoneStates,
+                          titleStates: titleStates,
+                        ),
                       ),
                     ),
                   ],
@@ -122,6 +133,84 @@ class AchievementScreen extends StatelessWidget {
       return 'Steady Starter';
     }
     return 'First Rep Ready';
+  }
+
+  List<_MilestoneState> _milestoneStates({
+    required int completedSessions,
+    required int xpTotal,
+    required int currentLevel,
+  }) {
+    final firstFinishProgress = completedSessions.clamp(0, 1);
+    final steadyWeekProgress = completedSessions.clamp(0, 3);
+    final levelTwoProgress = xpTotal.clamp(0, LevelService.xpPerLevel);
+
+    return [
+      _MilestoneState(
+        icon: Icons.check_circle_outline,
+        title: 'First Finish',
+        requirement: 'Complete 1 workout session.',
+        progressLabel: '$firstFinishProgress / 1 session',
+        stateLabel: completedSessions >= 1 ? 'Unlocked' : 'Locked',
+        isUnlocked: completedSessions >= 1,
+      ),
+      _MilestoneState(
+        icon: Icons.calendar_month_outlined,
+        title: 'Steady Week',
+        requirement: 'Complete 3 workout sessions on this device.',
+        progressLabel: '$steadyWeekProgress / 3 sessions',
+        stateLabel: completedSessions >= 3
+            ? 'Unlocked'
+            : completedSessions > 0
+            ? 'In progress'
+            : 'Locked',
+        isUnlocked: completedSessions >= 3,
+      ),
+      _MilestoneState(
+        icon: Icons.bolt,
+        title: 'Level 2',
+        requirement: 'Earn 100 Rep Score points by completing workouts.',
+        progressLabel: '$levelTwoProgress / 100 XP',
+        stateLabel: currentLevel >= 2
+            ? 'Unlocked'
+            : xpTotal > 0
+            ? 'In progress'
+            : 'Locked',
+        isUnlocked: currentLevel >= 2,
+      ),
+    ];
+  }
+
+  List<_TitleState> _titleStates({required int currentLevel}) {
+    return [
+      _TitleState(
+        title: 'First Rep Ready',
+        requirement: 'Available at Level 1.',
+        levelRequired: 1,
+        isCurrent: currentLevel < 2,
+        isUnlocked: currentLevel >= 1,
+      ),
+      _TitleState(
+        title: 'Steady Starter',
+        requirement: 'Unlock at Level 2.',
+        levelRequired: 2,
+        isCurrent: currentLevel >= 2 && currentLevel < 5,
+        isUnlocked: currentLevel >= 2,
+      ),
+      _TitleState(
+        title: 'Consistency Builder',
+        requirement: 'Unlock at Level 5.',
+        levelRequired: 5,
+        isCurrent: currentLevel >= 5 && currentLevel < 10,
+        isUnlocked: currentLevel >= 5,
+      ),
+      _TitleState(
+        title: 'Flow Regular',
+        requirement: 'Unlock at Level 10.',
+        levelRequired: 10,
+        isCurrent: currentLevel >= 10,
+        isUnlocked: currentLevel >= 10,
+      ),
+    ];
   }
 
   void _openWeek(BuildContext context) {
@@ -436,54 +525,89 @@ class _GrowthSignalsSection extends StatelessWidget {
   }
 }
 
-class _UpcomingRecognitionSection extends StatelessWidget {
-  const _UpcomingRecognitionSection();
+class _MilestoneState {
+  const _MilestoneState({
+    required this.icon,
+    required this.title,
+    required this.requirement,
+    required this.progressLabel,
+    required this.stateLabel,
+    required this.isUnlocked,
+  });
+
+  final IconData icon;
+  final String title;
+  final String requirement;
+  final String progressLabel;
+  final String stateLabel;
+  final bool isUnlocked;
+}
+
+class _TitleState {
+  const _TitleState({
+    required this.title,
+    required this.requirement,
+    required this.levelRequired,
+    required this.isCurrent,
+    required this.isUnlocked,
+  });
+
+  final String title;
+  final String requirement;
+  final int levelRequired;
+  final bool isCurrent;
+  final bool isUnlocked;
+}
+
+class _RecognitionSections extends StatelessWidget {
+  const _RecognitionSections({
+    required this.milestoneStates,
+    required this.titleStates,
+  });
+
+  final List<_MilestoneState> milestoneStates;
+  final List<_TitleState> titleStates;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        _SectionLabel('UPCOMING RECOGNITION'),
-        SizedBox(height: 10),
-        _SignalRow(
-          icon: Icons.workspace_premium_outlined,
-          title: 'Milestones',
-          detail: 'A small local milestone set arrives in RL-0028.',
-          isMuted: true,
-        ),
-        SizedBox(height: 10),
-        _SignalRow(
-          icon: Icons.lock_outline,
-          title: 'Private moments',
-          detail: 'Future celebration moments arrive later, only by choice.',
-          isMuted: true,
-        ),
+      children: [
+        const _SectionLabel('MILESTONES'),
+        const SizedBox(height: 10),
+        for (final milestone in milestoneStates) ...[
+          _MilestoneRow(milestone: milestone),
+          const SizedBox(height: 10),
+        ],
+        const SizedBox(height: 12),
+        const _SectionLabel('TITLE COLLECTION'),
+        const SizedBox(height: 10),
+        for (final title in titleStates) ...[
+          _TitleRow(titleState: title),
+          const SizedBox(height: 10),
+        ],
       ],
     );
   }
 }
 
-class _SignalRow extends StatelessWidget {
-  const _SignalRow({
-    required this.icon,
-    required this.title,
-    required this.detail,
-    this.isMuted = false,
-  });
+class _MilestoneRow extends StatelessWidget {
+  const _MilestoneRow({required this.milestone});
 
-  final IconData icon;
-  final String title;
-  final String detail;
-  final bool isMuted;
+  final _MilestoneState milestone;
 
   @override
   Widget build(BuildContext context) {
+    final isActive =
+        milestone.isUnlocked || milestone.stateLabel == 'In progress';
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isMuted ? AchievementScreen.surface : AchievementScreen.elevated,
+        color: isActive
+            ? AchievementScreen.elevated
+            : AchievementScreen.surface,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AchievementScreen.border),
       ),
@@ -493,18 +617,221 @@ class _SignalRow extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: isMuted
-                  ? const Color(0xFF1A1D20)
-                  : AchievementScreen.accentDark,
+              color: isActive
+                  ? AchievementScreen.accentDark
+                  : const Color(0xFF1A1D20),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
-              icon,
-              color: isMuted
-                  ? AchievementScreen.mutedText
-                  : AchievementScreen.accent,
+              milestone.icon,
+              color: isActive
+                  ? AchievementScreen.accent
+                  : AchievementScreen.mutedText,
               size: 24,
             ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        milestone.title,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: AchievementScreen.primaryText,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _StatePill(
+                      label: milestone.stateLabel,
+                      isActive: milestone.isUnlocked,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  milestone.requirement,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AchievementScreen.secondaryText,
+                    height: 1.25,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  milestone.progressLabel,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: isActive
+                        ? AchievementScreen.accent
+                        : AchievementScreen.mutedText,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TitleRow extends StatelessWidget {
+  const _TitleRow({required this.titleState});
+
+  final _TitleState titleState;
+
+  @override
+  Widget build(BuildContext context) {
+    final stateLabel = titleState.isCurrent
+        ? 'Current title'
+        : titleState.isUnlocked
+        ? 'Unlocked'
+        : 'Locked';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: titleState.isUnlocked
+            ? AchievementScreen.elevated
+            : AchievementScreen.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: titleState.isCurrent
+              ? AchievementScreen.accent
+              : AchievementScreen.border,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: titleState.isUnlocked
+                  ? AchievementScreen.accentDark
+                  : const Color(0xFF1A1D20),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              titleState.isUnlocked
+                  ? Icons.workspace_premium_outlined
+                  : Icons.lock_outline,
+              color: titleState.isUnlocked
+                  ? AchievementScreen.accent
+                  : AchievementScreen.mutedText,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        titleState.title,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: AchievementScreen.primaryText,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _StatePill(
+                      label: stateLabel,
+                      isActive: titleState.isUnlocked,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  titleState.requirement,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: titleState.isUnlocked
+                        ? AchievementScreen.secondaryText
+                        : AchievementScreen.mutedText,
+                    height: 1.25,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatePill extends StatelessWidget {
+  const _StatePill({required this.label, required this.isActive});
+
+  final String label;
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isActive
+            ? AchievementScreen.accentDark
+            : const Color(0xFF1A1D20),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: isActive
+              ? AchievementScreen.accent
+              : AchievementScreen.secondaryText,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
+class _SignalRow extends StatelessWidget {
+  const _SignalRow({
+    required this.icon,
+    required this.title,
+    required this.detail,
+  });
+
+  final IconData icon;
+  final String title;
+  final String detail;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AchievementScreen.elevated,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AchievementScreen.border),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: AchievementScreen.accentDark,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: AchievementScreen.accent, size: 24),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -522,9 +849,7 @@ class _SignalRow extends StatelessWidget {
                 Text(
                   detail,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: isMuted
-                        ? AchievementScreen.mutedText
-                        : AchievementScreen.secondaryText,
+                    color: AchievementScreen.secondaryText,
                     height: 1.25,
                   ),
                 ),

@@ -620,6 +620,139 @@ void main() {
   });
 
   testWidgets(
+    'Achievement milestones show locked in-progress and unlocked states',
+    (WidgetTester tester) async {
+      await resetHiveBoxesForTest(tester);
+      await completeOnboardingForTest(tester);
+      await tester.runAsync(() async {
+        final today = DateTime.now();
+        await StorageService().addWorkoutLog(
+          WorkoutLog(
+            id: 'milestone-log-1',
+            date: _dateKey(today),
+            workoutId: 'milestone-workout-1',
+            workoutName: 'Step Ups',
+            category: 'Strength',
+            isCompleted: false,
+            createdAt: today,
+          ),
+        );
+        await StorageService().toggleWorkoutCompletion('milestone-log-1');
+      });
+
+      await pumpFlowFitApp(tester);
+
+      await tester.tap(find.text('Achievement'));
+      await tester.pumpAndSettle();
+      await tester.dragUntilVisible(
+        find.text('MILESTONES'),
+        find.byType(CustomScrollView),
+        const Offset(0, -250),
+      );
+      await tester.pump();
+
+      expect(find.text('MILESTONES'), findsOneWidget);
+      expect(find.text('First Finish'), findsOneWidget);
+      expect(find.text('1 / 1 session'), findsOneWidget);
+      expect(find.text('Steady Week'), findsOneWidget);
+      expect(find.text('1 / 3 sessions'), findsOneWidget);
+      expect(find.text('Level 2'), findsOneWidget);
+      expect(find.text('10 / 100 XP'), findsOneWidget);
+      expect(find.text('Unlocked'), findsOneWidget);
+      expect(find.text('In progress'), findsNWidgets(2));
+    },
+  );
+
+  testWidgets('Achievement title collection marks current and locked titles', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      final today = DateTime.now();
+      for (var index = 0; index < 10; index += 1) {
+        final logId = 'title-log-$index';
+        await StorageService().addWorkoutLog(
+          WorkoutLog(
+            id: logId,
+            date: _dateKey(today.subtract(Duration(days: index))),
+            workoutId: 'title-workout-$index',
+            workoutName: 'Consistency Session $index',
+            category: 'Strength',
+            isCompleted: false,
+            createdAt: today.add(Duration(minutes: index)),
+          ),
+        );
+        await StorageService().toggleWorkoutCompletion(logId);
+      }
+    });
+
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.text('Achievement'));
+    await tester.pumpAndSettle();
+    await tester.dragUntilVisible(
+      find.text('TITLE COLLECTION'),
+      find.byType(CustomScrollView),
+      const Offset(0, -250),
+    );
+    await tester.pump();
+
+    expect(find.text('TITLE COLLECTION'), findsOneWidget);
+    expect(find.text('Steady Starter'), findsOneWidget);
+    expect(find.text('Current title'), findsOneWidget);
+    expect(find.text('Consistency Builder'), findsOneWidget);
+    expect(find.text('Unlock at Level 5.'), findsOneWidget);
+    expect(find.text('Flow Regular'), findsOneWidget);
+    expect(find.text('Unlock at Level 10.'), findsOneWidget);
+    expect(find.text('Locked'), findsNWidgets(2));
+  });
+
+  testWidgets(
+    'Achievement milestones avoid comparison engine and sharing scope',
+    (WidgetTester tester) async {
+      await resetHiveBoxesForTest(tester);
+      await completeOnboardingForTest(tester);
+      await pumpFlowFitApp(tester);
+
+      await tester.tap(find.text('Achievement'));
+      await tester.pumpAndSettle();
+      await tester.dragUntilVisible(
+        find.text('MILESTONES'),
+        find.byType(CustomScrollView),
+        const Offset(0, -250),
+      );
+      await tester.pump();
+
+      expect(find.text('MILESTONES'), findsOneWidget);
+      expect(
+        find.textContaining('leaderboard', findRichText: true),
+        findsNothing,
+      );
+      expect(find.textContaining('ranking', findRichText: true), findsNothing);
+      expect(
+        find.textContaining('percentile', findRichText: true),
+        findsNothing,
+      );
+      expect(find.textContaining('dynamic', findRichText: true), findsNothing);
+      expect(
+        find.textContaining('configurable', findRichText: true),
+        findsNothing,
+      );
+      expect(
+        find.textContaining('public profile', findRichText: true),
+        findsNothing,
+      );
+      expect(find.textContaining('penalty', findRichText: true), findsNothing);
+      expect(
+        find.textContaining('level lost', findRichText: true),
+        findsNothing,
+      );
+      expect(find.textContaining('Share', findRichText: true), findsNothing);
+    },
+  );
+
+  testWidgets(
     'opens completed Workout Detail from History as read-only review',
     (WidgetTester tester) async {
       await resetHiveBoxesForTest(tester);

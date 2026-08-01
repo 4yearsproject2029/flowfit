@@ -10,6 +10,87 @@ Rules:
 
 ## 2026-07-25
 
+### RL-0028
+
+Epic:
+
+EP-14 Achievement Milestones And Titles
+
+Status:
+
+Done
+
+Summary:
+
+- Added a small predefined local milestone catalog to Achievement.
+- Added title collection rows with current, unlocked, and locked states.
+- Reused local XP, level, and completed-session data.
+- Preserved Achievement foundation, Home preview separation, and bottom navigation behavior.
+- Avoided generic rule engines, configurable achievements, dynamic definitions, public rankings, percentile claims, social comparison, penalties, level loss, and share moments.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- user_stories/RL-0028/RL-0028_SPRINT_PLAN.md
+- user_stories/RL-0028/RL-0028_UX_SPEC.md
+- user_stories/RL-0028/RL-0028_INTERPRETATION.md
+- user_stories/RL-0028/RL-0028_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0028/RL-0028_CODE_REVIEW.md
+- user_stories/RL-0028/RL-0028_QA_REPORT.md
+- user_stories/RL-0028/RL-0028_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- lib/features/achievement/screens/achievement_screen.dart
+- test/widget_test.dart
+- user_stories/RL-0028/RL-0028_TASKS.md
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Open Achievement.
+- Scroll to `MILESTONES`.
+- Confirm `First Finish`, `Steady Week`, and `Level 2` show progress and state labels.
+- Scroll to `TITLE COLLECTION`.
+- Confirm current, unlocked, and locked title states.
+- Confirm no ranking, percentile, public profile, penalty, level-loss, configurable achievement, dynamic definition, or share-moment behavior appears.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by user instruction to continue the workflow on 2026-07-25.
+
+Known Limitations:
+
+- Manual device QA was not run in this agent environment.
+- Full `test/widget_test.dart` was not rerun because the previous release documented a broad Hive-backed widget-file stall.
+
+Lessons Learned:
+
+- Static local milestone and title rows provide meaningful Achievement depth without requiring a reward engine or new persistence.
+
+Next Recommended Story:
+
+RL-0029
+
+---
+
 ### RL-0019
 
 Epic:

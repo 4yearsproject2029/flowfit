@@ -378,6 +378,8 @@ Dependency validation:
 | 2026-07-25 | RL-0036 | In Progress | Done | Release Manager | Bottom navigation tab switching hotfix completed, Code Review approved, focused QA passed, and release closeout completed. |
 | 2026-07-25 | RL-0019 | Not Started | In Progress | Coordinator | Next eligible Achievement Hub Foundation story selected after RL-0036 release; dependencies RL-0016 and RL-0021 are Done. |
 | 2026-07-25 | RL-0019 | In Progress | Done | Release Manager | Achievement Hub Foundation completed, Code Review approved, focused QA passed, and release closeout completed. |
+| 2026-07-25 | RL-0028 | Not Started | In Progress | Coordinator | Next eligible Achievement Milestones And Titles story selected after RL-0019 release. |
+| 2026-07-25 | RL-0028 | In Progress | Done | Release Manager | Achievement Milestones And Titles completed, Code Review approved, focused QA passed, and release closeout completed. |
 
 ---
 
@@ -386,17 +388,17 @@ Dependency validation:
 | Metric | Value |
 | ------ | ----- |
 | Total Stories | 36 |
-| Not Started | 6 |
+| Not Started | 5 |
 | In Progress | 0 |
 | Blocked | 0 |
 | On Hold | 0 |
-| Done | 30 |
+| Done | 31 |
 | Canceled | 0 |
 
 Completion Rate:
 
 ```text
-30 / (36 - 0) = 83.3%
+31 / (36 - 0) = 86.1%
 ```
 
 MVP Completion Rate:
@@ -575,6 +577,8 @@ Reasoning:
 | v1.41 | 2026-07-25 | Release Manager Agent | Closed RL-0036 as Done after bottom navigation tab switching hotfix, focused QA pass, and release closeout. |
 | v1.42 | 2026-07-25 | Coordinator Agent | Selected RL-0019 as the next eligible Achievement Hub Foundation story and started the sprint. |
 | v1.43 | 2026-07-25 | Release Manager Agent | Closed RL-0019 as Done after Achievement hub foundation implementation, focused QA pass, and release closeout. |
+| v1.44 | 2026-07-25 | Coordinator Agent | Selected RL-0028 as the next eligible Achievement Milestones And Titles story and started the sprint. |
+| v1.45 | 2026-07-25 | Release Manager Agent | Closed RL-0028 as Done after Achievement milestone and title implementation, focused QA pass, and release closeout. |
 
 ---
 
@@ -945,7 +949,7 @@ RL-0020
 | Done | RL-0026 | EP-14 | Read-Only History | Should Have | P1 | M | RL-0016, RL-0017 | Yes | Yes | As a user reviewing completed sessions, I want History to show completed workouts without editing or celebration states, so that review feels clear and safe. | - Uses `design/approved/07_history.png` for approved History layout and screen composition.<br>- History displays completed workout records grouped by recent periods where practical.<br>- History is read-only and excludes planning edits, Start Workout, rest timer controls, and Workout Summary celebration behavior.<br>- History can navigate to completed Workout Detail, deferred to `RL-0027`.<br>- Dashboard and Week do not duplicate History as a primary section.<br>- QA verifies completed records are review-only and navigation returns cleanly. |
 | Done | RL-0027 | EP-14 | Completed Workout Detail | Should Have | P1 | M | RL-0026 | Yes | Yes | As a user opening a completed workout, I want Workout Detail to show what I did without acting like Summary or planning, so that history review remains read-only. | - Uses `design/approved/08_workout_detail.png` only for completed History detail in this story.<br>- Completed Workout Detail displays completed record fields such as exercises, sets, reps, weight, notes, and date where locally available.<br>- Completed Workout Detail excludes Start Workout, celebration animations, reward granting, and summary-only sharing prompts.<br>- Detail state cannot modify completed history records unless a later approved story explicitly adds editing.<br>- Navigation returns to History and then Dashboard predictably.<br>- QA verifies completed detail does not reopen Workout Summary. |
 | Done | RL-0036 | EP-14 | Bottom Navigation Tab Switching Bug Fix | Must Have | P0 | S | RL-0014, RL-0017, RL-0026 | Yes | Yes | As a user moving between implemented tabs, I want bottom navigation to switch directly between Home, Week, and History, so that I do not have to route through Home when changing sections. | - Home can open Week and History directly.<br>- Week can open Home and History directly.<br>- History can open Home and Week directly.<br>- Re-selecting the current implemented tab does not push duplicate routes.<br>- Today and Achievement remain placeholders until approved stories implement them.<br>- Existing Week, History, planned Session Detail, and completed Workout Detail behavior remains intact. |
-| Not Started | RL-0028 | EP-14 | Achievement Milestones And Titles | Should Have | P1 | M | RL-0019 | Yes | Yes | As a user checking long-term growth, I want a small set of predefined milestones and titles to show what I can unlock next, so that Achievement feels meaningful without becoming a complex achievement engine. | - Builds on the Achievement hub foundation from `RL-0019`.<br>- Uses a small predefined local milestone catalog.<br>- Reuses existing XP and completion data where possible.<br>- Displays medals or achievements, milestone progress, and title/reward collection using simple local rules.<br>- Does not introduce generic rule engines, configurable achievements, dynamic achievement definitions, backend systems, public ranking, percentile claims, social comparison, public profiles, penalties, or level loss.<br>- Unlock requirements are clear, consistency-focused, and non-punitive.<br>- QA verifies milestone and title states for locked, in-progress, and unlocked examples. |
+| Done | RL-0028 | EP-14 | Achievement Milestones And Titles | Should Have | P1 | M | RL-0019 | Yes | Yes | As a user checking long-term growth, I want a small set of predefined milestones and titles to show what I can unlock next, so that Achievement feels meaningful without becoming a complex achievement engine. | - Builds on the Achievement hub foundation from `RL-0019`.<br>- Uses a small predefined local milestone catalog.<br>- Reuses existing XP and completion data where possible.<br>- Displays medals or achievements, milestone progress, and title/reward collection using simple local rules.<br>- Does not introduce generic rule engines, configurable achievements, dynamic achievement definitions, backend systems, public ranking, percentile claims, social comparison, public profiles, penalties, or level loss.<br>- Unlock requirements are clear, consistency-focused, and non-punitive.<br>- QA verifies milestone and title states for locked, in-progress, and unlocked examples. |
 | Not Started | RL-0029 | EP-14 | Achievement Unlock And Share Moments | Should Have | P1 | S | RL-0028, RL-0024 | Yes | Yes | As a user who earns recognition, I want recent unlock and share moments to be visible only when I choose, so that rewards feel celebratory and private. | - Achievement shows recent unlock moments without requiring social posting.<br>- Share actions are user-initiated and preserve existing share-card privacy defaults.<br>- Recent unlock language reinforces consistency and return, not performance comparison.<br>- Dashboard remains limited to short-term preview and does not become the full Achievement hub.<br>- Existing share-card generation tracking remains local.<br>- QA covers unlock visibility, share entry point, and privacy-default preservation. |
 | Not Started | RL-0030 | EP-15 | Phase 2 Screen QA | Should Have | P1 | M | RL-0032, RL-0024, RL-0027, RL-0029, RL-0033 | Yes | Yes | As a QA reviewer, I want each approved Phase 2 screen validated independently, so that screen-level layout and accessibility issues are caught before integration testing. | - Screen QA only: validates Home, Workout Plan Builder, Add Exercise bottom sheet, Current Workout, Rest Timer, Workout Summary, Week, Achievement, History, and Workout Detail independently against `design/approved/` responsibilities.<br>- Checks common iPhone layouts for readable text, touch targets, contrast, navigation predictability, and non-overlapping content.<br>- Confirms each screen owns only its intended responsibility.<br>- Does not validate full cross-screen journeys, navigation survival, or end-to-end regression flows except where needed to enter the screen under test.<br>- Runs `flutter analyze`.<br>- Runs focused widget or service tests relevant to changed screens where available.<br>- Documents any skipped tests or manual-only checks without changing production behavior just for the harness. |
 | Not Started | RL-0031 | EP-15 | Phase 2 Journey Regression QA | Should Have | P1 | M | RL-0030 | Yes | Yes | As a QA reviewer, I want cross-screen integration and regression QA, so that the redesigned screens work together as one product experience. | - Cross-screen integration and regression QA only.<br>- Validates Dashboard -> Workout Plan Builder -> Add Exercise -> Save Workout -> Dashboard -> Current Workout handoff.<br>- Validates Dashboard -> Current Workout -> Rest -> Completion -> Summary -> Achievement/Reward -> Dashboard flow.<br>- Validates Week -> Planned Session Detail -> Start Today -> Current Workout handoff.<br>- Validates History -> Completed Workout Detail review without reopening Summary.<br>- Validates Rest Timer continuity behavior from `RL-0032` across allowed navigation paths.<br>- Validates Achievement rewards and share moments preserve privacy and non-comparison rules.<br>- Runs `flutter test` or documents skipped tests as known limitations.<br>- Produces final integration evidence for `RL-0020` release readiness. |

@@ -3,21 +3,21 @@
 ## Current Story
 
 Story ID:
-RL-0019
+RL-0028
 
 Status:
 Done
 
 Reason:
-RL-0019 was released after Code Review approval, focused QA pass, and release closeout. The story implemented the Achievement hub foundation and connected Achievement as an implemented bottom navigation tab.
+RL-0028 was released after Code Review approval, focused QA pass, and release closeout. The story added a small predefined local milestone catalog and title collection to Achievement.
 
 ## Routing Decision Traceability
 
 Decision Point:
-Release Closeout For RL-0019
+Release Closeout For RL-0028
 
 Selected Story:
-RL-0019
+RL-0028
 
 Previous Story State:
 In Progress
@@ -31,42 +31,41 @@ Inputs Considered:
 - /Users/jounghwapak/Developer/AI_Agents/system/coordinator.md
 - /Users/jounghwapak/Developer/AI_Agents/prompts/close_user_story.md
 - docs/EPIC_USER_STORY_TASKS.md
-- user_stories/RL-0019/RL-0019_SPRINT_PLAN.md
-- user_stories/RL-0019/RL-0019_UX_SPEC.md
-- user_stories/RL-0019/RL-0019_INTERPRETATION.md
-- user_stories/RL-0019/RL-0019_IMPLEMENTATION_NOTES.md
-- user_stories/RL-0019/RL-0019_CODE_REVIEW.md
-- user_stories/RL-0019/RL-0019_QA_REPORT.md
+- user_stories/RL-0028/RL-0028_SPRINT_PLAN.md
+- user_stories/RL-0028/RL-0028_UX_SPEC.md
+- user_stories/RL-0028/RL-0028_INTERPRETATION.md
+- user_stories/RL-0028/RL-0028_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0028/RL-0028_CODE_REVIEW.md
+- user_stories/RL-0028/RL-0028_QA_REPORT.md
 
 Dependency and Blocker Status:
 
-- RL-0016 is Done.
-- RL-0021 is Done.
-- Code Review approved RL-0019.
-- QA passed RL-0019.
+- RL-0019 is Done.
+- Code Review approved RL-0028.
+- QA passed RL-0028.
 - User approval received by workflow continuation instruction on 2026-07-25.
-- No unresolved RL-0019 blockers are present.
+- No unresolved RL-0028 blockers are present.
 
 Selection Summary:
-RL-0019 is complete. Achievement is now an implemented tab that shows local level, Rep Score, recognition, and high-level progress while preserving non-comparison boundaries.
+RL-0028 is complete. Achievement now includes predefined local milestones and title states while preserving local-first and non-comparison boundaries.
 
 ## Dependency Validation
 
 - PRODUCT_BRIEF.md: Present.
 - PROJECT_CONTEXT.md: Present.
 - ARCHITECTURE.md: Present.
-- EPIC_USER_STORY_TASKS.md: Present and updated with RL-0019 Done.
-- RL-0019 task file: Present and updated with all tasks Done.
-- Story dependencies: RL-0016, RL-0021.
+- EPIC_USER_STORY_TASKS.md: Present and updated with RL-0028 Done.
+- RL-0028 task file: Present and updated with all tasks Done.
+- Story dependencies: RL-0019.
 - Dependency status: all direct dependencies are Done.
 
 ## Execution Order
 
 Completed:
 
-1. Coordinator selected RL-0019 and updated story status.
-2. UX Designer produced the focused RL-0019 UX specification.
-3. User Story Interpreter interpreted RL-0019 against approved scope and current local services.
+1. Coordinator selected RL-0028 and updated story status.
+2. UX Designer produced the focused RL-0028 UX specification.
+3. User Story Interpreter interpreted RL-0028 against approved scope and current Achievement foundation.
 4. Code Writer implemented the interpreted story.
 5. Code Reviewer reviewed and approved the implementation.
 6. QA Tester validated the story and passed QA.
@@ -105,13 +104,13 @@ Approved by user instruction to continue the workflow on 2026-07-25.
 
 ## Required Deliverables
 
-- user_stories/RL-0019/RL-0019_SPRINT_PLAN.md
-- user_stories/RL-0019/RL-0019_UX_SPEC.md
-- user_stories/RL-0019/RL-0019_INTERPRETATION.md
-- user_stories/RL-0019/RL-0019_IMPLEMENTATION_NOTES.md
-- user_stories/RL-0019/RL-0019_CODE_REVIEW.md
-- user_stories/RL-0019/RL-0019_QA_REPORT.md
-- user_stories/RL-0019/RL-0019_RELEASE_NOTE.md
+- user_stories/RL-0028/RL-0028_SPRINT_PLAN.md
+- user_stories/RL-0028/RL-0028_UX_SPEC.md
+- user_stories/RL-0028/RL-0028_INTERPRETATION.md
+- user_stories/RL-0028/RL-0028_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0028/RL-0028_CODE_REVIEW.md
+- user_stories/RL-0028/RL-0028_QA_REPORT.md
+- user_stories/RL-0028/RL-0028_RELEASE_NOTE.md
 - docs/EPIC_USER_STORY_TASKS.md
 - docs/SPRINT_PLAN.md
 - docs/DEVELOPMENT_LOG.md
@@ -121,25 +120,25 @@ Complete
 
 ## Risks Or Blockers
 
-- Detailed medals, milestones, title collection, recent unlocks, and share moments remain deferred to RL-0028 and RL-0029.
+- Recent unlock and share moments remain deferred to RL-0029.
 - Today remains a placeholder until its approved story.
 - Manual device QA was not run in this agent environment.
-- Broad `flutter test test/widget_test.dart -r expanded` stalled and was interrupted; focused RL-0019 tests and related navigation regression passed.
+- Full `test/widget_test.dart` was not rerun because the previous release documented a broad Hive-backed widget-file stall.
 
 ## Expected Outcome
 
-- RL-0019 release is complete.
-- Users can open Achievement directly from the bottom navigation.
-- Achievement shows local level, Rep Score, current recognition, and high-level progress.
-- Achievement avoids rankings, leaderboards, public percentile claims, social comparison, penalties, level loss, public profiles, and share actions.
+- RL-0028 release is complete.
+- Users can see locked, in-progress, and unlocked milestones.
+- Users can see current, unlocked, and locked titles.
+- Achievement remains local, private, non-comparative, non-punitive, and simple.
 
 ## Next Recommended Story
 
 Story ID:
-RL-0028
+RL-0029
 
 Reason:
-RL-0028 builds on the released Achievement hub foundation with a small predefined milestone and title catalog.
+RL-0029 builds on released milestones and titles by adding recent unlock and optional private share moments.
 
 ## Agent Handoff
 
@@ -153,7 +152,7 @@ Completed Output:
 
 ```text
 docs/SPRINT_PLAN.md
-user_stories/RL-0019/RL-0019_RELEASE_NOTE.md
+user_stories/RL-0028/RL-0028_RELEASE_NOTE.md
 docs/EPIC_USER_STORY_TASKS.md
 docs/DEVELOPMENT_LOG.md
 ```
@@ -178,7 +177,7 @@ Required Input Files:
 
 Optional Input Files:
 
-- user_stories/RL-0019/RL-0019_RELEASE_NOTE.md
+- user_stories/RL-0028/RL-0028_RELEASE_NOTE.md
 
 Expected Output:
 
@@ -193,4 +192,4 @@ Blocking Conditions:
 Instructions:
 
 - Select the next eligible story from the current backlog state.
-- Preserve completed RL-0019 release artifacts.
+- Preserve completed RL-0028 release artifacts.
