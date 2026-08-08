@@ -15,9 +15,9 @@ design/approved/08_workout_detail.png
 
 | Status | Task ID | Description | Owner Agent |
 | ------ | ------- | ----------- | ----------- |
-| Not Started | RL-0030-T01 | Interpret screen-only Phase 2 QA requirements for approved screens, accessibility, layout, and role ownership. | User Story Interpreter |
-| Not Started | RL-0030-T02 | Execute manual screen-only QA for Home, Current Workout, Rest Timer, Workout Summary, Week, Achievement, History, and Workout Detail. | QA Tester |
-| Not Started | RL-0030-T03 | Execute accessibility and layout QA for readable text, touch targets, contrast, predictable navigation, and non-overlapping content on common iPhone layouts. | QA Tester |
-| Not Started | RL-0030-T04 | Execute `flutter analyze` and focused screen/widget/service tests where available. | QA Tester |
-| Not Started | RL-0030-T05 | Review screen QA evidence, skipped-test notes, design alignment, role-boundary risks, and absence of cross-screen integration/regression scope. | Code Reviewer |
-| Not Started | RL-0030-T06 | Close story and sync release artifacts. | Release Manager |
+| Done | RL-0030-T01 | Interpret screen-only Phase 2 QA requirements for approved screens, accessibility, layout, and role ownership. | User Story Interpreter |
+| Done | RL-0030-T02 | Execute manual screen-only QA for Home, Current Workout, Rest Timer, Workout Summary, Week, Achievement, History, and Workout Detail. | QA Tester |
+| Done | RL-0030-T03 | Execute accessibility and layout QA for readable text, touch targets, contrast, predictable navigation, and non-overlapping content on common iPhone layouts. | QA Tester |
+| Done | RL-0030-T04 | Execute `flutter analyze` and focused screen/widget/service tests where available. | QA Tester |
+| Done | RL-0030-T05 | Review screen QA evidence, skipped-test notes, design alignment, role-boundary risks, and absence of cross-screen integration/regression scope. | Code Reviewer |
+| Done | RL-0030-T06 | Close story and sync release artifacts. | Release Manager |

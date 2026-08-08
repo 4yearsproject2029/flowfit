@@ -986,3 +986,80 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0030
+
+---
+
+### RL-0030
+
+Epic:
+
+EP-15 Phase 2 Screen QA
+
+Status:
+
+Done
+
+Summary:
+
+- Completed focused screen-readiness QA for approved Phase 2 screens.
+- Validated Home, Workout Plan Builder, Add Exercise, Current Workout, Rest Timer, Workout Summary, Week, Achievement, History, and Workout Detail with command-backed evidence and source responsibility review.
+- Preserved RL-0031 for broader journey integration and regression QA.
+- Made no production code changes.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- user_stories/RL-0030/RL-0030_SPRINT_PLAN.md
+- user_stories/RL-0030/RL-0030_UX_SPEC.md
+- user_stories/RL-0030/RL-0030_INTERPRETATION.md
+- user_stories/RL-0030/RL-0030_QA_REPORT.md
+- user_stories/RL-0030/RL-0030_CODE_REVIEW.md
+- user_stories/RL-0030/RL-0030_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- user_stories/RL-0030/RL-0030_TASKS.md
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Open each approved Phase 2 screen on a small iPhone simulator and confirm no critical text overlap.
+- Open Workout Plan Builder and Add Exercise bottom sheet and confirm fields remain readable and reachable.
+- Open Current Workout rest state and Rest Timer overlay and confirm controls are reachable.
+- Open Workout Summary and confirm share-card controls are private-by-default.
+- Open History and Completed Workout Detail and confirm no planning or celebration controls appear.
+- Open Achievement and confirm recognition remains non-comparative.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by explicit user workflow instruction to continue on 2026-08-08.
+
+Known Limitations:
+
+- Manual device QA was not run in this agent environment.
+- The intentionally skipped share-card widget test remains a known Hive-backed widget harness limitation.
+
+Lessons Learned:
+
+- RL-0030 can serve as a clean evidence checkpoint before RL-0031 without mixing in cross-screen journey regression.
+
+Next Recommended Story:
+
+RL-0031
