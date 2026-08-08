@@ -7,6 +7,7 @@ class Phase2BottomNavigation extends StatelessWidget {
     super.key,
     required this.selectedTab,
     this.onHomeSelected,
+    this.onTodaySelected,
     this.onWeekSelected,
     this.onAchievementSelected,
     this.onHistorySelected,
@@ -14,6 +15,7 @@ class Phase2BottomNavigation extends StatelessWidget {
 
   final Phase2Tab selectedTab;
   final VoidCallback? onHomeSelected;
+  final VoidCallback? onTodaySelected;
   final VoidCallback? onWeekSelected;
   final VoidCallback? onAchievementSelected;
   final VoidCallback? onHistorySelected;
@@ -42,7 +44,11 @@ class Phase2BottomNavigation extends StatelessWidget {
               isSelected: selectedTab == Phase2Tab.home,
               onTap: selectedTab == Phase2Tab.home ? null : onHomeSelected,
             ),
-            const _Phase2NavItem(icon: Icons.today_outlined, label: 'Today'),
+            _Phase2NavItem(
+              icon: Icons.today_outlined,
+              label: 'Today',
+              onTap: onTodaySelected,
+            ),
             _Phase2NavItem(
               icon: Icons.calendar_month_outlined,
               selectedIcon: Icons.calendar_month,

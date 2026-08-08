@@ -5,6 +5,7 @@ import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
 import '../../achievement/screens/achievement_screen.dart';
 import '../../history/screens/history_screen.dart';
+import '../../navigation/services/today_navigation_service.dart';
 import '../../navigation/widgets/phase2_bottom_navigation.dart';
 import '../../workout_detail/screens/planned_session_detail_screen.dart';
 import '../../workout_plan/screens/workout_plan_builder_screen.dart';
@@ -135,6 +136,7 @@ class _WeekScreenState extends State<WeekScreen> {
         onHomeSelected: () => Navigator.of(context).popUntil((route) {
           return route.isFirst;
         }),
+        onTodaySelected: _openToday,
         onAchievementSelected: _openAchievement,
         onHistorySelected: _openHistory,
       ),
@@ -176,6 +178,14 @@ class _WeekScreenState extends State<WeekScreen> {
           return AchievementScreen(storageService: widget.storageService);
         },
       ),
+    );
+  }
+
+  Future<void> _openToday() {
+    return TodayNavigationService.openToday(
+      context: context,
+      storageService: widget.storageService,
+      replaceCurrentRoute: true,
     );
   }
 

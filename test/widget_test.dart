@@ -298,6 +298,166 @@ void main() {
     expect(find.text('Completed Workout Detail'), findsNothing);
   });
 
+  testWidgets('Today nav opens Current Workout from Home', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      final today = DateTime.now();
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'today-home-log-1',
+          date: _dateKey(today),
+          workoutId: 'today-home-workout-1',
+          workoutName: 'Goblet Squat',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 3,
+          reps: 10,
+          createdAt: today,
+        ),
+      );
+    });
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.text('Today'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('CURRENT WORKOUT'), findsOneWidget);
+    expect(find.text('Goblet Squat'), findsWidgets);
+    expect(find.text('Exercise 1 of 1'), findsOneWidget);
+  });
+
+  testWidgets('Today nav opens Current Workout from secondary tabs', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      final today = DateTime.now();
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'today-tabs-log-1',
+          date: _dateKey(today),
+          workoutId: 'today-tabs-workout-1',
+          workoutName: 'Push Press',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 3,
+          reps: 8,
+          createdAt: today,
+        ),
+      );
+    });
+    await pumpFlowFitApp(tester);
+
+    for (final tabLabel in ['Week', 'Achievement', 'History']) {
+      await tester.tap(find.text(tabLabel));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Today'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('CURRENT WORKOUT'), findsOneWidget);
+      expect(find.text('Push Press'), findsWidgets);
+
+      Navigator.of(tester.element(find.text('CURRENT WORKOUT'))).pop();
+      await tester.pumpAndSettle();
+      expect(find.text("TODAY'S FOCUS"), findsOneWidget);
+    }
+  });
+
+  testWidgets('Today nav uses Home fallback when no workout is planned', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.text('Week'));
+    await tester.pumpAndSettle();
+    expect(find.text('Your Week'), findsOneWidget);
+
+    await tester.tap(find.text('Today'));
+    await tester.pumpAndSettle();
+
+    expect(find.text("TODAY'S FOCUS"), findsOneWidget);
+    expect(find.text('No workout planned'), findsOneWidget);
+    expect(find.text('CURRENT WORKOUT'), findsNothing);
+
+    await tester.tap(find.text('Today'));
+    await tester.pumpAndSettle();
+    expect(find.text("TODAY'S FOCUS"), findsOneWidget);
+    expect(find.text('CURRENT WORKOUT'), findsNothing);
+  });
+
+  testWidgets('Today nav returns to active Current Workout rest context', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      final today = DateTime.now();
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'today-rest-log-1',
+          date: _dateKey(today),
+          workoutId: 'today-rest-workout-1',
+          workoutName: 'Incline Press',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 1,
+          reps: 10,
+          createdAt: today,
+        ),
+      );
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'today-rest-log-2',
+          date: _dateKey(today),
+          workoutId: 'today-rest-workout-2',
+          workoutName: 'Cable Row',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 1,
+          reps: 12,
+          createdAt: today.add(const Duration(minutes: 1)),
+        ),
+      );
+    });
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Start Workout'));
+    await tester.pumpAndSettle();
+    await tester.dragUntilVisible(
+      find.widgetWithText(FilledButton, 'Complete Set'),
+      find.byType(CustomScrollView),
+      const Offset(0, -120),
+    );
+    await tester.pump();
+    await tester.tap(find.widgetWithText(FilledButton, 'Complete Set'));
+    await tester.pumpAndSettle();
+    expect(find.text('REST STATE'), findsOneWidget);
+
+    Navigator.of(tester.element(find.text('CURRENT WORKOUT'))).pop();
+    await tester.pumpAndSettle();
+    expect(find.text('Rest timer'), findsOneWidget);
+
+    await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Today'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('CURRENT WORKOUT'), findsOneWidget);
+    expect(find.text('REST STATE'), findsOneWidget);
+    expect(find.text('Rest after Incline Press'), findsOneWidget);
+    expect(find.text('Next: Cable Row'), findsOneWidget);
+
+    RestTimerContinuityService().clear();
+    await tester.pump();
+  });
+
   testWidgets('opens read-only History from dashboard navigation', (
     WidgetTester tester,
   ) async {

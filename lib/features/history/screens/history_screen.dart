@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import '../../../data/models/workout_log.dart';
 import '../../../data/services/storage_service.dart';
 import '../../achievement/screens/achievement_screen.dart';
+import '../../navigation/services/today_navigation_service.dart';
 import '../../navigation/widgets/phase2_bottom_navigation.dart';
 import '../../week/screens/week_screen.dart';
 import '../../workout_detail/screens/completed_workout_detail_screen.dart';
@@ -72,6 +73,7 @@ class HistoryScreen extends StatelessWidget {
         onHomeSelected: () => Navigator.of(context).popUntil((route) {
           return route.isFirst;
         }),
+        onTodaySelected: () => _openToday(context),
         onAchievementSelected: () => _openAchievement(context),
         onWeekSelected: () => _openWeek(context),
       ),
@@ -95,6 +97,14 @@ class HistoryScreen extends StatelessWidget {
           return AchievementScreen(storageService: storageService);
         },
       ),
+    );
+  }
+
+  Future<void> _openToday(BuildContext context) {
+    return TodayNavigationService.openToday(
+      context: context,
+      storageService: storageService,
+      replaceCurrentRoute: true,
     );
   }
 

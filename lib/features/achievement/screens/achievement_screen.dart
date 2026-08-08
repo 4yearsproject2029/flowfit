@@ -7,6 +7,7 @@ import '../../../data/models/workout_log.dart';
 import '../../../data/services/level_service.dart';
 import '../../../data/services/storage_service.dart';
 import '../../history/screens/history_screen.dart';
+import '../../navigation/services/today_navigation_service.dart';
 import '../../navigation/widgets/phase2_bottom_navigation.dart';
 import '../../share_cards/models/share_card_data.dart';
 import '../../share_cards/widgets/share_card_preview.dart';
@@ -117,6 +118,7 @@ class AchievementScreen extends StatelessWidget {
         onHomeSelected: () => Navigator.of(context).popUntil((route) {
           return route.isFirst;
         }),
+        onTodaySelected: () => _openToday(context),
         onWeekSelected: () => _openWeek(context),
         onHistorySelected: () => _openHistory(context),
       ),
@@ -130,6 +132,14 @@ class AchievementScreen extends StatelessWidget {
         .map((log) => log.date)
         .toSet()
         .length;
+  }
+
+  Future<void> _openToday(BuildContext context) {
+    return TodayNavigationService.openToday(
+      context: context,
+      storageService: storageService,
+      replaceCurrentRoute: true,
+    );
   }
 
   String _titleFor(int level) {

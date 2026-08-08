@@ -1063,3 +1063,88 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0031
+
+---
+
+### RL-0037
+
+Epic:
+
+EP-12 Today Navigation To Current Workout Bug Fix
+
+Status:
+
+Done
+
+Summary:
+
+- Added RL-0037 as a focused P0 hotfix after user validation found the visible Today bottom nav item is inaccessible.
+- Implemented Today as a bottom-nav shortcut into today's Current Workout flow when a runnable local session exists.
+- Preserved active rest return behavior from Today.
+- Added safe Home fallback behavior for days with no runnable workout so the app does not open an empty Current Workout route.
+- Released RL-0037 before resuming RL-0031 journey regression QA.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- user_stories/RL-0037/RL-0037_TASKS.md
+- user_stories/RL-0037/RL-0037_SPRINT_PLAN.md
+- user_stories/RL-0037/RL-0037_UX_SPEC.md
+- user_stories/RL-0037/RL-0037_INTERPRETATION.md
+- user_stories/RL-0037/RL-0037_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0037/RL-0037_CODE_REVIEW.md
+- user_stories/RL-0037/RL-0037_QA_REPORT.md
+- user_stories/RL-0037/RL-0037_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- lib/features/navigation/widgets/phase2_bottom_navigation.dart
+- lib/features/home/screens/home_screen.dart
+- lib/features/week/screens/week_screen.dart
+- lib/features/history/screens/history_screen.dart
+- lib/features/achievement/screens/achievement_screen.dart
+- test/widget_test.dart
+
+Files Added:
+
+- lib/features/navigation/services/today_navigation_service.dart
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Manual simulator QA was not run in this agent environment.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by explicit user direction that Today should redirect to the Current Workout page on 2026-08-08.
+
+Known Limitations:
+
+- RL-0031 remains the broader cross-screen journey regression pass.
+- Manual simulator QA was not run in this agent environment.
+
+Lessons Learned:
+
+- Visible placeholder navigation should become a formal hotfix before broad journey regression QA begins.
+- Shared route helpers keep primary nav fixes consistent across existing tab screens.
+
+Next Recommended Story:
+
+RL-0031

@@ -3,88 +3,88 @@
 ## Current Story
 
 Story ID:
-RL-0030
+RL-0037
 
 Status:
 Done
 
 Reason:
-RL-0030 was released after focused Phase 2 screen QA, evidence review, and release closeout. The story validated approved screen responsibilities with command-backed evidence and documented manual-device limitations.
+RL-0037 was completed as a small P0 bug-fix story after user validation found the visible Today bottom navigation item was inaccessible. Today now routes into today's Current Workout flow when possible and safely falls back to Home when no runnable workout exists.
 
 ## Routing Decision Traceability
 
 Decision Point:
-Release Closeout For RL-0030
+Coordinator Hotfix Routing After RL-0030
 
 Selected Story:
-RL-0030
+RL-0037
 
 Previous Story State:
-In Progress
+Not Started
 
 New Story State:
 Done
 
 Inputs Considered:
 
-- User instruction to continue the workflow.
+- User report that the Today tab is inaccessible.
+- User direction that Today should redirect to the Current Workout page.
 - /Users/jounghwapak/Developer/AI_Agents/system/coordinator.md
 - docs/EPIC_USER_STORY_TASKS.md
-- user_stories/RL-0030/RL-0030_SPRINT_PLAN.md
-- user_stories/RL-0030/RL-0030_UX_SPEC.md
-- user_stories/RL-0030/RL-0030_INTERPRETATION.md
-- user_stories/RL-0030/RL-0030_QA_REPORT.md
-- user_stories/RL-0030/RL-0030_CODE_REVIEW.md
+- docs/SPRINT_PLAN.md
+- user_stories/RL-0037/RL-0037_TASKS.md
+- user_stories/RL-0037/RL-0037_UX_SPEC.md
+- user_stories/RL-0037/RL-0037_INTERPRETATION.md
+- lib/features/navigation/widgets/phase2_bottom_navigation.dart
+- lib/features/home/screens/home_screen.dart
+- lib/features/current_workout/screens/current_workout_screen.dart
+- lib/features/current_workout/services/rest_timer_continuity_service.dart
 
 Dependency and Blocker Status:
 
-- RL-0032 is Done.
-- RL-0024 is Done.
-- RL-0027 is Done.
-- RL-0029 is Done.
+- RL-0015 is Done.
 - RL-0033 is Done.
-- Code Review approved RL-0030.
-- QA passed RL-0030 with documented manual-device limitations.
-- User approval received by workflow continuation instruction on 2026-08-08.
-- No unresolved RL-0030 blockers are present.
+- RL-0036 is Done.
+- RL-0030 is Done.
+- RL-0031 remains Not Started and can resume after this hotfix release.
+- RL-0037 is released with no unresolved blockers.
 
 Selection Summary:
-RL-0030 is complete. Phase 2 screen readiness has focused evidence for Home, Workout Plan Builder, Add Exercise, Current Workout, Rest Timer, Workout Summary, Week, Achievement, History, and Workout Detail.
+RL-0037 should fix the visible Today nav item before journey regression QA. Today should act as a workout-flow shortcut: route to today's Current Workout when a runnable session exists, return to active workout/rest context when applicable, and avoid an empty Current Workout route when no workout exists.
 
 ## Dependency Validation
 
 - PRODUCT_BRIEF.md: Present.
 - PROJECT_CONTEXT.md: Present.
 - ARCHITECTURE.md: Present.
-- EPIC_USER_STORY_TASKS.md: Present and updated with RL-0030 Done.
-- RL-0030 task file: Present and updated with all tasks Done.
-- Story dependencies: RL-0032, RL-0024, RL-0027, RL-0029, RL-0033.
+- EPIC_USER_STORY_TASKS.md: Present and updated with RL-0037 Done.
+- RL-0037 task file: Present.
+- Story dependencies: RL-0015, RL-0033, RL-0036.
 - Dependency status: all direct dependencies are Done.
 
 ## Execution Order
 
 Completed:
 
-1. Coordinator selected RL-0030 and updated story status.
-2. UX Designer produced the focused RL-0030 screen QA specification.
-3. User Story Interpreter interpreted screen-only QA scope.
-4. QA Tester validated the story with focused screen evidence.
-5. Code Reviewer reviewed and approved the QA evidence.
-6. Release Manager closed the story and synchronized release artifacts.
+1. Coordinator selected RL-0037 and updated story status.
+2. UX Designer produced the focused RL-0037 UX specification.
+3. User Story Interpreter interpreted RL-0037 against bottom-nav, Current Workout, and fallback-routing boundaries.
 
-Next:
-
-7. Coordinator selects the next eligible story.
+4. Code Writer implements the interpreted story.
+5. Code Reviewer reviews implementation.
+6. QA Tester validates Today navigation behavior.
+7. Release Manager closes the story and synchronizes release artifacts if QA passes.
 
 ## Assigned Agents
 
 1. Coordinator
 2. UX Designer
 3. User Story Interpreter
-4. QA Tester
+4. Code Writer
 5. Code Reviewer
-6. Release Manager
-7. Coordinator
+6. QA Tester
+7. Release Manager
+8. Coordinator
 
 ## UX Routing Decision
 
@@ -100,35 +100,37 @@ User Approval Required:
 Yes
 
 Approval Evidence:
-Approved by user instruction to continue the workflow on 2026-08-08.
+Approved by user direction that Today should redirect to the Current Workout page on 2026-08-08.
 
 ## Required Deliverables
 
-- user_stories/RL-0030/RL-0030_SPRINT_PLAN.md
-- user_stories/RL-0030/RL-0030_UX_SPEC.md
-- user_stories/RL-0030/RL-0030_INTERPRETATION.md
-- user_stories/RL-0030/RL-0030_QA_REPORT.md
-- user_stories/RL-0030/RL-0030_CODE_REVIEW.md
-- user_stories/RL-0030/RL-0030_RELEASE_NOTE.md
+- user_stories/RL-0037/RL-0037_SPRINT_PLAN.md
+- user_stories/RL-0037/RL-0037_UX_SPEC.md
+- user_stories/RL-0037/RL-0037_INTERPRETATION.md
+- user_stories/RL-0037/RL-0037_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0037/RL-0037_CODE_REVIEW.md
+- user_stories/RL-0037/RL-0037_QA_REPORT.md
+- user_stories/RL-0037/RL-0037_RELEASE_NOTE.md
 - docs/EPIC_USER_STORY_TASKS.md
 - docs/SPRINT_PLAN.md
 - docs/DEVELOPMENT_LOG.md
 
 Status:
-Complete
+Done
 
 ## Risks Or Blockers
 
-- Manual device QA was not run in this agent environment.
-- The intentionally skipped share-card widget test remains a known Hive-backed widget harness limitation; focused service tests and prior story QA cover the behavior.
-- RL-0031 remains required for cross-screen integration and regression QA.
+- No-session Today behavior must be safe; it should not open an empty Current Workout route.
+- Duplicate Current Workout routes must be avoided.
+- Active rest/current workout continuity should be preserved.
+- RL-0031 journey regression QA can resume now that this hotfix is released.
 
 ## Expected Outcome
 
-- RL-0030 release is complete.
-- Phase 2 screen QA evidence is available for downstream journey regression.
-- Screen responsibility boundaries remain intact.
-- No production code changes were required.
+- Today is no longer an inert visible tab.
+- Today supports the Guide step by taking users into today's workout flow when possible.
+- Existing Home, Week, Achievement, and History tab switching remains intact.
+- No new Today screen or broad routing migration is introduced.
 
 ## Next Recommended Story
 
@@ -136,7 +138,7 @@ Story ID:
 RL-0031
 
 Reason:
-RL-0031 is the next eligible Phase 2 Journey Regression QA story and depends on RL-0030.
+RL-0037 is released; RL-0031 can resume journey regression QA against the fixed Today navigation behavior.
 
 ## Agent Handoff
 
@@ -149,9 +151,15 @@ Release Manager
 Completed Output:
 
 ```text
-docs/SPRINT_PLAN.md
-user_stories/RL-0030/RL-0030_RELEASE_NOTE.md
+user_stories/RL-0037/RL-0037_SPRINT_PLAN.md
+user_stories/RL-0037/RL-0037_UX_SPEC.md
+user_stories/RL-0037/RL-0037_INTERPRETATION.md
+user_stories/RL-0037/RL-0037_IMPLEMENTATION_NOTES.md
+user_stories/RL-0037/RL-0037_CODE_REVIEW.md
+user_stories/RL-0037/RL-0037_QA_REPORT.md
+user_stories/RL-0037/RL-0037_RELEASE_NOTE.md
 docs/EPIC_USER_STORY_TASKS.md
+docs/SPRINT_PLAN.md
 docs/DEVELOPMENT_LOG.md
 ```
 
@@ -164,30 +172,35 @@ Coordinator
 Next Prompt:
 
 ```text
-/Users/jounghwapak/Developer/AI_Agents/prompts/create_sprint_plan.md
+/Users/jounghwapak/Developer/AI_Agents/system/coordinator.md
 ```
 
 Required Input Files:
 
+- user_stories/RL-0037/RL-0037_SPRINT_PLAN.md
+- user_stories/RL-0037/RL-0037_UX_SPEC.md
+- user_stories/RL-0037/RL-0037_INTERPRETATION.md
+- user_stories/RL-0037/RL-0037_TASKS.md
 - docs/EPIC_USER_STORY_TASKS.md
-- docs/SPRINT_PLAN.md
-- docs/DEVELOPMENT_LOG.md
-
-Optional Input Files:
-
-- user_stories/RL-0030/RL-0030_RELEASE_NOTE.md
+- docs/ARCHITECTURE.md
+- lib/features/navigation/widgets/phase2_bottom_navigation.dart
+- lib/features/home/screens/home_screen.dart
+- lib/features/week/screens/week_screen.dart
+- lib/features/history/screens/history_screen.dart
+- lib/features/achievement/screens/achievement_screen.dart
+- lib/features/current_workout/screens/current_workout_screen.dart
+- lib/features/current_workout/services/rest_timer_continuity_service.dart
 
 Expected Output:
 
 ```text
-Next story selection and sprint plan update
+Selection and kickoff for RL-0031 when the workflow resumes.
 ```
 
 Blocking Conditions:
 
-- Stop if no eligible story exists.
+- None for the released RL-0037 hotfix.
 
 Instructions:
 
-- Select the next eligible story from the current backlog state.
-- Preserve completed RL-0030 release artifacts.
+- Resume workflow from RL-0031 when ready.

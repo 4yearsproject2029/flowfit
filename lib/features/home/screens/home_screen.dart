@@ -11,6 +11,7 @@ import '../../current_workout/screens/current_workout_screen.dart';
 import '../../current_workout/services/rest_timer_continuity_service.dart';
 import '../../current_workout/widgets/active_rest_timer_affordance.dart';
 import '../../history/screens/history_screen.dart';
+import '../../navigation/services/today_navigation_service.dart';
 import '../../navigation/widgets/phase2_bottom_navigation.dart';
 import '../../week/screens/week_screen.dart';
 import '../../workout_plan/screens/workout_plan_builder_screen.dart';
@@ -161,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: Phase2BottomNavigation(
         selectedTab: Phase2Tab.home,
+        onTodaySelected: _openToday,
         onWeekSelected: _openWeek,
         onAchievementSelected: _openAchievement,
         onHistorySelected: _openHistory,
@@ -192,6 +194,13 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
+    );
+  }
+
+  Future<void> _openToday() {
+    return TodayNavigationService.openToday(
+      context: context,
+      storageService: storageService,
     );
   }
 
