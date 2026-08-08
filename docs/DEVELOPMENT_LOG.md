@@ -1224,3 +1224,79 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0020
+
+---
+
+### RL-0020
+
+Epic:
+
+EP-15 Phase 2 Screen QA
+
+Status:
+
+Done
+
+Summary:
+
+- Selected RL-0020 after RL-0031 released Phase 2 journey regression QA.
+- Completed final Phase 2 readiness review using RL-0030 screen QA and RL-0031 integration/regression QA evidence.
+- Confirmed no unresolved product blockers remain for the Guide -> Complete -> Celebrate -> Reward -> Come Back loop.
+- Confirmed local-first, privacy, no-backend, no-login, no-cloud-sync, no-analytics, and non-comparison boundaries remain intact.
+- Released RL-0020 as a documentation-only readiness review with accepted limitations documented.
+
+Acceptance Criteria:
+
+- Passed with accepted limitations.
+
+Files Created:
+
+- user_stories/RL-0020/RL-0020_SPRINT_PLAN.md
+- user_stories/RL-0020/RL-0020_UX_SPEC.md
+- user_stories/RL-0020/RL-0020_INTERPRETATION.md
+- user_stories/RL-0020/RL-0020_QA_REPORT.md
+- user_stories/RL-0020/RL-0020_CODE_REVIEW.md
+- user_stories/RL-0020/RL-0020_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- user_stories/RL-0020/RL-0020_TASKS.md
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Manual simulator/device QA was not run in this agent environment.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by explicit user workflow instruction to proceed on 2026-08-08.
+
+Known Limitations:
+
+- Manual simulator/device QA was not run in this agent environment.
+- Full `flutter test -r expanded` currently stalls in the widget harness and is documented in RL-0031.
+- Existing skipped Hive-backed callback tests remain accepted harness limitations.
+- Add Exercise bottom-sheet visual QA remains manual-only.
+
+Lessons Learned:
+
+- Separating screen QA, integration QA, and final readiness review kept RL-0020 focused and avoided reopening completed stories.
+- Phase 2 evidence is complete enough for current repo readiness, with real-device visual QA remaining as an external release step.
+
+Next Recommended Story:
+
+None

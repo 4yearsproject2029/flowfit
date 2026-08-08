@@ -3,21 +3,21 @@
 ## Current Story
 
 Story ID:
-RL-0031
+RL-0020
 
 Status:
 Done
 
 Reason:
-RL-0031 completed Phase 2 journey regression QA after RL-0037 release. Focused integration evidence passed and the full-suite widget harness limitation was documented for RL-0020 readiness review.
+RL-0020 completed final Phase 2 readiness review using RL-0030 screen QA and RL-0031 integration/regression QA evidence. No unresolved product blockers remain; accepted limitations are documented.
 
 ## Routing Decision Traceability
 
 Decision Point:
-Coordinator Routing After RL-0037
+Coordinator Routing After RL-0031
 
 Selected Story:
-RL-0031
+RL-0020
 
 Previous Story State:
 Not Started
@@ -31,49 +31,48 @@ Inputs Considered:
 - /Users/jounghwapak/Developer/AI_Agents/system/coordinator.md
 - docs/EPIC_USER_STORY_TASKS.md
 - docs/SPRINT_PLAN.md
+- docs/PRODUCT_BRIEF.md
+- docs/PROJECT_CONTEXT.md
 - docs/ARCHITECTURE.md
-- docs/DEVELOPMENT_LOG.md
-- user_stories/RL-0031/RL-0031_TASKS.md
-- user_stories/RL-0031/RL-0031_SPRINT_PLAN.md
-- user_stories/RL-0031/RL-0031_UX_SPEC.md
-- user_stories/RL-0031/RL-0031_INTERPRETATION.md
+- docs/USER_JOURNEY.md
+- user_stories/RL-0020/RL-0020_TASKS.md
+- user_stories/RL-0020/RL-0020_SPRINT_PLAN.md
+- user_stories/RL-0020/RL-0020_UX_SPEC.md
+- user_stories/RL-0020/RL-0020_INTERPRETATION.md
+- user_stories/RL-0020/RL-0020_QA_REPORT.md
 - user_stories/RL-0030/RL-0030_QA_REPORT.md
-- user_stories/RL-0037/RL-0037_RELEASE_NOTE.md
+- user_stories/RL-0031/RL-0031_QA_REPORT.md
 
 Dependency and Blocker Status:
 
+- RL-0031 is Done.
 - RL-0030 is Done.
 - RL-0037 is Done.
-- RL-0024 is Done.
-- RL-0027 is Done.
-- RL-0029 is Done.
-- RL-0032 is Done.
-- RL-0033 is Done.
-- RL-0031 is released with no unresolved product blockers.
+- RL-0020 is released with no unresolved product blockers.
 
 Selection Summary:
-RL-0031 should validate the completed Phase 2 journey before RL-0020 final readiness review. It is a QA/documentation story and should not introduce new implementation unless QA exposes a blocker requiring a separate story.
+RL-0020 reviewed the completed Phase 2 screen and integration evidence without repeating all prior QA. The story confirms final readiness with accepted limitations.
 
 ## Dependency Validation
 
 - PRODUCT_BRIEF.md: Present.
 - PROJECT_CONTEXT.md: Present.
 - ARCHITECTURE.md: Present.
-- EPIC_USER_STORY_TASKS.md: Present and updated with RL-0031 Done.
-- RL-0031 task file: Present.
-- Story dependency: RL-0030.
+- EPIC_USER_STORY_TASKS.md: Present and updated with RL-0020 Done.
+- RL-0020 task file: Present.
+- Story dependency: RL-0031.
 - Dependency status: all direct dependencies are Done.
 
 ## Execution Order
 
 Completed:
 
-1. Coordinator selected RL-0031 and updated story status.
-2. UX Designer produced the RL-0031 journey QA scope.
-3. User Story Interpreter mapped RL-0031 to executable evidence.
-4. QA Tester ran regression evidence.
-5. Code Reviewer reviewed QA evidence and confirmed no implementation changes were required.
-6. Release Manager closed RL-0031 after QA passed.
+1. Coordinator selected RL-0020 and updated story status.
+2. UX Designer produced the final journey readiness scope.
+3. User Story Interpreter mapped RL-0020 to prior QA evidence.
+4. QA Tester reviewed final evidence and current validation state.
+5. Code Reviewer approved the documentation-only readiness result.
+6. Release Manager closed RL-0020.
 
 ## Assigned Agents
 
@@ -103,12 +102,12 @@ Approved by explicit user workflow instruction to proceed on 2026-08-08.
 
 ## Required Deliverables
 
-- user_stories/RL-0031/RL-0031_SPRINT_PLAN.md
-- user_stories/RL-0031/RL-0031_UX_SPEC.md
-- user_stories/RL-0031/RL-0031_INTERPRETATION.md
-- user_stories/RL-0031/RL-0031_QA_REPORT.md
-- user_stories/RL-0031/RL-0031_CODE_REVIEW.md
-- user_stories/RL-0031/RL-0031_RELEASE_NOTE.md
+- user_stories/RL-0020/RL-0020_SPRINT_PLAN.md
+- user_stories/RL-0020/RL-0020_UX_SPEC.md
+- user_stories/RL-0020/RL-0020_INTERPRETATION.md
+- user_stories/RL-0020/RL-0020_QA_REPORT.md
+- user_stories/RL-0020/RL-0020_CODE_REVIEW.md
+- user_stories/RL-0020/RL-0020_RELEASE_NOTE.md
 - docs/EPIC_USER_STORY_TASKS.md
 - docs/SPRINT_PLAN.md
 - docs/DEVELOPMENT_LOG.md
@@ -116,25 +115,26 @@ Approved by explicit user workflow instruction to proceed on 2026-08-08.
 Status:
 Done
 
-## Risks Or Blockers
+## Accepted Limitations
 
-- Full `flutter test` stalled in the known widget harness and was documented in the QA report.
-- Manual simulator QA was not run in this agent environment.
-- No product behavior blockers were found in focused integration evidence.
+- Manual simulator/device QA was not run in this agent environment.
+- Full `flutter test -r expanded` currently stalls in the widget harness and is documented in RL-0031.
+- Existing skipped Hive-backed callback tests remain harness limitations.
+- Add Exercise bottom-sheet visual QA remains manual-only.
 
 ## Expected Outcome
 
-- Phase 2 journey integration evidence is captured.
-- RL-0020 receives usable readiness input.
-- No new feature behavior is introduced by RL-0031.
+- Final Phase 2 readiness evidence is captured.
+- All tracked backlog stories are Done.
+- No new feature behavior is introduced by RL-0020.
 
 ## Next Recommended Story
 
 Story ID:
-RL-0020
+None
 
 Reason:
-RL-0031 is released; RL-0020 can perform final Phase 2 readiness review using RL-0030 and RL-0031 evidence.
+No eligible Phase 2 backlog story remains after RL-0020.
 
 ## Agent Handoff
 
@@ -147,12 +147,12 @@ Release Manager
 Completed Output:
 
 ```text
-user_stories/RL-0031/RL-0031_SPRINT_PLAN.md
-user_stories/RL-0031/RL-0031_UX_SPEC.md
-user_stories/RL-0031/RL-0031_INTERPRETATION.md
-user_stories/RL-0031/RL-0031_QA_REPORT.md
-user_stories/RL-0031/RL-0031_CODE_REVIEW.md
-user_stories/RL-0031/RL-0031_RELEASE_NOTE.md
+user_stories/RL-0020/RL-0020_SPRINT_PLAN.md
+user_stories/RL-0020/RL-0020_UX_SPEC.md
+user_stories/RL-0020/RL-0020_INTERPRETATION.md
+user_stories/RL-0020/RL-0020_QA_REPORT.md
+user_stories/RL-0020/RL-0020_CODE_REVIEW.md
+user_stories/RL-0020/RL-0020_RELEASE_NOTE.md
 docs/EPIC_USER_STORY_TASKS.md
 docs/SPRINT_PLAN.md
 docs/DEVELOPMENT_LOG.md
@@ -167,29 +167,26 @@ Coordinator
 Next Prompt:
 
 ```text
-/Users/jounghwapak/Developer/AI_Agents/system/coordinator.md
+No eligible Phase 2 backlog story remains. Await user direction.
 ```
 
 Required Input Files:
 
-- user_stories/RL-0031/RL-0031_SPRINT_PLAN.md
-- user_stories/RL-0031/RL-0031_UX_SPEC.md
-- user_stories/RL-0031/RL-0031_INTERPRETATION.md
-- user_stories/RL-0031/RL-0031_TASKS.md
 - docs/EPIC_USER_STORY_TASKS.md
-- docs/ARCHITECTURE.md
-- test/widget_test.dart
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- user_stories/RL-0020/RL-0020_RELEASE_NOTE.md
 
 Expected Output:
 
 ```text
-Selection and kickoff for RL-0020 when the workflow resumes.
+Await user direction.
 ```
 
 Blocking Conditions:
 
-- None for released RL-0031.
+- None for released RL-0020.
 
 Instructions:
 
-- Resume workflow from RL-0020 when ready.
+- Stop after release.
