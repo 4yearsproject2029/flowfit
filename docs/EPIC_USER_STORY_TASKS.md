@@ -386,6 +386,8 @@ Dependency validation:
 | 2026-08-08 | RL-0030 | In Progress | Done | Release Manager | Phase 2 Screen QA completed with focused screen evidence, Code Review approval, QA pass, documented manual-device limitations, and release closeout. |
 | 2026-08-08 | RL-0037 | Not Started | In Progress | Coordinator | User-reported Today nav accessibility defect selected as a P0 hotfix before RL-0031 journey regression QA. |
 | 2026-08-08 | RL-0037 | In Progress | Done | Release Manager | Today navigation hotfix completed, Code Review approved, focused QA passed, and release closeout completed. |
+| 2026-08-08 | RL-0031 | Not Started | In Progress | Coordinator | Phase 2 journey regression QA selected after RL-0037 release; dependencies are Done and evidence is needed for RL-0020 readiness. |
+| 2026-08-08 | RL-0031 | In Progress | Done | Release Manager | Phase 2 journey regression QA completed with focused integration evidence, documented full-suite harness limitation, Code Review approval, and release closeout. |
 
 ---
 
@@ -394,17 +396,17 @@ Dependency validation:
 | Metric | Value |
 | ------ | ----- |
 | Total Stories | 37 |
-| Not Started | 3 |
+| Not Started | 2 |
 | In Progress | 0 |
 | Blocked | 0 |
 | On Hold | 0 |
-| Done | 34 |
+| Done | 35 |
 | Canceled | 0 |
 
 Completion Rate:
 
 ```text
-33 / (37 - 0) = 89.2%
+35 / (37 - 0) = 94.6%
 ```
 
 MVP Completion Rate:
@@ -589,6 +591,8 @@ Reasoning:
 | v1.45 | 2026-07-25 | Release Manager Agent | Closed RL-0028 as Done after Achievement milestone and title implementation, focused QA pass, and release closeout. |
 | v1.46 | 2026-08-08 | Coordinator Agent | Added and selected RL-0037 as a focused Today bottom navigation hotfix before RL-0031 journey regression QA. |
 | v1.47 | 2026-08-08 | Release Manager Agent | Closed RL-0037 as Done after Today navigation hotfix, focused QA pass, and release closeout. |
+| v1.48 | 2026-08-08 | Coordinator Agent | Selected RL-0031 as the next eligible Phase 2 journey regression QA story after RL-0037 release. |
+| v1.49 | 2026-08-08 | Release Manager Agent | Closed RL-0031 as Done after Phase 2 journey regression QA, focused evidence pass, and documented full-suite harness limitation. |
 
 ---
 
@@ -972,7 +976,7 @@ RL-0020
 | Done | RL-0029 | EP-14 | Achievement Unlock And Share Moments | Should Have | P1 | S | RL-0028, RL-0024 | Yes | Yes | As a user who earns recognition, I want recent unlock and share moments to be visible only when I choose, so that rewards feel celebratory and private. | - Achievement shows recent unlock moments without requiring social posting.<br>- Share actions are user-initiated and preserve existing share-card privacy defaults.<br>- Recent unlock language reinforces consistency and return, not performance comparison.<br>- Dashboard remains limited to short-term preview and does not become the full Achievement hub.<br>- Existing share-card generation tracking remains local.<br>- QA covers unlock visibility, share entry point, and privacy-default preservation. |
 | Done | RL-0030 | EP-15 | Phase 2 Screen QA | Should Have | P1 | M | RL-0032, RL-0024, RL-0027, RL-0029, RL-0033 | Yes | Yes | As a QA reviewer, I want each approved Phase 2 screen validated independently, so that screen-level layout and accessibility issues are caught before integration testing. | - Screen QA only: validates Home, Workout Plan Builder, Add Exercise bottom sheet, Current Workout, Rest Timer, Workout Summary, Week, Achievement, History, and Workout Detail independently against `design/approved/` responsibilities.<br>- Checks common iPhone layouts for readable text, touch targets, contrast, navigation predictability, and non-overlapping content.<br>- Confirms each screen owns only its intended responsibility.<br>- Does not validate full cross-screen journeys, navigation survival, or end-to-end regression flows except where needed to enter the screen under test.<br>- Runs `flutter analyze`.<br>- Runs focused widget or service tests relevant to changed screens where available.<br>- Documents any skipped tests or manual-only checks without changing production behavior just for the harness. |
 | Done | RL-0037 | EP-12 | Today Navigation To Current Workout Bug Fix | Must Have | P0 | S | RL-0015, RL-0033, RL-0036 | Yes | Yes | As a user with a workout planned for today, I want the Today bottom navigation item to take me directly into today's current workout flow, so that the visible Today tab is accessible and supports the core workout journey. | - The Today bottom nav item is actionable from Home, Week, Achievement, and History.<br>- When today has a saved runnable workout session, tapping Today opens `CurrentWorkoutScreen` for today's local session.<br>- When an active rest timer exists, tapping Today returns to the active Current Workout/rest context rather than creating a duplicate route.<br>- When no runnable workout exists for today, tapping Today routes to a safe today-focused fallback such as Home's Today's Focus or the workout planning entry point, with no blank Current Workout state.<br>- Re-tapping Today while already in the current workout flow does not stack duplicate Current Workout routes.<br>- Existing Home, Week, Achievement, History, planned Session Detail, completed Workout Detail, and bottom-nav direct switching behavior remains intact.<br>- No backend, login, cloud sync, external routing package, broad navigation rewrite, or new persisted data model is introduced.<br>- QA covers Today from each implemented tab, runnable-session behavior, no-session fallback, active-rest behavior, and duplicate-route prevention. |
-| Not Started | RL-0031 | EP-15 | Phase 2 Journey Regression QA | Should Have | P1 | M | RL-0030 | Yes | Yes | As a QA reviewer, I want cross-screen integration and regression QA, so that the redesigned screens work together as one product experience. | - Cross-screen integration and regression QA only.<br>- Validates Dashboard -> Workout Plan Builder -> Add Exercise -> Save Workout -> Dashboard -> Current Workout handoff.<br>- Validates Dashboard -> Current Workout -> Rest -> Completion -> Summary -> Achievement/Reward -> Dashboard flow.<br>- Validates Week -> Planned Session Detail -> Start Today -> Current Workout handoff.<br>- Validates History -> Completed Workout Detail review without reopening Summary.<br>- Validates Rest Timer continuity behavior from `RL-0032` across allowed navigation paths.<br>- Validates Achievement rewards and share moments preserve privacy and non-comparison rules.<br>- Runs `flutter test` or documents skipped tests as known limitations.<br>- Produces final integration evidence for `RL-0020` release readiness. |
+| Done | RL-0031 | EP-15 | Phase 2 Journey Regression QA | Should Have | P1 | M | RL-0030 | Yes | Yes | As a QA reviewer, I want cross-screen integration and regression QA, so that the redesigned screens work together as one product experience. | - Cross-screen integration and regression QA only.<br>- Validates Dashboard -> Workout Plan Builder -> Add Exercise -> Save Workout -> Dashboard -> Current Workout handoff.<br>- Validates Dashboard -> Current Workout -> Rest -> Completion -> Summary -> Achievement/Reward -> Dashboard flow.<br>- Validates Week -> Planned Session Detail -> Start Today -> Current Workout handoff.<br>- Validates History -> Completed Workout Detail review without reopening Summary.<br>- Validates Rest Timer continuity behavior from `RL-0032` across allowed navigation paths.<br>- Validates Achievement rewards and share moments preserve privacy and non-comparison rules.<br>- Runs `flutter test` or documents skipped tests as known limitations.<br>- Produces final integration evidence for `RL-0020` release readiness. |
 | Done | RL-0032 | EP-14 | Cross-Screen Rest Timer Continuity | Should Have | P1 | M | RL-0018, RL-0023, RL-0034 | Yes | Yes | As a user resting during an active workout, I want the timer to survive navigation and give me a way back to the workout, so that rest remains connected to the workout flow across screens. | - Builds on the Rest Timer overlay from `RL-0018`.<br>- Timer survives allowed navigation during an active workout flow.<br>- Global/floating timer state remains visible or recoverable where it supports active workout continuity.<br>- Users have a clear return-to-workout entry point from active timer state.<br>- Active timer state persists during the workout flow without introducing backend, login, cloud sync, or cross-device behavior.<br>- Timer continuity remains scoped to active workout flow and is not a Dashboard feature, standalone timer mode, or background service outside the app.<br>- QA covers navigation survival, active timer state, return-to-workout entry, and cleanup when rest/workout ends. |
 
 ---

@@ -15,9 +15,9 @@ design/approved/08_workout_detail.png
 
 | Status | Task ID | Description | Owner Agent |
 | ------ | ------- | ----------- | ----------- |
-| Not Started | RL-0031-T01 | Interpret cross-screen integration and regression requirements for Guide -> Complete -> Celebrate -> Reward -> Come Back and planning/review side paths. | User Story Interpreter |
-| Not Started | RL-0031-T02 | Execute integration QA for Dashboard -> Current Workout -> Rest -> Completion -> Summary -> Reward -> Dashboard. | QA Tester |
-| Not Started | RL-0031-T03 | Execute integration QA for Week -> Planned Session Detail -> Start Today -> Current Workout. | QA Tester |
-| Not Started | RL-0031-T04 | Execute integration QA for History -> Completed Workout Detail, Achievement unlock/share moments, and Rest Timer continuity from `RL-0032`. | QA Tester |
-| Not Started | RL-0031-T05 | Execute regression automation with `flutter test` or document skipped tests as known limitations, then review evidence for final `RL-0020` readiness. | QA Tester |
-| Not Started | RL-0031-T06 | Close story and sync release artifacts. | Release Manager |
+| Done | RL-0031-T01 | Interpret cross-screen integration and regression requirements for Guide -> Complete -> Celebrate -> Reward -> Come Back and planning/review side paths. | User Story Interpreter |
+| Done | RL-0031-T02 | Execute integration QA for Dashboard -> Current Workout -> Rest -> Completion -> Summary -> Reward -> Dashboard. | QA Tester |
+| Done | RL-0031-T03 | Execute integration QA for Week -> Planned Session Detail -> Start Today -> Current Workout. | QA Tester |
+| Done | RL-0031-T04 | Execute integration QA for History -> Completed Workout Detail, Achievement unlock/share moments, and Rest Timer continuity from `RL-0032`. | QA Tester |
+| Done | RL-0031-T05 | Execute regression automation with `flutter test` or document skipped tests as known limitations, then review evidence for final `RL-0020` readiness. | QA Tester |
+| Done | RL-0031-T06 | Close story and sync release artifacts. | Release Manager |
