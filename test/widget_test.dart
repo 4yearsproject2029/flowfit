@@ -652,7 +652,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('MILESTONES'), findsOneWidget);
-      expect(find.text('First Finish'), findsOneWidget);
+      expect(find.text('First Finish'), findsWidgets);
       expect(find.text('1 / 1 session'), findsOneWidget);
       expect(find.text('Steady Week'), findsOneWidget);
       expect(find.text('1 / 3 sessions'), findsOneWidget);
@@ -749,6 +749,215 @@ void main() {
         findsNothing,
       );
       expect(find.textContaining('Share', findRichText: true), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'Achievement recent unlocks show earned recognition and optional share entry',
+    (WidgetTester tester) async {
+      await resetHiveBoxesForTest(tester);
+      await completeOnboardingForTest(tester);
+      await tester.runAsync(() async {
+        final today = DateTime.now();
+        await StorageService().addWorkoutLog(
+          WorkoutLog(
+            id: 'recent-unlock-log-1',
+            date: _dateKey(today),
+            workoutId: 'recent-unlock-workout-1',
+            workoutName: 'First Flow',
+            category: 'Strength',
+            isCompleted: false,
+            createdAt: today,
+          ),
+        );
+        await StorageService().toggleWorkoutCompletion('recent-unlock-log-1');
+      });
+
+      await pumpFlowFitApp(tester);
+
+      await tester.tap(find.text('Achievement'));
+      await tester.pumpAndSettle();
+      await tester.dragUntilVisible(
+        find.text('RECENT UNLOCKS'),
+        find.byType(CustomScrollView),
+        const Offset(0, -300),
+      );
+      await tester.pump();
+
+      expect(find.text('RECENT UNLOCKS'), findsOneWidget);
+      expect(find.text('First Finish'), findsWidgets);
+      expect(
+        find.text('You finished your first local workout.'),
+        findsOneWidget,
+      );
+      expect(find.text('Share moment'), findsOneWidget);
+
+      await tester.tap(find.text('Share moment'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Share card preview'), findsOneWidget);
+      expect(find.text('Recognition unlocked.'), findsOneWidget);
+      expect(
+        find.text('Performance numbers are hidden by default.'),
+        findsOneWidget,
+      );
+
+      await closeShareCardPreviewForTest(tester);
+    },
+  );
+
+  testWidgets(
+    'Achievement recent unlocks show private empty state before recognition',
+    (WidgetTester tester) async {
+      await resetHiveBoxesForTest(tester);
+      await completeOnboardingForTest(tester);
+      await pumpFlowFitApp(tester);
+
+      await tester.tap(find.text('Achievement'));
+      await tester.pumpAndSettle();
+      await tester.dragUntilVisible(
+        find.text('RECENT UNLOCKS'),
+        find.byType(CustomScrollView),
+        const Offset(0, -300),
+      );
+      await tester.pump();
+
+      expect(find.text('RECENT UNLOCKS'), findsOneWidget);
+      expect(find.text('Recognition is warming up'), findsOneWidget);
+      expect(
+        find.text('Complete a workout to make your first recognition moment.'),
+        findsOneWidget,
+      );
+      expect(find.text('Share moment'), findsNothing);
+    },
+  );
+
+  testWidgets('Achievement share moment preserves privacy defaults', (
+    WidgetTester tester,
+  ) async {
+    await resetHiveBoxesForTest(tester);
+    await completeOnboardingForTest(tester);
+    await tester.runAsync(() async {
+      final today = DateTime.now();
+      await StorageService().addWorkoutLog(
+        WorkoutLog(
+          id: 'privacy-unlock-log-1',
+          date: _dateKey(today),
+          workoutId: 'privacy-unlock-workout-1',
+          workoutName: 'Private Flow',
+          category: 'Strength',
+          isCompleted: false,
+          sets: 3,
+          reps: 8,
+          weight: 20,
+          createdAt: today,
+        ),
+      );
+      await StorageService().toggleWorkoutCompletion('privacy-unlock-log-1');
+    });
+
+    await pumpFlowFitApp(tester);
+
+    await tester.tap(find.text('Achievement'));
+    await tester.pumpAndSettle();
+    await tester.dragUntilVisible(
+      find.text('Share moment'),
+      find.byType(CustomScrollView),
+      const Offset(0, -300),
+    );
+    await tester.pump();
+
+    expect(StorageService().shouldShowShareCardWorkoutMetrics(), isFalse);
+
+    await tester.tap(find.text('Share moment'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Share card preview'), findsOneWidget);
+    expect(find.text('Show workout metrics'), findsNothing);
+
+    await tester.ensureVisible(find.text('Generate'));
+    await tester.pump();
+    await tester.tap(find.text('Generate'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Level card generated'), findsOneWidget);
+    expect(StorageService().shouldShowShareCardWorkoutMetrics(), isFalse);
+    expect(
+      StorageService().getShareCardGenerationCounts().values.fold<int>(
+        0,
+        (sum, count) => sum + count,
+      ),
+      1,
+    );
+
+    await closeShareCardPreviewForTest(tester);
+  });
+
+  testWidgets(
+    'Achievement share moments preserve Dashboard separation and no comparison copy',
+    (WidgetTester tester) async {
+      await resetHiveBoxesForTest(tester);
+      await completeOnboardingForTest(tester);
+      await tester.runAsync(() async {
+        final today = DateTime.now();
+        await StorageService().addWorkoutLog(
+          WorkoutLog(
+            id: 'dashboard-separation-log-1',
+            date: _dateKey(today),
+            workoutId: 'dashboard-separation-workout-1',
+            workoutName: 'Quiet Progress',
+            category: 'Strength',
+            isCompleted: false,
+            createdAt: today,
+          ),
+        );
+        await StorageService().toggleWorkoutCompletion(
+          'dashboard-separation-log-1',
+        );
+      });
+
+      await pumpFlowFitApp(tester);
+
+      await tester.dragUntilVisible(
+        find.text('NEXT ACHIEVEMENT'),
+        find.byType(Scrollable),
+        const Offset(0, -250),
+      );
+      await tester.pump();
+
+      expect(find.text('NEXT ACHIEVEMENT'), findsOneWidget);
+      expect(find.text('RECENT UNLOCKS'), findsNothing);
+      expect(find.text('Share moment'), findsNothing);
+
+      await tester.tap(find.text('Achievement'));
+      await tester.pumpAndSettle();
+      await tester.dragUntilVisible(
+        find.text('RECENT UNLOCKS'),
+        find.byType(CustomScrollView),
+        const Offset(0, -300),
+      );
+      await tester.pump();
+
+      expect(find.text('RECENT UNLOCKS'), findsOneWidget);
+      expect(find.text('Share moment'), findsOneWidget);
+      expect(
+        find.textContaining('leaderboard', findRichText: true),
+        findsNothing,
+      );
+      expect(find.textContaining('ranking', findRichText: true), findsNothing);
+      expect(
+        find.textContaining('percentile', findRichText: true),
+        findsNothing,
+      );
+      expect(
+        find.textContaining('public profile', findRichText: true),
+        findsNothing,
+      );
+      expect(find.textContaining('penalty', findRichText: true), findsNothing);
+      expect(
+        find.textContaining('level lost', findRichText: true),
+        findsNothing,
+      );
     },
   );
 

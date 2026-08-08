@@ -907,3 +907,82 @@ Lessons Learned:
 Next Recommended Story:
 
 RL-0017
+
+---
+
+### RL-0029
+
+Epic:
+
+EP-14 Achievement Unlock And Share Moments
+
+Status:
+
+Done
+
+Summary:
+
+- Added `RECENT UNLOCKS` to Achievement for earned local recognition.
+- Added an optional `Share moment` action that opens only after user action.
+- Reused existing share-card preview and local generation tracking.
+- Preserved Dashboard separation, share-card privacy defaults, and non-comparison boundaries.
+
+Acceptance Criteria:
+
+- Passed
+
+Files Created:
+
+- user_stories/RL-0029/RL-0029_SPRINT_PLAN.md
+- user_stories/RL-0029/RL-0029_UX_SPEC.md
+- user_stories/RL-0029/RL-0029_INTERPRETATION.md
+- user_stories/RL-0029/RL-0029_IMPLEMENTATION_NOTES.md
+- user_stories/RL-0029/RL-0029_CODE_REVIEW.md
+- user_stories/RL-0029/RL-0029_QA_REPORT.md
+- user_stories/RL-0029/RL-0029_RELEASE_NOTE.md
+
+Files Modified:
+
+- docs/EPIC_USER_STORY_TASKS.md
+- docs/SPRINT_PLAN.md
+- docs/DEVELOPMENT_LOG.md
+- user_stories/RL-0029/RL-0029_TASKS.md
+- lib/features/achievement/screens/achievement_screen.dart
+- test/widget_test.dart
+
+Packages Added:
+
+- None
+
+Manual Steps:
+
+- Open Achievement with no completed workouts and confirm `RECENT UNLOCKS` shows the private empty state.
+- Complete one workout and confirm `First Finish` appears under recent unlocks.
+- Tap `Share moment` and confirm the share-card preview opens only after the tap.
+- Confirm performance numbers remain hidden by default.
+- Confirm Dashboard does not show recent unlocks or share prompts.
+
+Commit References:
+
+- Not committed
+
+QA Result:
+
+Passed
+
+User Approval:
+
+Approved by explicit user workflow instruction to proceed through release on 2026-08-02.
+
+Known Limitations:
+
+- Manual device QA was not run in this agent environment.
+- Grouped widget execution hit the existing widget-file teardown issue after the targeted scenarios ran; individual RL-0029 focused tests passed.
+
+Lessons Learned:
+
+- Achievement recognition can reuse existing milestone/title state and share-card preview behavior without adding a persisted achievement model.
+
+Next Recommended Story:
+
+RL-0030

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -6,6 +8,8 @@ import '../../../data/services/level_service.dart';
 import '../../../data/services/storage_service.dart';
 import '../../history/screens/history_screen.dart';
 import '../../navigation/widgets/phase2_bottom_navigation.dart';
+import '../../share_cards/models/share_card_data.dart';
+import '../../share_cards/widgets/share_card_preview.dart';
 import '../../week/screens/week_screen.dart';
 
 class AchievementScreen extends StatelessWidget {
@@ -45,6 +49,10 @@ class AchievementScreen extends StatelessWidget {
                 );
                 final titleStates = _titleStates(
                   currentLevel: levelProgress.currentLevel,
+                );
+                final recentUnlocks = _recentUnlocks(
+                  milestoneStates: milestoneStates,
+                  titleStates: titleStates,
                 );
 
                 return CustomScrollView(
@@ -92,6 +100,8 @@ class AchievementScreen extends StatelessWidget {
                         child: _RecognitionSections(
                           milestoneStates: milestoneStates,
                           titleStates: titleStates,
+                          recentUnlocks: recentUnlocks,
+                          storageService: storageService,
                         ),
                       ),
                     ),
@@ -211,6 +221,64 @@ class AchievementScreen extends StatelessWidget {
         isUnlocked: currentLevel >= 10,
       ),
     ];
+  }
+
+  List<_RecentUnlockState> _recentUnlocks({
+    required List<_MilestoneState> milestoneStates,
+    required List<_TitleState> titleStates,
+  }) {
+    final unlocks = <_RecentUnlockState>[];
+
+    for (final milestone in milestoneStates.where(
+      (state) => state.isUnlocked,
+    )) {
+      unlocks.add(
+        _RecentUnlockState(
+          icon: milestone.icon,
+          title: milestone.title,
+          detail: _recentUnlockDetailForMilestone(milestone.title),
+          shareCard: ShareCardData(
+            type: ShareCardType.level,
+            title: milestone.title,
+            message: 'Recognition unlocked.',
+            detail: milestone.requirement,
+          ),
+        ),
+      );
+    }
+
+    for (final titleState in titleStates.where(
+      (state) => state.isUnlocked && state.levelRequired > 1,
+    )) {
+      unlocks.add(
+        _RecentUnlockState(
+          icon: Icons.workspace_premium_outlined,
+          title: titleState.title,
+          detail: 'A new local title is ready when you want to use it.',
+          shareCard: ShareCardData(
+            type: ShareCardType.level,
+            title: titleState.title,
+            message: 'New title unlocked.',
+            detail: titleState.requirement,
+          ),
+        ),
+      );
+    }
+
+    return unlocks.take(3).toList();
+  }
+
+  String _recentUnlockDetailForMilestone(String title) {
+    switch (title) {
+      case 'First Finish':
+        return 'You finished your first local workout.';
+      case 'Steady Week':
+        return 'Three local sessions are part of your rhythm now.';
+      case 'Level 2':
+        return 'Your Rep Score moved you into the next level.';
+    }
+
+    return 'You earned this through local workout progress.';
   }
 
   void _openWeek(BuildContext context) {
@@ -563,10 +631,14 @@ class _RecognitionSections extends StatelessWidget {
   const _RecognitionSections({
     required this.milestoneStates,
     required this.titleStates,
+    required this.recentUnlocks,
+    required this.storageService,
   });
 
   final List<_MilestoneState> milestoneStates;
   final List<_TitleState> titleStates;
+  final List<_RecentUnlockState> recentUnlocks;
+  final StorageService storageService;
 
   @override
   Widget build(BuildContext context) {
@@ -586,7 +658,230 @@ class _RecognitionSections extends StatelessWidget {
           _TitleRow(titleState: title),
           const SizedBox(height: 10),
         ],
+        const SizedBox(height: 12),
+        _RecentUnlocksSection(
+          recentUnlocks: recentUnlocks,
+          storageService: storageService,
+        ),
       ],
+    );
+  }
+}
+
+class _RecentUnlockState {
+  const _RecentUnlockState({
+    required this.icon,
+    required this.title,
+    required this.detail,
+    required this.shareCard,
+  });
+
+  final IconData icon;
+  final String title;
+  final String detail;
+  final ShareCardData shareCard;
+}
+
+class _RecentUnlocksSection extends StatelessWidget {
+  const _RecentUnlocksSection({
+    required this.recentUnlocks,
+    required this.storageService,
+  });
+
+  final List<_RecentUnlockState> recentUnlocks;
+  final StorageService storageService;
+
+  @override
+  Widget build(BuildContext context) {
+    final shareableUnlock = recentUnlocks.isEmpty ? null : recentUnlocks.first;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _SectionLabel('RECENT UNLOCKS'),
+        const SizedBox(height: 10),
+        if (recentUnlocks.isEmpty)
+          const _RecentUnlockEmptyState()
+        else ...[
+          for (final unlock in recentUnlocks) ...[
+            _RecentUnlockRow(unlock: unlock),
+            const SizedBox(height: 10),
+          ],
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: shareableUnlock == null
+                  ? null
+                  : () => _showShareMoment(context, shareableUnlock.shareCard),
+              icon: const Icon(Icons.ios_share_outlined),
+              label: const Text('Share moment'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AchievementScreen.accent,
+                side: const BorderSide(color: AchievementScreen.accent),
+                minimumSize: const Size.fromHeight(48),
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  void _showShareMoment(BuildContext context, ShareCardData card) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.9,
+      ),
+      builder: (context) {
+        return _AchievementSharePreviewSheet(
+          card: card,
+          storageService: storageService,
+        );
+      },
+    );
+  }
+}
+
+class _RecentUnlockEmptyState extends StatelessWidget {
+  const _RecentUnlockEmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AchievementScreen.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AchievementScreen.border),
+      ),
+      child: const _SignalRowContent(
+        icon: Icons.auto_awesome_outlined,
+        title: 'Recognition is warming up',
+        detail: 'Complete a workout to make your first recognition moment.',
+        isActive: false,
+      ),
+    );
+  }
+}
+
+class _RecentUnlockRow extends StatelessWidget {
+  const _RecentUnlockRow({required this.unlock});
+
+  final _RecentUnlockState unlock;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AchievementScreen.elevated,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AchievementScreen.border),
+      ),
+      child: _SignalRowContent(
+        icon: unlock.icon,
+        title: unlock.title,
+        detail: unlock.detail,
+        isActive: true,
+      ),
+    );
+  }
+}
+
+class _AchievementSharePreviewSheet extends StatefulWidget {
+  const _AchievementSharePreviewSheet({
+    required this.card,
+    required this.storageService,
+  });
+
+  final ShareCardData card;
+  final StorageService storageService;
+
+  @override
+  State<_AchievementSharePreviewSheet> createState() {
+    return _AchievementSharePreviewSheetState();
+  }
+}
+
+class _AchievementSharePreviewSheetState
+    extends State<_AchievementSharePreviewSheet> {
+  bool hasGenerated = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height * 0.9,
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Share card preview',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Close',
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ShareCardPreview(card: widget.card),
+              const SizedBox(height: 12),
+              Text(
+                'Performance numbers are hidden by default.',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () {
+                    setState(() {
+                      hasGenerated = true;
+                    });
+                    unawaited(widget.storageService.recordShareCardGenerated());
+                  },
+                  child: const Text('Generate'),
+                ),
+              ),
+              if (hasGenerated) ...[
+                const SizedBox(height: 12),
+                Text(
+                  widget.card.confirmationLabel,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -822,42 +1117,76 @@ class _SignalRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AchievementScreen.border),
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: AchievementScreen.accentDark,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: AchievementScreen.accent, size: 24),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: AchievementScreen.primaryText,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  detail,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AchievementScreen.secondaryText,
-                    height: 1.25,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+      child: _SignalRowContent(
+        icon: icon,
+        title: title,
+        detail: detail,
+        isActive: true,
       ),
+    );
+  }
+}
+
+class _SignalRowContent extends StatelessWidget {
+  const _SignalRowContent({
+    required this.icon,
+    required this.title,
+    required this.detail,
+    required this.isActive,
+  });
+
+  final IconData icon;
+  final String title;
+  final String detail;
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: isActive
+                ? AchievementScreen.accentDark
+                : const Color(0xFF1A1D20),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            color: isActive
+                ? AchievementScreen.accent
+                : AchievementScreen.mutedText,
+            size: 24,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: AchievementScreen.primaryText,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                detail,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: isActive
+                      ? AchievementScreen.secondaryText
+                      : AchievementScreen.mutedText,
+                  height: 1.25,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
